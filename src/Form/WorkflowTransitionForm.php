@@ -8,7 +8,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\workflow\Element\WorkflowTransitionElement;
 use Drupal\workflow\Entity\Workflow;
-use Drupal\workflow\Entity\WorkflowConfigTransitionInterface;
 use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
 /**
@@ -167,7 +166,7 @@ class WorkflowTransitionForm extends ContentEntityForm {
     // where $entity is passed by reference.
     // $this->copyFormValuesToEntity($entity, $form, $form_state);
     $item = $form_state->getValues();
-    $entity = WorkflowTransitionElement::copyFormItemValuesToEntity($entity, $form, $item);
+    $entity = WorkflowTransitionElement::copyFormItemValuesToEntity($entity, $form, $form_state, $item);
 
     // Mark the entity as NOT requiring validation. (Used in validateForm().)
     $entity->setValidationRequired(FALSE);
@@ -209,9 +208,7 @@ class WorkflowTransitionForm extends ContentEntityForm {
    * {@inheritdoc}
    */
 //  public function validateForm(array &$form, FormStateInterface $form_state) {
-//    // Workflow module does not add any validations. They are on element level.
-//    //    parent::validateForm($form, $form_state);
-//    return;
+//    return parent::validateForm($form, $form_state);
 //  }
 
 }

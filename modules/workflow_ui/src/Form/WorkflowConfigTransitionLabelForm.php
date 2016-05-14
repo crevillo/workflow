@@ -15,12 +15,13 @@ class WorkflowConfigTransitionLabelForm extends WorkflowConfigTransitionFormBase
 
   /**
    * {@inheritdoc}
-   *
-   * Create an $entity for every ConfigTransition.
    */
-  public function load() {
-    return parent::load();
-  }
+  protected $entitiesKey = 'workflow_config_transition';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $type = 'label';
 
   /**
    * {@inheritdoc}
@@ -78,22 +79,7 @@ class WorkflowConfigTransitionLabelForm extends WorkflowConfigTransitionFormBase
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    return parent::buildForm($form, $form_state);
-  }
-
-    /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    return;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    //  parent::submitForm($form, $form_state);
     foreach ($form_state->getValue($this->entitiesKey) as $key => $value) {
       $new_label = trim($value['label_new']);
       $value['config_transition']
@@ -102,8 +88,6 @@ class WorkflowConfigTransitionLabelForm extends WorkflowConfigTransitionFormBase
     }
 
     drupal_set_message(t('The transition labels have been saved.'));
-
-    return;
   }
 
 }

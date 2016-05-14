@@ -3,6 +3,7 @@
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -75,6 +76,16 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   // Attached States and Transitions.
   public $states = array();
   public $transitions = array();
+
+  /**
+   * Retrieves the workflow manager.
+   *
+   * @return \Drupal\workflow\Entity\WorkflowManagerInterface
+   *   The workflow manager.
+   */
+  public static function workflowManager() {
+    return \Drupal::service('workflow.manager');
+  }
 
   /**
    * CRUD functions.
@@ -208,13 +219,6 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public static function workflowManager() {
-    return new WorkflowManager();
-  }
-
-  /**
    * Property functions.
    */
 
@@ -283,7 +287,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   /**
    * {@inheritdoc}
    */
-  public function getFirstSid($entity, $field_name, AccountInterface $user, $force) {
+  public function getFirstSid(EntityInterface $entity, $field_name, AccountInterface $user, $force = FALSE) {
     $creation_state = $this->getCreationState();
     $options = $creation_state->getOptions($entity, $field_name, $user, $force);
     if ($options) {
@@ -301,10 +305,11 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   /**
    * {@inheritdoc}
    */
-  public function getNextSid($entity, $field_name, $user, $force = FALSE) {
+  public function getNextSid(EntityInterface $entity, $field_name, AccountInterface $user, $force = FALSE) {
     $new_sid = FALSE;
 
-    $current_sid = WorkflowManager::getCurrentStateId($entity, $field_name);
+    $current_sid = Workflow::workflowManager()->getCurrentStateId($entity, $field_name);
+    /* @var $current_state WorkflowState */
     $current_state = WorkflowState::load($current_sid);
     $options = $current_state->getOptions($entity, $field_name, $user, $force);
     // Loop over every option. To find the next one.

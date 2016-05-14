@@ -4,7 +4,6 @@ namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\user\Entity\Role;
 
 /**
  * Provides an interface for workflow manager.
@@ -116,6 +115,33 @@ interface WorkflowManagerInterface {
    * Helper functions.
    *
    */
+
+  /**
+   * Utility function to return an array of workflow fields.
+   *
+   * @param string $entity_type_id
+   *   The content entity type to which the workflow fields are attached.
+   *
+   * @return array
+   *   An array of workflow field map definitions, keyed by field name. Each
+   *   value is an array with two entries:
+   *   - type: The field type.
+   *   - bundles: The bundles in which the field appears, as an array with entity
+   *     types as keys and the array of bundle names as values.
+   *
+   * @see \Drupal\Core\Entity\EntityManagerInterface::getFieldMap()
+   */
+//  public function getFields($entity_type_id);
+
+  /**
+   * Returns the attached fields (via Field UI)
+   *
+   * @param $entity_type_id
+   * @param $bundle
+   *
+   * @return array
+   */
+  public function getAttachedFields($entity_type_id, $bundle);
 
   /**
    * Gets the current state ID of a given entity.
