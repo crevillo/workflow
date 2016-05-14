@@ -129,12 +129,12 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
     ];
     $row['id'] = [
       '#type' => 'machine_name',
-      '#title' => NULL,  // Thes hides the red 'required' asterisk.
+      '#title' => NULL,  // This hides the red 'required' asterisk.
       '#size' => 30,
       '#description' => NULL,
-      '#disabled' => !$state->isNew(),
+      '#disabled' => TRUE, // !$state->isNew(),
       '#default_value' => $state->id(),
-      // N.B.: Keep machine_name in WorkflowState and ~ListBuillder aligned.
+      // N.B.: Keep machine_name in WorkflowState and ~ListBuilder aligned.
       '#required' => FALSE,
       // @TODO D8-port: enable machine_name: interactive WorkflowState element.
       '#machine_name' => [
