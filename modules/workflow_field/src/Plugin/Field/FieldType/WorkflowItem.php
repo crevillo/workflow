@@ -2,15 +2,12 @@
 
 namespace Drupal\workflowfield\Plugin\Field\FieldType;
 
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldConfigStorageBase;
-use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TypedData\DataDefinition;
-use Drupal\Core\TypedData\OptionsProviderInterface;
+use Drupal\Core\Url;
 use Drupal\options\Plugin\Field\FieldType\ListItemBase;
 use Drupal\workflow\Entity\Workflow;
 use Drupal\workflow\Entity\WorkflowState;
@@ -218,7 +215,7 @@ class WorkflowItem extends ListItemBase {
 
     // Let the user choose between the available workflow types.
     $wid = $this->getSetting('workflow_type');
-    $url = \Drupal\Core\Url::fromRoute('entity.workflow_type.collection');
+    $url = Url::fromRoute('entity.workflow_type.collection');
     $element['workflow_type'] = array(
       '#type' => 'select',
       '#title' => t('Workflow type'),

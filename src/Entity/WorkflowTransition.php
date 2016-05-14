@@ -3,12 +3,11 @@
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Language\Language;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
-use Drupal\workflow\Entity\WorkflowState;
 
 /**
  * Implements an actual, executed, Transition.
@@ -830,7 +829,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
   public function getOwner() {
     $user = $this->get('uid')->entity;
     if (!$user || $user->isAnonymous()) {
-      $user = \Drupal\user\Entity\User::getAnonymousUser();
+      $user = User::getAnonymousUser();
       $user->name = \Drupal::config('user.settings')->get('anonymous');
     }
     return $user;

@@ -2,10 +2,9 @@
 
 namespace Drupal\workflow\Entity;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityConstraintViolationList;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\EntityConstraintViolationList;
 
 /**
  * Implements a scheduled transition, as shown on Workflow form.

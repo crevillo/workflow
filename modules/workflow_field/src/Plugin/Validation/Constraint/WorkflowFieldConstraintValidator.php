@@ -3,13 +3,12 @@
 namespace Drupal\workflowfield\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\comment\CommentInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\Core\Entity\FieldableEntityInterface;
 
 /**
  * Validates the CommentName constraint.
