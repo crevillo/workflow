@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Plugin\Block\WorkflowTransitionBlock.
- */
-
 namespace Drupal\workflow\Plugin\Block;
 
 use Drupal\block\BlockAccessControlHandler;

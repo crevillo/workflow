@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Plugin\Action\WorkflowNodeNextStateAction.
- */
-
 namespace Drupal\workflow\Plugin\Action;
 
 use Drupal\Core\Form\FormStateInterface;

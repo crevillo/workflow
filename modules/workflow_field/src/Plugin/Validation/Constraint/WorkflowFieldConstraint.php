@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflowfield\Plugin\Validation\Constraint\WorkflowFieldConstraint.
- */
-
 namespace Drupal\workflowfield\Plugin\Validation\Constraint;
 
 use Drupal\Core\Entity\Plugin\Validation\Constraint\CompositeConstraintBase;

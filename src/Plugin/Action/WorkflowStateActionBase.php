@@ -1,13 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Plugin\Action\WorkflowStateActionBase.
- *
- * This is an abstract Action. Derive your own from this.
- *
- */
-
 namespace Drupal\workflow\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;

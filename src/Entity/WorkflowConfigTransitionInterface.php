@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workflow\Entity\WorkflowConfigTransitionInterface.
- */
-
 namespace Drupal\workflow\Entity;
 
 use Drupal\user\UserInterface;

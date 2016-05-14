@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workflow\Entity\WorkflowTransition.
- *
- * Implements (scheduled/executed) state transitions on entities.
- */
-
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Entity\ContentEntityBase;

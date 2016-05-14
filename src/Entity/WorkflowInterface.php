@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workflow\Entity\WorkflowInterface.
- */
-
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;

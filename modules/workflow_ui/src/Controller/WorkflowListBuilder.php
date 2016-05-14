@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Controller\WorkflowListBuilder.
- */
-
 namespace Drupal\workflow_ui\Controller;
 
 use Drupal\Core\Entity\EntityInterface;

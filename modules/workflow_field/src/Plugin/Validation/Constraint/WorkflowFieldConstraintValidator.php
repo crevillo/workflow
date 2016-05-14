@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflowfield\Plugin\Validation\Constraint\WorkflowFieldConstraintValidator.
- */
-
 namespace Drupal\workflowfield\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

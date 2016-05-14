@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Controller\WorkflowStateListBuilder.
- */
-
 namespace Drupal\workflow_ui\Controller;
 
 use Drupal\Core\Config\Entity\DraggableListBuilder;

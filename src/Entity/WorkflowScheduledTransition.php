@@ -1,12 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workflow\Entity\WorkflowScheduledTransition.
- *
- * Implements (scheduled/executed) state transitions on entities.
- */
-
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Entity\EntityInterface;

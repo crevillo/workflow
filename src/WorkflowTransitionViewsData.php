@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\WorkflowTransitionViewsData.
- */
-
 namespace Drupal\workflow;
 
 use Drupal\views\EntityViewsData;

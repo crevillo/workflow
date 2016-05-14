@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Form\WorkflowConfigTransitionRoleForm.
- */
-
 namespace Drupal\workflow_ui\Form;
 
 use Drupal\Core\Entity\EntityInterface;

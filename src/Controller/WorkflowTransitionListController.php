@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Controller\WorkflowTransitionListController.
- */
-
 namespace Drupal\workflow\Controller;
 
 use Drupal\Core\Access\AccessResult;

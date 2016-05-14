@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflowfield\Plugin\Field\FieldWidget\WorkflowDefaultWidget.
- */
-
 namespace Drupal\workflowfield\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;

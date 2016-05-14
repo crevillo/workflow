@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains Drupal\workflow\Entity\WorkflowManager.
- */
-
 namespace Drupal\workflow\Entity;
 
 use Drupal\Core\Cache\Cache;

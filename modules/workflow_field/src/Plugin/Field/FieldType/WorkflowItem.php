@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflowfield\Plugin\Field\FieldType\WorkflowItem.
- */
-
 namespace Drupal\workflowfield\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldDefinitionInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\WorkflowAccessControlHandler.
- */
-
 namespace Drupal\workflow;
 
 use Drupal\Core\Access\AccessResult;

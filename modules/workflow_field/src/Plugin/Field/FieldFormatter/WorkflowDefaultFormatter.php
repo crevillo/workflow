@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflowfield\Plugin\Field\FieldFormatter\WorkflowDefaultFormatter.
- */
-
 namespace Drupal\workflowfield\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityManagerInterface;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\WorkflowPermissions.
- */
-
 namespace Drupal\workflow;
 
 use Drupal\Core\Routing\UrlGeneratorTrait;

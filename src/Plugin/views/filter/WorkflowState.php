@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Plugin\views\filter\WorkflowState.
- */
-
 namespace Drupal\workflow\Plugin\views\filter;
 
 use Drupal\field\Entity\FieldStorageConfig;

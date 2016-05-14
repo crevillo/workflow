@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\Form\WorkflowTransitionForm.
- */
-
 namespace Drupal\workflow\Form;
 
 use Drupal\Component\Utility\Html;

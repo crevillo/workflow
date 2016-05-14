@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Form\WorkflowForm.
- */
-
 namespace Drupal\workflow_ui\Form;
 
 use Drupal\Core\Entity\EntityForm;

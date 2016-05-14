@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow\WorkflowTransitionListBuilder.
- */
-
 namespace Drupal\workflow;
 
 use Drupal\Component\Utility\Html;

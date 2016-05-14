@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Controller\WorkflowUiController.
- */
-
 namespace Drupal\workflow_ui\Controller;
 
 use Drupal\Core\Controller\ControllerBase;

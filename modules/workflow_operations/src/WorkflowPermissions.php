@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_operations\WorkflowPermissions.
- */
-
 namespace Drupal\workflow_operations;
 
 /**

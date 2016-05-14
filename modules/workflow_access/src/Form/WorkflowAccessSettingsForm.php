@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_access\Form\WorkflowAccessSettingsForm.
- */
-
 namespace Drupal\workflow_access\Form;
 
 use Drupal\Core\Form\ConfigFormBase;

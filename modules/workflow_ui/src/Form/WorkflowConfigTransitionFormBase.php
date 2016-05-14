@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_ui\Form\WorkflowConfigTransitionFormBase.
- */
-
 namespace Drupal\workflow_ui\Form;
 
 use Drupal\Core\Form\FormInterface;

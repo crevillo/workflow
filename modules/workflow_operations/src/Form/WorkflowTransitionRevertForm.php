@@ -1,28 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\workflow_operations\Form\WorkflowTransitionRevertForm.
- *
- * @todo: The following annotations should not reside in the Workflow module:
- * at ContentEntityType(
- *   id = "workflow_transition",
- *   handlers = {
- *     "form" = {
- *        "edit" = "Drupal\workflow\Form\WorkflowTransitionForm",
- *        "revert" = "Drupal\workflow_operations\Form\WorkflowTransitionRevertForm",
- *        "delete" = "Drupal\Core\Entity\EntityDeleteForm",
- *      }
- *   },
- *   links = {
- *     "edit-form" = "/workflow_transition/{workflow_transition}/edit",
- *     "revert-form" = "/workflow_transition/{workflow_transition}/revert",
- *     "delete-form" = "/workflow_transition/{workflow_transition}/delete",
- *   },
- * )
- *
- */
-
 namespace Drupal\workflow_operations\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
