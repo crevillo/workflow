@@ -16,9 +16,9 @@ module_load_include('php', 'workflow', 'workflow.api');
 /**
  * Hooks defined by workflow_ui, workflow module.
  */
-function workflow_devel_workflow_operations($op, Workflow $workflow = NULL, WorkflowState $state = NULL, WorkflowTransitionInterface $transition = NULL) {
+function workflow_devel_workflow_operations($op, EntityInterface $entity = NULL) {
   workflow_debug(__FILE__, __FUNCTION__, __LINE__, $op, '');
-  return hook_workflow_operations($op, $workflow, $state, $transition);
+  return hook_workflow_operations($op, $entity);
 }
 
 /**

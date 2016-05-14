@@ -22,13 +22,10 @@ use Drupal\workflow\Entity\WorkflowTransitionInterface;
  * @param string $op
  *   'top_actions': Allow modules to insert their own front page action links.
  *   'operations': Allow modules to insert their own workflow operations.
+ *   'workflow':  Allow modules to insert workflow operations.
  *   'state':  Allow modules to insert state operations.
- * @param \Drupal\workflow\Entity\Workflow|NULL $workflow
- *   The current workflow object.
- * @param \Drupal\workflow\Entity\WorkflowState|NULL $state
- *   The current state object.
- * @param \Drupal\workflow\Entity\WorkflowTransitionInterface|NULL $transition
- *   The current transition object.
+ * @param EntityInterface|NULL $entity
+ *   The current workflow/state/transition object.
  *
  * @return array
  *   The new actions, to be added to the entity list.
