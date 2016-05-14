@@ -115,7 +115,8 @@ class WorkflowState extends ConfigEntityBase {
       $values['id'] = ''; // Clear ID; will be set in save().
       $values['sysid'] = WORKFLOW_CREATION_STATE;
       $values['weight'] = WORKFLOW_CREATION_DEFAULT_WEIGHT;
-      $values['label'] = '(creation)'; // machine_name;
+      // Do not translate the machine_name.
+      $values['label'] = '(' . 'creation' . ')'; // machine_name;
     }
     parent::__construct($values, $entityType);
 

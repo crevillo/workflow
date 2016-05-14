@@ -9,7 +9,7 @@ define('WORKFLOW_CREATION_STATE', 1);
 define('WORKFLOW_CREATION_DEFAULT_WEIGHT', -50);
 define('WORKFLOW_DELETION', 0);
 // Couldn't find a more elegant way to preserve translation.
-define('WORKFLOW_CREATION_STATE_NAME', '(' . t('creation') . ')');
+define('WORKFLOW_CREATION_STATE_NAME', 'creation');
 
 /**
  * Role ID for anonymous users.
