@@ -54,6 +54,17 @@ class WorkflowConfigTransitionLabelForm extends WorkflowConfigTransitionFormBase
       $to_state = $config_transition->getToState();
       $from_sid = $from_state->id();
 
+      // Skip the transitions without any roles.
+      $skip = TRUE;
+      foreach ($config_transition->roles as $rid => $active) {
+        if ($active) {
+          $skip = FALSE;
+        }
+      }
+      if ($skip == TRUE && ($from_state != $to_state)) {
+        return $row;
+      }
+
       $row['from'] = [
         '#type' => 'value',
         '#markup' => ($previous_from_sid != $from_sid) ? $from_state->label() : '"',
