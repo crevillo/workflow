@@ -12,6 +12,12 @@ use Drupal\user\UserInterface;
  * @ConfigEntityType(
  *   id = "workflow_config_transition",
  *   label = @Translation("Workflow config transition"),
+ *   label_singular = @Translation("Workflow config transition"),
+ *   label_plural = @Translation("Workflow config transitions"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count Workflow config transition",
+ *     plural = "@count Workflow config transitions",
+ *   ),
  *   module = "workflow",
  *   handlers = {
  *     "list_builder" = "Drupal\workflow_ui\Controller\WorkflowConfigTransitionListBuilder",

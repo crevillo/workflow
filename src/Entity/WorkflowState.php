@@ -14,6 +14,12 @@ use Drupal\Core\Session\AccountInterface;
  * @ConfigEntityType(
  *   id = "workflow_state",
  *   label = @Translation("Workflow state"),
+ *   label_singular = @Translation("Workflow state"),
+ *   label_plural = @Translation("Workflow states"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count Workflow state",
+ *     plural = "@count Workflow states",
+ *   ),
  *   module = "workflow",
  *   handlers = {
  *     "list_builder" = "Drupal\workflow_ui\Controller\WorkflowStateListBuilder",

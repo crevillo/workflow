@@ -12,6 +12,12 @@ use Drupal\Core\Field\BaseFieldDefinition;
  * @ContentEntityType(
  *   id = "workflow_scheduled_transition",
  *   label = @Translation("Workflow scheduled transition"),
+ *   label_singular = @Translation("Workflow scheduled transition"),
+ *   label_plural = @Translation("Workflow scheduled transitions"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count Workflow scheduled transition",
+ *     plural = "@count Workflow scheduled transitions",
+ *   ),
  *   bundle_label = @Translation("Workflow type"),
  *   module = "workflow",
  *   handlers = {

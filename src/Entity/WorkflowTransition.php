@@ -18,6 +18,12 @@ use Drupal\user\UserInterface;
  * @ContentEntityType(
  *   id = "workflow_transition",
  *   label = @Translation("Workflow executed transition"),
+ *   label_singular = @Translation("Workflow executed transition"),
+ *   label_plural = @Translation("Workflow executed transitions"),
+ *   label_count = @PluralTranslation(
+ *     singular = "@count Workflow executed transition",
+ *     plural = "@count Workflow executed transitions",
+ *   ),
  *   bundle_label = @Translation("Workflow type"),
  *   module = "workflow",
  *   handlers = {
