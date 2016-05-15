@@ -53,7 +53,8 @@ class WorkflowPermissions {
       // D7->D8-Conversion of 'participate in workflow' permission to "create $type_id transition" (@see NodePermissions::create content).
       "create $type_id workflow_transition" => array(
         'title' => $this->t('%type_name: Participate in workflow', $type_params),
-        'description' => t('Role is enabled to create state transitions. (Determine transition-specific permission on the workflow admin page.)'),
+        'description' => t("Role is enabled to create state transitions. (Determines transition-specific permission on the workflow admin page.
+          <i> Warning: For better control, uncheck the 'Authenticated user', and manage the permissions per separate role.</i>)"),
       ),
       // D7->D8-Conversion of 'schedule workflow transitions' permission to "schedule $type_id transition" (@see NodePermissions::create content).
       "schedule $type_id workflow_transition" => array(

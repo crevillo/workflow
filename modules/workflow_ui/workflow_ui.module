@@ -49,10 +49,10 @@ function workflow_ui_help($route_name, RouteMatchInterface $route_match) {
         role is built in and refers to the user who authored the content.')
       . '<br /><i>'
       . t("If not all roles are in the list, please review which roles may
-        'participate in workflows' on <a href=':url'>the Permissions page</a>.",
-        array(':url' => $url->toString()))
-      . '</i>'
-        ;
+        'participate in workflows' on <a href=':url'>the Permissions page</a>.
+        On that page, uncheck the 'Authenticated user' role temporarily to
+        view the permissions of each separate role.</i>",
+        array(':url' => $url->toString()));
 
     case 'entity.workflow_label.collection':
       return t('You can add labels to transitions if you don\'t like the
