@@ -7,6 +7,7 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\Entity;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Workflow configuration entity to persistently store configuration.
@@ -146,9 +147,11 @@ class WorkflowState extends ConfigEntityBase {
     }
     elseif(empty($sid)) {
       if ($label) {
-        // @todo: Use a proper machine_name regex.
-        $sid = str_replace(' ', '_', strtolower($label));
-        $sid = implode('_', [$wid, $sid]);
+        $transliteration = \Drupal::service('transliteration');
+        $value = $transliteration->transliterate($label, LanguageInterface::LANGCODE_DEFAULT, '_');
+        $value = strtolower($value);
+        $value = preg_replace('/[^a-z0-9_]+/', '_', $value);
+        $sid = implode('_', [$wid, $value]);
       }
       else {
         workflow_debug(__FILE__, __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
