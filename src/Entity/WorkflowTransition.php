@@ -362,10 +362,12 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public function isAllowed(UserInterface $user, $force = FALSE) {
-
     /**
      * Get early permissions of user, and bail out to avoid extra hook-calls.
      */
+
+    // Determine if user is owner of the entity.
+    $is_owner = WorkflowManager::isOwner($user, $this->getTargetEntity());
     // Check allow-ability of state change if user is not superuser (might be cron).
     $type_id = $this->getWorkflowId();
     if ($user->hasPermission("bypass $type_id workflow_transition access")) {
@@ -375,6 +377,10 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     if ($force) {
       // $force allows Rules to cause transition.
       return TRUE;
+    }
+    // Determine if user is owner of the entity.
+    if ($is_owner) {
+      $user->addRole(WORKFLOW_ROLE_AUTHOR_RID);
     }
 
     // @todo: Keep below code aligned between WorkflowState, ~Transition, ~TransitionListController

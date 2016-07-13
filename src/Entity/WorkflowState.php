@@ -415,7 +415,8 @@ class WorkflowState extends ConfigEntityBase {
       // Superuser is special. And $force allows Rules to cause transition.
       $force = TRUE;
     }
-    elseif ($is_owner) {
+
+    if ($is_owner) {
       $user->addRole(WORKFLOW_ROLE_AUTHOR_RID);
     }
 
