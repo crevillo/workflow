@@ -45,7 +45,7 @@ interface WorkflowManagerInterface {
    * @return string $to_sid
    *   The resulting WorkflowState id.
    */
-  public static function executeTransition(WorkflowTransitionInterface $transition, $force);
+  public static function executeTransition(WorkflowTransitionInterface $transition, $force = FALSE);
 
   /**
    * Given a timeframe, execute all scheduled transitions.
