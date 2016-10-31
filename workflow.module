@@ -197,7 +197,7 @@ function workflow_cron() {
  */
 function workflow_execute_transition(WorkflowTransitionInterface $transition, $force = FALSE) {
   // Execute transition and update the attached entity.
-  return \Drupal::service('workflow.manager')->executeTransition($transition);
+  return \Drupal::service('workflow.manager')->executeTransition($transition, $force);
 }
 
 /**

@@ -92,6 +92,7 @@ class WorkflowManager implements WorkflowManagerInterface {
     if ($force) {
       $transition->force($force);
     }
+    $force = $transition->isForced();
 
     $update_entity = (!$transition->isScheduled() && !$transition->isExecuted());
 
@@ -151,7 +152,7 @@ class WorkflowManager implements WorkflowManagerInterface {
         // A watchdog message is created with the result.
         $scheduled_transition->schedule(FALSE);
         $scheduled_transition->force(TRUE);
-        workflow_execute_transition($scheduled_transition, TRUE);
+        self::executeTransition($scheduled_transition, TRUE);
 
         if (!$field_name) {
           $clear_cache = TRUE;
