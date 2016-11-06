@@ -68,8 +68,7 @@ entity.workflow_state.collection:
 entity.workflow_transition.collection:
   path: '/admin/config/workflow/workflow/{workflow_type}/transition_roles'
   defaults:
-    _entity_list: 'workflow_config_transition'
-#     _form: '\Drupal\user\AccountSettingsForm'
+    _form: 'Drupal\workflow_ui\Form\WorkflowConfigTransitionRoleForm'
     _title: 'Edit Workflow'
     _title_callback: 'workflow_ui_url_get_title'
   requirements:
@@ -79,7 +78,7 @@ entity.workflow_transition.collection:
 entity.workflow_label.collection:
   path: '/admin/config/workflow/workflow/{workflow_type}/transition_labels'
   defaults:
-    _entity_list: 'workflow_config_transition'
+    _form: 'Drupal\workflow_ui\Form\WorkflowConfigTransitionLabelForm'
     _title: 'Edit Workflow'
     _title_callback: 'workflow_ui_url_get_title'
   requirements:
