@@ -20,7 +20,6 @@ use Drupal\user\UserInterface;
  *   ),
  *   module = "workflow",
  *   handlers = {
- *     "list_builder" = "Drupal\workflow_ui\Controller\WorkflowConfigTransitionListBuilder",
  *     "form" = {
  *        "delete" = "\Drupal\Core\Entity\EntityDeleteForm",
  *      }
@@ -40,7 +39,6 @@ use Drupal\user\UserInterface;
  *     "roles",
  *   },
  *   links = {
- *     "canonical" = "/admin/config/workflow/workflow/{workflow_type}",
  *     "collection" = "/admin/config/workflow/workflow/{workflow_type}/transitions",
  *   },
  * )
