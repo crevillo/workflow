@@ -440,11 +440,14 @@ class WorkflowState extends ConfigEntityBase {
     // Modules may veto a choice by removing a transition from the list.
     // Lots of data can be fetched via the $transition object.
     $context = array(
+      'entity' => $entity, // ConfigEntities do not have entity attached
+      'field_name' => $field_name, // or field.
       'user' => $user, // user may have the custom role AUTHOR.
       'workflow' => $workflow,
       'state' => $this,
       'force' => $force,
     );
+    dpm($transitions, __FUNCTION__);
     \Drupal::moduleHandler()->alter('workflow_permitted_state_transitions', $transitions, $context);
 
     /**
