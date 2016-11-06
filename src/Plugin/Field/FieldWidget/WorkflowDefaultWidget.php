@@ -249,7 +249,7 @@ class WorkflowDefaultWidget extends WidgetBase {
           // Get the new value from an action button if set in the workflow settings.
           $action_info = _workflow_transition_form_get_triggering_button($form_state);
           if ($field_name == $action_info['field_name']) {
-            $transition->to_sid->value = $action_info['to_sid'];
+            $transition->set('to_sid', $action_info['to_sid']);
           }
 
           $force = FALSE; // @TODO D8-port: add to form for usage in VBO.
