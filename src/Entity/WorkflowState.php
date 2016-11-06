@@ -447,7 +447,6 @@ class WorkflowState extends ConfigEntityBase {
       'state' => $this,
       'force' => $force,
     );
-    dpm($transitions, __FUNCTION__);
     \Drupal::moduleHandler()->alter('workflow_permitted_state_transitions', $transitions, $context);
 
     /**
