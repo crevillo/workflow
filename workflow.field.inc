@@ -59,7 +59,7 @@ function workflow_form_field_config_edit_form_alter(&$form, FormStateInterface $
  *
  * The module reuses the formatters defined in list.module.
  */
-function workflow_field_formatter_info_alter(&$info) {
+function workflow_formatter_info_alter(&$info) {
   $info['list_key']['field_types'][] = 'workflow';
   $info['list_default']['field_types'][] = 'workflow';
 }
@@ -72,7 +72,7 @@ function workflow_field_formatter_info_alter(&$info) {
  *
  * @see workflow_options_list()
  */
-function workflow_field_widget_info_alter(&$info) {
+function workflow_widget_info_alter(&$info) {
   $info['options_select']['field_types'][] = 'workflow';
   $info['options_buttons']['field_types'][] = 'workflow';
 }
@@ -82,7 +82,7 @@ function workflow_field_widget_info_alter(&$info) {
  *
  * @see callback_allowed_values_function()
  *
- * deprecated: workflowfield_options_list --> workflow_state_allowed_values
+ * deprecated: workflow_options_list --> workflow_state_allowed_values
  */
 function workflow_state_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE, AccountInterface $user = NULL) {
 //function callback_allowed_values_function(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE) {

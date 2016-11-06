@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workflowfield\Plugin\Field\FieldFormatter;
+namespace Drupal\workflow\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;

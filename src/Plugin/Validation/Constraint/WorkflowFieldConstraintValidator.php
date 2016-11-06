@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workflowfield\Plugin\Validation\Constraint;
+namespace Drupal\workflow\Plugin\Validation\Constraint;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;

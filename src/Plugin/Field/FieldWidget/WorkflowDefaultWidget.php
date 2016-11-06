@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workflowfield\Plugin\Field\FieldWidget;
+namespace Drupal\workflow\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -93,7 +93,7 @@ class WorkflowDefaultWidget extends WidgetBase {
       return $element;
     }
 
-    /* @var $item \Drupal\workflowfield\Plugin\Field\FieldType\WorkflowItem */
+    /* @var $item \Drupal\workflow\Plugin\Field\FieldType\WorkflowItem */
     $item = $items[$delta];
     /* @var $field_config \Drupal\field\Entity\FieldConfig */
     $field_config = $item->getFieldDefinition();
@@ -148,7 +148,7 @@ class WorkflowDefaultWidget extends WidgetBase {
 
       workflow_debug( __FILE__, __FUNCTION__, __LINE__, '', '');  // @todo D8-port: still test this snippet.
 
-      // @see workflowfield_form_field_config_edit_form_alter for other settings
+      // @see workflow_form_field_config_edit_form_alter for other settings
       // The Workflow field must have a value, so set to required.
       // Unfortunately, we need hook_form_alter for this.
       //$form['required']['#default_value'] = 1;
@@ -198,7 +198,7 @@ class WorkflowDefaultWidget extends WidgetBase {
    * @return int
    *   If update succeeded, the new State Id. Else, the old Id is returned.
    *
-   * This is called from function _workflowfield_form_submit($form, &$form_state)
+   * This is called from function _workflow_form_submit($form, &$form_state)
    * It is a replacement of function workflow_transition($entity, $to_sid, $force, $field)
    * It performs the following actions;
    * - save a scheduled action

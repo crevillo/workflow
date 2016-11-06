@@ -96,7 +96,7 @@ function workflow_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
 }
 
 /**
- * Fetches the first workflow_element from one fo the workflow_fields.
+ * Fetches the first workflow_element from one of the Workflow Fields.
  *
  * @param array $form
  *

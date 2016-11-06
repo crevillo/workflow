@@ -151,7 +151,7 @@ function workflow_access_node_access_records(\Drupal\node\NodeInterface $node) {
     // E.g.,
     // - when saving a node with workflow_node programmatically with node_save();
     // - when changing a state on a node view page/history tab;
-    // - when rebuilding permissions via batch for workflow_node and workflow_field.
+    // - when rebuilding permissions via batch for Workflow Fields.
     // In that case, we need to create the workflow_transitions ourselves to
     // calculate the grants.
     foreach (_workflow_info_fields($node, $entity_type) as $field) {

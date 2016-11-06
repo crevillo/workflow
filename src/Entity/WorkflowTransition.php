@@ -596,7 +596,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
         // --> We choose option 2:
         // TODO D8-port: figure out usage of $entity->workflow_transitions[$field_name]
         // - First, $entity->workflow_transitions[] is set for easy re-fetching.
-        // - Then, post_execute() is invoked via workflowfield_entity_insert(), _update().
+        // - Then, post_execute() is invoked via workflow_entity_insert(), _update().
       }
     }
 

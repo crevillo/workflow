@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workflowfield\Plugin\Field\FieldType;
+namespace Drupal\workflow\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -315,13 +315,13 @@ class WorkflowItem extends ListItemBase {
   /**
    * Implementation of TypedDataInterface
    *
-   * @see folder \workflow\modules\workflow_field\src\Plugin\Validation\Constraint
+   * @see folder \workflow\src\Plugin\Validation\Constraint
    */
 
   /**
    * {@inheritdoc}
    *
-   * @see folder \workflow\modules\workflow_field\src\Plugin\Validation\Constraint
+   * @see folder \workflow\src\Plugin\Validation\Constraint
    */
 //  public function getConstraints() {
 //    $constraints = parent::getConstraints();
@@ -331,7 +331,7 @@ class WorkflowItem extends ListItemBase {
   /**
    * {@inheritdoc}
    *
-   * @see folder \workflow\modules\workflow_field\src\Plugin\Validation\Constraint
+   * @see folder \workflow\src\Plugin\Validation\Constraint
    */
 //  public function validate() {
 //    $result = parent::validate();

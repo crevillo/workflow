@@ -449,7 +449,7 @@ class WorkflowTransitionElement extends FormElement {
       // Make sure the '#type' is not set to the invalid 'buttons' value.
       // It will be replaced by action buttons, but sometimes, the select box
       // is still shown.
-      // @see workflowfield_form_alter().
+      // @see workflow_form_alter().
       $element['to_sid']['#type'] = 'select';
       $element['to_sid']['#access'] = FALSE;
     }
