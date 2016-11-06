@@ -198,10 +198,11 @@ class WorkflowManager implements WorkflowManagerInterface {
         // We come from creating an entity via entity_form, with core widget.
         $comment = '';
         $old_sid = workflow_node_previous_state($entity, $field_name);
-        if (!$new_sid = $entity->$field_name->value) {
-          $workflow = Workflow::load($wid = $field_info->getSetting('workflow_type'));
+        $new_sid = $entity->$field_name->value;
+        if ((!$new_sid) && $wid = $field_info->getSetting('workflow_type')) {
+          $workflow = Workflow::load($wid);
           $new_sid = $workflow->getFirstSid($entity, $field_name, $user);
-        };
+        }
         $transition = WorkflowTransition::create([$old_sid, 'field_name' => $field_name]);
         $transition->setValues($new_sid, $user->id(), REQUEST_TIME, $comment, TRUE);
       }
