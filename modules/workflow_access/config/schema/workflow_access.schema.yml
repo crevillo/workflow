@@ -1,5 +1,5 @@
 workflow_access.settings:
-  type: mapping
+  type: config_object
   label: Settings
   mapping:
     workflow_access_priority:
