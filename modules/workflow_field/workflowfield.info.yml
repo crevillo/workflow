@@ -2,4 +2,4 @@ name: 'Workflow Field'
 description: 'A residual submodule. No need to enable this module for installations with workflow 8.x-1.0-beta6 and later.'
 package: Workflow
 type: module
-# core: 8.x
+core: 8.x
