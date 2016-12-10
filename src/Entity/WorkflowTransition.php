@@ -455,14 +455,6 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     }
     $force = $this->isForced();
 
-    // TODO D8-port: figure out usage of $entity->workflow_transitions[$field_name]
-    /*
-        // Store the transition, so it can be easily fetched later on.
-        // Store in an array, to prepare for multiple workflow_fields per entity.
-        // This is a.o. used in hook_entity_update to trigger 'transition post'.
-        $entity->workflow_transitions[$field_name] = $this;
-    */
-
     if (!$this->isValid()) {
       return $from_sid;  // <-- exit !!!
     }
@@ -534,6 +526,18 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       // We may need to clean up something.
     }
 
+
+    // TODO D8-port: figure out usage of $entity->workflow_transitions[$field_name]
+    /*
+        // Store the transition, so it can be easily fetched later on.
+        // Store in an array, to prepare for multiple workflow_fields per entity.
+        // This is a.o. used in hook_entity_update to trigger 'transition post'.
+      if ($state_changed || $comment) {
+        if (!isset($entity->workflow_transitions[$field_name])) {
+          $entity->workflow_transitions[$field_name] = &$this;
+        }
+      }
+    */
 
     /**
      * Output: process the transition.
