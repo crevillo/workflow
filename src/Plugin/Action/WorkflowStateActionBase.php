@@ -206,8 +206,8 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Add Field_name. @todo?? Add 'field_name' to WorkflowTransitionElement?
     $form['field_name'] = array(
       '#type' => 'select',
-      '#title' => t('Field name'),
-      '#description' => t('Choose the field name.'),
+      '#title' => $this->t('Field name'),
+      '#description' => $this->t('Choose the field name.'),
       '#options' => workflow_get_workflow_field_names($entity),
       '#default_value' => $field_name,
       '#required' => TRUE,
@@ -216,15 +216,15 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Add Force. @todo?? Add 'force' to WorkflowTransitionElement?
     $form['force'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Force transition'),
-      '#description' => t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
+      '#title' => $this->t('Force transition'),
+      '#description' => $this->t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
       '#default_value' => $force,
       '#weight' => -19,
     );
     // Change comment field.
     $form['comment'] = array(
-      '#title' => t('Message'),
-      '#description' => t('This message will be written into the workflow history log when the action
+      '#title' => $this->t('Message'),
+      '#description' => $this->t('This message will be written into the workflow history log when the action
       runs. You may include the following variables: %state, %title, %user.'),
     ) + $form['comment'];
 

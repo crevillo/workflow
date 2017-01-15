@@ -218,7 +218,7 @@ class WorkflowItem extends ListItemBase {
     $url = Url::fromRoute('entity.workflow_type.collection');
     $element['workflow_type'] = array(
       '#type' => 'select',
-      '#title' => t('Workflow type'),
+      '#title' => $this->t('Workflow type'),
       '#options' => $workflows,
       '#default_value' => $wid,
       '#required' => TRUE,
@@ -238,7 +238,7 @@ class WorkflowItem extends ListItemBase {
 
       $element['allowed_values'] = array(
         '#type' => 'textarea',
-        '#title' => t('Allowed values for the selected Workflow type'),
+        '#title' => $this->t('Allowed values for the selected Workflow type'),
         '#default_value' => ($wid) ? $this->allowedValuesString($allowed_values) : [],
         '#rows' => count($allowed_values),
         '#access' => ($wid) ? TRUE : FALSE, // User can see the data,
