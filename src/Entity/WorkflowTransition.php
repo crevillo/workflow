@@ -134,10 +134,14 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
   public static function create(array $values = array()) {
     if (is_array($values) && isset($values[0])) {
       $value = $values[0];
+
+      $values['wid'] = '';
+      $values['from_sid'] = '';
       if (is_string($value)) {
-        $state = WorkflowState::load($value);
-        $values['wid'] = $state->getWorkflowId();
-        $values['from_sid'] = $state->id();
+        if ($state = WorkflowState::load($value)) {
+          $values['wid'] = $state->getWorkflowId();
+          $values['from_sid'] = $state->id();
+        }
       }
       elseif (is_object($value) && $value instanceof WorkflowState) {
         $state = $value;
