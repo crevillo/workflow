@@ -169,7 +169,7 @@ class WorkflowManager implements WorkflowManagerInterface {
     if ($clear_cache) {
       // Clear the cache so that if the transition resulted in a entity
       // being published, the anonymous user can see it.
-      Cache::invalidateTags(array('rendered'));
+      Cache::invalidateTags(['rendered']);
     }
   }
 
@@ -254,11 +254,11 @@ class WorkflowManager implements WorkflowManagerInterface {
         $new_uid = 0;
 
         db_update('workflow_transition_history')
-          ->fields(array('uid' => $new_uid))
+          ->fields(['uid' => $new_uid])
           ->condition('uid', $uid, '=')
           ->execute();
         db_update('workflow_transition_schedule')
-          ->fields(array('uid' => $new_uid))
+          ->fields(['uid' => $new_uid])
           ->condition('uid', $uid, '=')
           ->execute();
 
@@ -272,7 +272,7 @@ class WorkflowManager implements WorkflowManagerInterface {
   public static function participateUserRoles(Workflow $workflow) {
     $type_id = $workflow->id();
     foreach (user_roles() as $rid => $role) {
-      $perms = array("create $type_id workflow_transition" => 1);
+      $perms = ["create $type_id workflow_transition" => 1];
       user_role_change_permissions($rid, $perms);  // <=== Enable Roles.
     }
   }
@@ -283,11 +283,11 @@ class WorkflowManager implements WorkflowManagerInterface {
 //  public function getFields($entity_type_id) {
 //    $entity_type = $this->entityTypeManager->getDefinition($entity_type_id);
 //    if (!$entity_type->isSubclassOf('\Drupal\Core\Entity\FieldableEntityInterface')) {
-//      return array();
+//      return [];
 //    }
 //
 //    $map = $this->entityTypeManager->getFieldMapByFieldType('workflow');
-//    return isset($map[$entity_type_id]) ? $map[$entity_type_id] : array();
+//    return isset($map[$entity_type_id]) ? $map[$entity_type_id] : [];
 //  }
 
   /**
@@ -399,7 +399,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       $sid = $workflow->getCreationSid();
     }
     else {
-      drupal_set_message(t('Workflow !wid cannot be loaded. Contact your system administrator.', array('!wid' => $wid)), 'error');
+      drupal_set_message(t('Workflow !wid cannot be loaded. Contact your system administrator.', ['!wid' => $wid]), 'error');
     }
     return $sid;
   }

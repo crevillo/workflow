@@ -32,7 +32,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
    */
   public function calculateDependencies(){
     return [
-      'module' => array('workflow',),
+      'module' => ['workflow',],
     ];
   }
 
@@ -47,12 +47,12 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $configuration = $this->configuration + array(
+    $configuration = $this->configuration + [
       'field_name' => '',
       'to_sid' => '',
       'comment' => "New state is set by a triggered Action.",
       'force' => 0,
-    );
+      ];
     return $configuration;
   }
 
@@ -82,19 +82,19 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     $field_name = workflow_get_field_name($entity, $config['field_name']);
     $current_sid = workflow_node_current_state($entity, $field_name);
     if (!$current_sid) {
-      \Drupal::logger('workflow_action')->notice('Unable to get current workflow state of entity %id.', array('%id' => $entity_id));
+      \Drupal::logger('workflow_action')->notice('Unable to get current workflow state of entity %id.', ['%id' => $entity_id]);
       return NULL;
     }
 
     $to_sid = isset($config['to_sid']) ? $config['to_sid'] : '';
     // Get the Comment. Parse the $comment variables.
     $comment_string = $this->configuration['comment'];
-    $comment = t($comment_string, array(
+    $comment = t($comment_string, [
       '%title' => $entity->label(),
       // "@" and "%" will automatically run check_plain().
       '%state' => workflow_get_sid_name($to_sid),
       '%user' => $user->getUsername(),
-    ));
+    ]);
     $force = $this->configuration['force'];
 
     $transition = WorkflowTransition::create([$current_sid, 'field_name' => $field_name]);
@@ -119,7 +119,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // If we are on a VBO action form, then $context only contains:
     // - $context['entity_type'] = "node"
     // - $context['view'] = "(Object) view"
-    // - $context['settings'] = "array()"
+    // - $context['settings'] = "[]"
 
     $config = $this->configuration;
     $field_name = $config['field_name'];
@@ -167,12 +167,12 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // to allow multiple forms per page (in listings, with hook_forms() ).
     // Ultimately, this is a wrapper for WorkflowDefaultWidget.
     // $form['workflow_current_state'] = workflow_state_formatter($entity_type, $entity, $field, $instance);
-    $form_id = implode('_', array(
+    $form_id = implode('_', [
       'workflow_transition_form',
       $entity_type,
       $entity_id,
       $field_id
-    ));
+    ]);
 */
     $to_sid = $config['to_sid'];
     $user = workflow_current_user();
@@ -204,7 +204,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     $form['to_sid']['#description'] = t('Please select the state that should be assigned when this action runs.');
 
     // Add Field_name. @todo?? Add 'field_name' to WorkflowTransitionElement?
-    $form['field_name'] = array(
+    $form['field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('Field name'),
       '#description' => $this->t('Choose the field name.'),
@@ -212,21 +212,21 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       '#default_value' => $field_name,
       '#required' => TRUE,
       '#weight' => -20,
-    );
+    ];
     // Add Force. @todo?? Add 'force' to WorkflowTransitionElement?
-    $form['force'] = array(
+    $form['force'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Force transition'),
       '#description' => $this->t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
       '#default_value' => $force,
       '#weight' => -19,
-    );
+    ];
     // Change comment field.
-    $form['comment'] = array(
+    $form['comment'] = [
       '#title' => $this->t('Message'),
       '#description' => $this->t('This message will be written into the workflow history log when the action
       runs. You may include the following variables: %state, %title, %user.'),
-    ) + $form['comment'];
+      ] + $form['comment'];
 
     return $form;
   }

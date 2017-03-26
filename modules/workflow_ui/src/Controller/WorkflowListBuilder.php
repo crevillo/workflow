@@ -67,12 +67,12 @@ class WorkflowListBuilder extends ConfigEntityListBuilder {
      */
     // This is what EntityListBuilder::getOperations() does:
     // $operations = $this->getDefaultOperations($entity);
-    // $operations += $this->moduleHandler()->invokeAll('entity_operation', array($entity));
+    // $operations += $this->moduleHandler()->invokeAll('entity_operation', [$entity]);
     // $this->moduleHandler->alter('entity_operation', $operations, $entity);
 
     // In D8, the interface of below hook_workflow_operations has changed a bit.
     // @see EntityListBuilder::getOperations, workflow_operations, workflow.api.php.
-    $operations += $this->moduleHandler()->invokeAll('workflow_operations', array('workflow', $workflow));
+    $operations += $this->moduleHandler()->invokeAll('workflow_operations', ['workflow', $workflow]);
 
     return $operations;
   }
@@ -92,11 +92,11 @@ class WorkflowListBuilder extends ConfigEntityListBuilder {
      *   @see workflow.api.php under 'hook_workflow_operations'.
      */
     // $top_actions = \Drupal::moduleHandler()
-    //   ->invokeAll('workflow_operations', array('top_actions', NULL));
-    // $top_actions_args = array(
+    //   ->invokeAll('workflow_operations', ['top_actions', NULL]);
+    // $top_actions_args = [
     //   'links' => $top_actions,
-    //   'attributes' => array('class' => array('inline', 'action-links')),
-    // );
+    //   'attributes' => ['class' => ['inline', 'action-links']],
+    // ];
 
     return $build;
   }

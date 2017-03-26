@@ -87,7 +87,7 @@ function workflow_field_widget_info_alter(&$info) {
 function workflow_state_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE, AccountInterface $user = NULL) {
 //function callback_allowed_values_function(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE) {
 // N.B. the parameter $user is added by Workflow module.
-  $allowed_options = array();
+  $allowed_options = [];
 
   $user = workflow_current_user($user); // @todo #2287057: OK?
   $field_name = $definition->getName();
@@ -130,7 +130,7 @@ function workflow_state_allowed_values(FieldStorageDefinitionInterface $definiti
  *   If state 0 is given, return an empty form element.
  */
 function workflow_state_formatter($entity, $field_name, $current_sid = '') {
-  $element = array();
+  $element = [];
 
   if (!$current_sid) {
     $current_sid = workflow_node_current_state($entity, $field_name);

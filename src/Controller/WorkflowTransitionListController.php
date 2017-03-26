@@ -67,7 +67,7 @@ class WorkflowTransitionListController extends EntityListController implements C
    *   An array as expected by drupal_render().
    */
   public function historyOverview(EntityInterface $node = NULL) {
-    $form = array();
+    $form = [];
 
     /*
      * Get data from parameters.
@@ -141,7 +141,7 @@ class WorkflowTransitionListController extends EntityListController implements C
    */
 
   public function historyAccess(AccountInterface $account) {
-    static $access = array();
+    static $access = [];
 
     $uid = ($account) ? $account->id() : -1;
 

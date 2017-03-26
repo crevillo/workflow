@@ -36,8 +36,8 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
-    ) + parent::defaultSettings();
+    return [
+      ] + parent::defaultSettings();
   }
 
   /**
@@ -132,8 +132,8 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
    * N.B. A large part of this function is taken from CommentDefaultFormatter.
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $elements = array();
-    $output = array();
+    $elements = [];
+    $output = [];
 
     $field_name = $this->fieldDefinition->getName();
     $entity = $items->getEntity();
@@ -169,7 +169,7 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
     // Workflows are added to the search results and search index by
     // workflow_node_update_index() instead of by this formatter, so don't
     // return anything if the view mode is search_index or search_result.
-    if (in_array($this->viewMode, array('search_result', 'search_index'))) {
+    if (in_array($this->viewMode, ['search_result', 'search_index'])) {
       return $elements;
     }
 
@@ -189,7 +189,7 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
     $transition->setTargetEntity($entity);
 
     // Remove the default formatter. We are now building the widget.
-    $elements = array();
+    $elements = [];
 
     // BEGIN Copy from CommentDefaultFormatter
     $elements['#cache']['contexts'][] = 'user.permissions';
@@ -202,11 +202,11 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
     // Only show the add workflow form if the user has permission.
     $elements['#cache']['contexts'][] = 'user.roles';
     // Do not show the form for the print view mode.
-    $elements[] = $output + array(
+    $elements[] = $output + [
       '#workflow_type' => $this->getFieldSetting('workflow_type'),
       '#workflow_display_mode' => $this->getFieldSetting('default_mode'),
-      'workflows' => array(),
-    );
+      'workflows' => [],
+      ];
     // END Copy from CommentDefaultFormatter
 
     return $elements;
@@ -216,7 +216,7 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = [];
     return $element;
   }
 
@@ -224,7 +224,7 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    return array();
+    return [];
   }
 
   /**

@@ -50,7 +50,7 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
    * {@inheritdoc}
    */
   public function load() {
-    $entities = array();
+    $entities = [];
 
     // TODO: D8-port: get entity from proper core methods.
     /* @var $entity EntityInterface */
@@ -65,7 +65,7 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
     $this->limit = \Drupal::config('workflow.settings')->get('workflow_states_per_page');
     $limit = $this->limit;
     // Get Transitions with highest timestamp first.
-    $entities = WorkflowTransition::loadMultipleByProperties($entity_type, array($entity_id), [], $field_name, '', $limit, 'DESC');
+    $entities = WorkflowTransition::loadMultipleByProperties($entity_type, [$entity_id], [], $field_name, '', $limit, 'DESC');
     return $entities;
   }
 
@@ -172,30 +172,30 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
     $owner = $transition->getOwner();
     $field_name = $transition->getFieldName();
     $field_label = $transition->getFieldName();
-    $variables = array(
+    $variables = [
       'transition' => $transition,
       'extra' => '',
       'from_label' => $from_label,
       'to_label' => $to_label,
       'user' => $owner,
-    );
+    ];
     // Allow other modules to modify the row.
     \Drupal::moduleHandler()->alter('workflow_history', $variables);
 
-//     'class' => array('workflow_history_row'), // TODO D8-port
-    $row['timestamp']['data'] = $transition->getTimestampFormatted(); // 'class' => array('timestamp')
+//     'class' => ['workflow_history_row'], // TODO D8-port
+    $row['timestamp']['data'] = $transition->getTimestampFormatted(); // 'class' => ['timestamp']
     // html_entity_decode() transforms chars like '&' correctly.
     if ($this->showColumnFieldname($entity)) {
       $row['field_name']['data'] = html_entity_decode($field_label);
     }
-    $row['from_state']['data'] = html_entity_decode($from_label); // 'class' => array('previous-state-name'))
-    $row['to_state']['data'] = html_entity_decode($to_label); // 'class' => array('state-name'))
-    $row['user_name']['data'] = $owner->getUsername(); // 'class' => array('user-name')
-    $row['comment']['data'] = html_entity_decode($transition->getComment()); // 'class' => array('log-comment')
-//    $row['comment'] = array(
+    $row['from_state']['data'] = html_entity_decode($from_label); // 'class' => ['previous-state-name'])
+    $row['to_state']['data'] = html_entity_decode($to_label); // 'class' => ['state-name'])
+    $row['user_name']['data'] = $owner->getUsername(); // 'class' => ['user-name']
+    $row['comment']['data'] = html_entity_decode($transition->getComment()); // 'class' => ['log-comment']
+//    $row['comment'] = [
 //      '#type' => 'textarea',
 //      '#default_value' => $transition->getComment(),
-//    );
+//    ];
 
     // Column 'Operations' is now added by core.
     // D7: $row['operations']['data'] = $this->buildOperations($entity);
@@ -220,11 +220,11 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
    * Builds the entity listing as renderable array for table.html.twig.
    */
   public function render() {
-    $build = array();
+    $build = [];
 
     // @todo d8-port: get pager working.
     $this->limit = \Drupal::config('workflow.settings')->get('workflow_states_per_page');  // TODO D8-port
-    // $output .= theme('pager', array('tags' => $limit)); // TODO D8-port
+    // $output .= theme('pager', ['tags' => $limit]); // TODO D8-port
 
     $build += parent::render();
 
@@ -232,22 +232,22 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
     if ($this->footer_needed) {  // TODO D8-port: test this.
       // Two variants. First variant is official, but I like 2nd better.
       /*
-      $build['table']['#footer'] = array(
-        array(
-          'class' => array('footer-class'),
-          'data' => array(
-            array(
+      $build['table']['#footer'] = [
+        [
+          'class' => ['footer-class'],
+          'data' => [
+            [
               'data' => WORKFLOW_MARK_STATE_IS_DELETED . ' ' . t('State is no longer available.'),
               'colspan' => count($build['table']['#header']),
-            ),
-          ),
-        ),
-      );
+            ],
+          ],
+        ],
+      ];
     */
-      $build['workflow_footer'] = array(
+      $build['workflow_footer'] = [
         '#markup' => WORKFLOW_MARK_STATE_IS_DELETED . ' ' . t('State is no longer available.'),
         '#weight' => 500, // @todo Make this better.
-      );
+      ];
     }
 
     return $build;
@@ -259,7 +259,7 @@ class WorkflowTransitionListBuilder extends EntityListBuilder implements FormInt
    */
 //  public function getOperations(EntityInterface $entity) {
 //    $operations = $this->getDefaultOperations($entity);
-//    $operations += $this->moduleHandler()->invokeAll('entity_operation', array($entity));
+//    $operations += $this->moduleHandler()->invokeAll('entity_operation', [$entity]);
 //    $this->moduleHandler->alter('entity_operation', $operations, $entity);
 //    uasort($operations, '\Drupal\Component\Utility\SortArray::sortByWeightElement');
 //

@@ -107,7 +107,7 @@ function workflow_devel_form_alter(&$form, \Drupal\Core\Form\FormStateInterface 
  */
 function workflow_devel_entity_operation($entities) {
   workflow_debug(__FILE__, __FUNCTION__, __LINE__, '', '');
-  $operations = array();
+  $operations = [];
   return $operations;
 }
 

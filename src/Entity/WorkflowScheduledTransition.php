@@ -46,7 +46,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
   /**
    * Constructor.
    */
-  public function __construct(array $values = array(), $entityType = 'WorkflowScheduledTransition', $bundle = FALSE, $translations = array()) {
+  public function __construct(array $values = [], $entityType = 'WorkflowScheduledTransition', $bundle = FALSE, $translations = []) {
     // Please be aware that $entity_type and $entityType are different things!
     parent::__construct($values, $entityType, $bundle, $translations);
 
@@ -127,12 +127,12 @@ class WorkflowScheduledTransition extends WorkflowTransition {
     if ($state = $this->getToState()) {
       $entity = $this->getTargetEntity();
       $message = '%entity_title scheduled for state change to %state_name on %scheduled_date';
-      $args = array(
+      $args = [
         '%entity_title' => $entity->label(),
         '%state_name' => $state->label(),
         '%scheduled_date' => $this->getTimestampFormatted(),
         'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
-      );
+      ];
       \Drupal::logger('workflow')->notice($message, $args);
       drupal_set_message(t($message, $args));
     }
@@ -200,7 +200,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    * If a scheduled transition has no comment, a default comment is added before executing it.
    */
   public function addDefaultComment() {
-    $this->setComment(t('Scheduled by user @uid.', array('@uid' => $this->getOwnerId())));
+    $this->setComment(t('Scheduled by user @uid.', ['@uid' => $this->getOwnerId()]));
   }
 
   /**
@@ -208,7 +208,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields = array();
+    $fields = [];
 
     // Add the specific ID-field : tid vs. hid.
     $fields['tid'] = BaseFieldDefinition::create('integer')
@@ -227,15 +227,15 @@ class WorkflowScheduledTransition extends WorkflowTransition {
       ->setDescription(t('The date+time this transition is scheduled for.'))
       ->setQueryable(FALSE)
 //      ->setTranslatable(TRUE)
-//      ->setDisplayOptions('view', array(
+//      ->setDisplayOptions('view', [
 //        'label' => 'hidden',
 //        'type' => 'timestamp',
 //        'weight' => 0,
-//      ))
-//      ->setDisplayOptions('form', array(
+//      ])
+//      ->setDisplayOptions('form', [
 //        'type' => 'datetime_timestamp',
 //        'weight' => 10,
-//      ))
+//      ])
 //      ->setDisplayConfigurable('form', TRUE);
       ->setRevisionable(TRUE);
 

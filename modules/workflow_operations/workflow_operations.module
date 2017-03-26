@@ -15,13 +15,13 @@ use Drupal\workflow_operations\WorkflowAccessControlHandler;
  */
 function workflow_operations_rules_event_info() {
   workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
-  $events = array(
-    'workflow_state_reverted' => array(
+  $events = [
+    'workflow_state_reverted' => [
       'group' => t('Workflow'),
       'label' => t('Workflow state reverted'),
       'variables' => rules_events_node_variables(t('updated content'), TRUE),
-    ),
-  );
+    ],
+  ];
   return $events;
 }
 
@@ -36,7 +36,7 @@ function workflow_operations_rules_event_info() {
  * @return array
  */
 function workflow_operations_entity_operation(\Drupal\Core\Entity\EntityInterface $entity) {
-  $operations = array();
+  $operations = [];
 
   // Check correct entity type.
   if (!in_array($entity->getEntityTypeId(), ['workflow_transition'])) {
@@ -74,12 +74,12 @@ function workflow_operations_entity_operation(\Drupal\Core\Entity\EntityInterfac
       if (!in_array(FALSE, $permitted, TRUE)) {
         // Add the operation - it is not vetoed.
         // @todo: Pluggability problem: the revert_form route is fixed in WorkflowTransition Annotation. Add to some alter() function.
-        $operations['revert'] = array(
+        $operations['revert'] = [
           'title' => t('Revert to last state'),
           'url' => \Drupal\Core\Url::fromRoute('entity.workflow_transition.revert_form', ['workflow_transition' => $transition->id()]),
           'query' => \Drupal::destination()->getAsArray(), // Add destination.
           'weight' => 50,
-        );
+        ];
 
         $first = FALSE;
       }

@@ -31,7 +31,7 @@ use Drupal\workflow\Entity\WorkflowTransitionInterface;
  *   The new actions, to be added to the entity list.
  */
 function hook_workflow_operations($op, EntityInterface $entity = NULL) {
-  $operations = array();
+  $operations = [];
 
   switch ($op) {
     case 'top_actions':
@@ -47,14 +47,14 @@ function hook_workflow_operations($op, EntityInterface $entity = NULL) {
       /* @var $workflow Workflow */
       $workflow = $entity;
 
-      $alt = t('Control content access for @wf', array('@wf' => $workflow->label()));
-      $attributes = array('alt' => $alt, 'title' => $alt);
-      $operations['workflow_access_form'] = array(
+      $alt = t('Control content access for @wf', ['@wf' => $workflow->label()]);
+      $attributes = ['alt' => $alt, 'title' => $alt];
+      $operations['workflow_access_form'] = [
         'title' => t('Access'),
         'weight' => 50,
         'url' => \Drupal\Core\Url::fromRoute('entity.workflow_type.access_form', ['workflow_type' => $workflow->id()]),
         'query' => \Drupal::destination()->getAsArray(), // Add destination.
-      );
+      ];
       return $operations;
 
     case 'state':
@@ -210,12 +210,12 @@ function hook_workflow_comment_alter(&$comment, array &$context) {
  *  $context). They are already filtered by the settings in Admin UI.
  * @param array $context
  *  An array of relevant objects. Currently:
- *    $context = array(
+ *    $context = [
  *      'user' => $user,
  *      'workflow' => $workflow,
  *      'state' => $current_state,
  *      'force' => $force,
- *    );
+ *    ];
  *
  * This hook allows you to add custom filtering of allowed target states, add
  * new custom states, change labels, etc.
@@ -239,7 +239,7 @@ function hook_workflow_permitted_state_transitions_alter(array &$transitions, ar
   }
 
   // This example creates a new custom target state.
-  $values = array(
+  $values = [
     // Fixed values for new transition.
     'wid' => $context['workflow']->id(),
     'from_sid' => $context['state']->id(),
@@ -248,7 +248,7 @@ function hook_workflow_permitted_state_transitions_alter(array &$transitions, ar
     // The ID must be an integer, due to db-table constraints.
     'to_sid' => '998',
     'label' => 'go to my new fantasy state',
-  );
+  ];
   $new_transition = WorkflowConfigTransition::create($values);
 //  $transitions[] = $new_transition;
 }

@@ -13,7 +13,7 @@ function workflow_install() {
   $message = t('Thanks for using Workflow. To maintain workflows,
     <a href=":url">install the Workflow UI module</a>. To start using
     a Workflow, add a Workflow Field to your entity.',
-    array(':url' => $url->toString())
+    [':url' => $url->toString()]
   );
   drupal_set_message($message);
 }
@@ -33,7 +33,7 @@ function workflow_uninstall() {
  * @todo: extend workflow_requirements() for use with Workflow Field API.
  */
 function workflow_requirements($phase) {
-  $requirements = array();
+  $requirements = [];
   switch ($phase) {
     case 'install':
       break;
@@ -67,12 +67,11 @@ function workflow_requirements($phase) {
 */
 
 /*
- *
-      $requirements['workflow'] = array(
+      $requirements['workflow'] = [
         'title' => $t('Workflow'),
-        'value' => $t('Workflow is active on the @types content types.', array('@types' => $type_list)),
+        'value' => $t('Workflow is active on the @types content types.', ['@types' => $type_list]),
         'severity' => REQUIREMENT_OK,
-      );
+      ];
 */
       break;
 
@@ -92,7 +91,7 @@ function workflow_requirements($phase) {
  * - WorkflowScheduledTransition::baseFieldDefinitions().
  */
 function workflow_schema() {
-  return $schema = array();
+  return $schema = [];
 }
 
 /**

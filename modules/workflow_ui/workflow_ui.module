@@ -52,7 +52,7 @@ function workflow_ui_help($route_name, RouteMatchInterface $route_match) {
         'participate in workflows' on <a href=':url'>the Permissions page</a>.
         On that page, uncheck the 'Authenticated user' role temporarily to
         view the permissions of each separate role.</i>",
-        array(':url' => $url->toString()));
+        [':url' => $url->toString()]);
 
     case 'entity.workflow_label.collection':
       return t('You can add labels to transitions if you don\'t like the
@@ -70,7 +70,7 @@ function workflow_ui_help($route_name, RouteMatchInterface $route_match) {
  */
 function workflow_ui_url_get_workflow($url = '' ) {
   /* @var $workflows \Drupal\workflow\Entity\Workflow[] */
-  static $workflows = array();
+  static $workflows = [];
 
   // For some reason, $_SERVER is not allowed as default.
   $url = ($url == '') ? $_SERVER['REQUEST_URI'] : $url;

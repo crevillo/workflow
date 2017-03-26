@@ -37,18 +37,18 @@ class WorkflowItem extends ListItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    $schema = array(
-      'columns' => array(
-        'value' => array(
+    $schema = [
+      'columns' => [
+        'value' => [
           'description' => 'The {workflow_states}.sid that this entity is currently in.',
           'type' => 'varchar',
           'length' => 128,
-        ),
-      ),
-      'indexes' => array(
-        'value' => array('value'),
-      ),
-    );
+        ],
+      ],
+      'indexes' => [
+        'value' => ['value'],
+      ],
+    ];
 
     return $schema;
   }
@@ -77,7 +77,7 @@ class WorkflowItem extends ListItemBase {
 
       $propertyDefinitions[$key]['value'] = DataDefinition::create('string') // TODO D8-port : or 'any'
       ->setLabel(t('Workflow state'))
-        ->addConstraint('Length', array('max' => 128))
+        ->addConstraint('Length', ['max' => 128])
         ->setRequired(TRUE);
 
 //      workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
@@ -92,23 +92,22 @@ class WorkflowItem extends ListItemBase {
         ->setClass('\Drupal\workflow\Entity\WorkflowTransition')
         ->setSetting('date source', 'value');
 
-      $propertyDefinitions[$key]['display'] = array(
+      $propertyDefinitions[$key]['display'] = [
         'type' => 'boolean',
         'label' => t('Flag to control whether this file should be displayed when viewing content.'),
-      );
-      $propertyDefinitions[$key]['description'] = array(
+      ];
+      $propertyDefinitions[$key]['description'] = [
         'type' => 'string',
         'label' => t('A description of the file.'),
-      );
-
-      $propertyDefinitions[$key]['display'] = array(
+      ];
+      $propertyDefinitions[$key]['display'] = [
         'type' => 'boolean',
         'label' => t('Flag to control whether this file should be displayed when viewing content.'),
-      );
-      $propertyDefinitions[$key]['description'] = array(
+      ];
+      $propertyDefinitions[$key]['description'] = [
         'type' => 'string',
         'label' => t('A description of the file.'),
-      );
+      ];
 */
     }
     return $propertyDefinitions[$key];
@@ -142,14 +141,14 @@ class WorkflowItem extends ListItemBase {
    */
   public static function defaultStorageSettings() {
 
-    return array(
+    return [
       'workflow_type' => '',
-//      'allowed_values' => array(),
+//      'allowed_values' => [],
       'allowed_values_function' => 'workflow_state_allowed_values',
 
 // TODO D8-port: below settings may be (re)moved.
       /*
-            'widget' => array(
+            'widget' => [
               'options' => 'select',
               'name_as_title' => 1,
               'fieldset' => 0,
@@ -157,17 +156,17 @@ class WorkflowItem extends ListItemBase {
               'schedule' => 1,
               'schedule_timezone' => 1,
               'comment' => 1,
-            ),
+            ],
             'watchdog_log' => 1,
       */
-    ) + parent::defaultStorageSettings();
+      ] + parent::defaultStorageSettings();
   }
 
   /**
    * Implements hook_field_settings_form() -> ConfigFieldItemInterface::settingsForm().
    */
   public function storageSettingsForm(array &$form, FormStateInterface $form_state, $has_data) {
-    $element = array();
+    $element = [];
 
     // Create list of all Workflow types. Include an initial empty value.
     // Validate each workflow, and generate a message if not complete.
@@ -190,7 +189,7 @@ class WorkflowItem extends ListItemBase {
           // A 'comment' field name MUST be equal to content field name.
           // @todo: Still not waterproof. You could have a field on a non-relevant entity_type.
           drupal_set_message($violation->getMessage(), 'error');
-          $workflows = array();
+          $workflows = [];
           break;
 
         default:
@@ -203,7 +202,7 @@ class WorkflowItem extends ListItemBase {
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
     if (!$this->getSetting('workflow_type') && $field_storage->getTargetEntityTypeId() == 'comment') {
       $field_name = $field_storage->get('field_name');
-      $workflows = array();
+      $workflows = [];
       foreach(_workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name) as $key => $info) {
         if ($info->getName() == $field_name && ($info->getTargetEntityTypeId() !== 'comment')) {
           $wid = $info->getSetting('workflow_type');
@@ -216,7 +215,7 @@ class WorkflowItem extends ListItemBase {
     // Let the user choose between the available workflow types.
     $wid = $this->getSetting('workflow_type');
     $url = Url::fromRoute('entity.workflow_type.collection');
-    $element['workflow_type'] = array(
+    $element['workflow_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Workflow type'),
       '#options' => $workflows,
@@ -224,8 +223,8 @@ class WorkflowItem extends ListItemBase {
       '#required' => TRUE,
       '#disabled' => $has_data,
       '#description' => t('Choose the Workflow type. Maintain workflows
-         <a href=":url">here</a>.', array(':url' => $url->toString())),
-    );
+         <a href=":url">here</a>.', [':url' => $url->toString()]),
+    ];
 
     // Get a string representation to show all options.
 
@@ -236,21 +235,21 @@ class WorkflowItem extends ListItemBase {
       $allowed_values = WorkflowState::loadMultiple([], $wid);
       $allowed_values_function = $this->getSetting('allowed_values_function');
 
-      $element['allowed_values'] = array(
+      $element['allowed_values'] = [
         '#type' => 'textarea',
         '#title' => $this->t('Allowed values for the selected Workflow type'),
         '#default_value' => ($wid) ? $this->allowedValuesString($allowed_values) : [],
         '#rows' => count($allowed_values),
         '#access' => ($wid) ? TRUE : FALSE, // User can see the data,
         '#disabled' => TRUE, // .. but cannot change them.
-        '#element_validate' => array(array(get_class($this), 'validateAllowedValues')),
+        '#element_validate' => [[get_class($this), 'validateAllowedValues']],
 
         '#field_has_data' => $has_data,
         '#field_name' => $this->getFieldDefinition()->getName(),
         '#entity_type' => $this->getEntity()->getEntityTypeId(),
         '#allowed_values' => $allowed_values,
         '#description' => $this->allowedValuesDescription(),
-      );
+      ];
     }
 
     return $element;
@@ -280,7 +279,7 @@ class WorkflowItem extends ListItemBase {
    *    - Each value is in the format "value|label" or "value".
    */
   protected function allowedValuesString($states) {
-    $lines = array();
+    $lines = [];
 
     $wid = $this->getSetting('workflow_type');
 
@@ -294,7 +293,7 @@ class WorkflowItem extends ListItemBase {
           $previous_wid = $state->getWorkflowId();
           $lines[] = $state->getWorkflow()->label() . "'s states: ";
         }
-        $label = t('@label', array('@label' => $state->label()));
+        $label = t('@label', ['@label' => $state->label()]);
 
         $lines[] = "   $key|$label";
       }
@@ -362,7 +361,7 @@ class WorkflowItem extends ListItemBase {
    * {@inheritdoc}
    */
   public function getPossibleOptions(AccountInterface $account = NULL) {
-    $allowed_options = array();
+    $allowed_options = [];
 
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
@@ -396,7 +395,7 @@ class WorkflowItem extends ListItemBase {
    * {@inheritdoc}
    */
   public function getSettableOptions(AccountInterface $account = NULL) {
-    $allowed_options = array();
+    $allowed_options = [];
 
     // When we are initially on the Storage settings form, no wid is set, yet.
     if (!$wid = $this->getSetting('workflow_type')) {

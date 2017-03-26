@@ -21,7 +21,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function load() {
-    $entities = array();
+    $entities = [];
 
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
@@ -80,7 +80,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row = array();
+    $row = [];
 
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
@@ -97,14 +97,14 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
 
     // Build select options for reassigning states.
     // We put a blank state first for validation.
-    $state_options = array('' => ' ');
+    $state_options = ['' => ' '];
     $state_options += workflow_get_workflow_state_names($wid, $grouped = FALSE, $all = FALSE);
 
     // Make it impossible to reassign to the same state that is disabled.
     if ($state->isCreationState() || !$sid || !$state->isActive()) {
-      $current_state_options = array();
+      $current_state_options = [];
     } else {
-      $current_state = array($sid => $state_options[$sid]);
+      $current_state = [$sid => $state_options[$sid]];
       $current_state_options = array_diff($state_options, $current_state);
     }
 
@@ -139,8 +139,8 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
       // @TODO D8-port: enable machine_name: interactive WorkflowState element.
       '#machine_name' => [
         'exists' => [$this, 'exists'],  // Local helper function, at the bottom of this class.
-//        'source' => array('label_new'),
-        'source' => array('states', $state->id(), 'label_new'),
+//        'source' => ['label_new'],
+        'source' => ['states', $state->id(), 'label_new'],
 //        'replace_pattern' =>'([^a-z0-9_]+)|(^custom$)',
         'replace_pattern' => '[^a-z0-9_()]+', // Added '()' characters from exclusion list since creation state has it.
         'error' => $this->t('The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores.'),
@@ -233,12 +233,12 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
      */
     // This is what EntityListBuilder::getOperations() does:
     // $operations = $this->getDefaultOperations($entity);
-    // $operations += $this->moduleHandler()->invokeAll('entity_operation', array($entity));
+    // $operations += $this->moduleHandler()->invokeAll('entity_operation', [$entity]);
     // $this->moduleHandler->alter('entity_operation', $operations, $entity);
 
     // In D8, the interface of below hook_workflow_operations has changed a bit.
     // @see EntityListBuilder::getOperations, workflow_operations, workflow.api.php.
-    $operations += $this->moduleHandler()->invokeAll('workflow_operations', array('state', $state));
+    $operations += $this->moduleHandler()->invokeAll('workflow_operations', ['state', $state]);
 
     return $operations;
   }
@@ -256,7 +256,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
         // Does user want to deactivate the state (reassign current content)?
         if ($sid && $value['status'] == 0 && $state->isActive()) {
           workflow_debug( __FILE__, __FUNCTION__, __LINE__, '', '');  // @todo D8-port: still test this snippet.
-          $args = array('%state' => $state->label());
+          $args = ['%state' => $state->label()];
           // Does that state have content in it?
           if ($value['count'] > 0 && empty($value['reassign'])) {
             if ($form['#last_mohican']) {
@@ -385,7 +385,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
    * @return bool
    */
   function exists($name, array $element, FormStateInterface $form_state) {
-    $state_names = array();
+    $state_names = [];
     foreach ($form_state->getValue($this->entitiesKey) as $sid => $value) {
       $state_names[] = $value['id'];
     }

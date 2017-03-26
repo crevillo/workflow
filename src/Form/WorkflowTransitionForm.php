@@ -48,7 +48,7 @@ class WorkflowTransitionForm extends ContentEntityForm {
     else {
       $suffix = 'form';
     }
-    $form_id = implode('_', array('workflow_transition', $field_name, $suffix));
+    $form_id = implode('_', ['workflow_transition', $field_name, $suffix]);
     $form_id = Html::getUniqueId($form_id);
 
     return $form_id;
@@ -119,7 +119,7 @@ class WorkflowTransitionForm extends ContentEntityForm {
 
     // A default button is provided by core. Override it.
     $actions['submit']['#value'] = t('Update workflow');
-    $actions['submit']['#attributes'] = array('class' => array('form-save-default-button'));
+    $actions['submit']['#attributes'] = ['class' => ['form-save-default-button']];
 
     if (!_workflow_use_action_buttons()) {
       // Change the default submit button on the Workflow History tab.

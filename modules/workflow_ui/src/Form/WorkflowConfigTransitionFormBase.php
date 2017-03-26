@@ -31,7 +31,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
    *
    * @var \Drupal\Core\Entity\EntityInterface[]
    */
-  protected $entities = array();
+  protected $entities = [];
 
   /**
    * The workflow object.
@@ -70,7 +70,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
    * Create an $entity for every ConfigTransition.
    */
   public function load() {
-    $entities = array();
+    $entities = [];
 
     $entity_type = $this->entitiesKey;
     $workflow = $this->workflow;
@@ -133,7 +133,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form = array();
+    $form = [];
 
     if (!$this->workflow) {
       return $form;
@@ -142,12 +142,12 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
     /*
      * Begin of copied code DraggableListBuilder::buildForm()
      */
-    $form[$this->entitiesKey] = array(
+    $form[$this->entitiesKey] = [
       '#type' => 'table',
       '#header' => $this->buildHeader(),
-      '#empty' => t('There is no @label yet.', array('@label' => 'Transition')),
-      '#tabledrag' => array(array('action' => 'order', 'relationship' => 'sibling', 'group' => 'weight',),),
-    );
+      '#empty' => t('There is no @label yet.', ['@label' => 'Transition']),
+      '#tabledrag' => [['action' => 'order', 'relationship' => 'sibling', 'group' => 'weight',],],
+    ];
 
     $this->entities = $this->load();
     $delta = 10;
@@ -161,7 +161,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
     foreach ($this->entities as $entity) {
       $row = $this->buildRow($entity);
       if (isset($row['label'])) {
-        $row['label'] = array('#markup' => $row['label']);
+        $row['label'] = ['#markup' => $row['label']];
       }
       if (isset($row['weight'])) {
         $row['weight']['#delta'] = $delta;

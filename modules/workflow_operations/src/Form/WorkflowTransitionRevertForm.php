@@ -39,7 +39,7 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
   public function getCancelUrl() {
     /* @var $transition WorkflowTransitionInterface */
     $transition = $this->entity;
-    return new Url('entity.node.workflow_history', array('node' => $transition->getTargetEntityId(), 'field_name' => $transition->getFieldname()));
+    return new Url('entity.node.workflow_history', ['node' => $transition->getTargetEntityId(), 'field_name' => $transition->getFieldname()]);
   }
 
   /**
@@ -89,10 +89,10 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
     $comment = ($previous_sid == $new_sid) ? 'State is reverted.' : 'State could not be reverted.';
     drupal_set_message(t($comment), 'warning');
 
-    $form_state->setRedirect('entity.node.workflow_history', array(
+    $form_state->setRedirect('entity.node.workflow_history', [
         'node' => $transition->getTargetEntityId(),
         'field_name' => $transition->getFieldName(),
-      )
+      ]
     );
   }
 

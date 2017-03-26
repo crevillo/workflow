@@ -43,12 +43,12 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header = array(
+    $header = [
       'label_new' => t('State'),
       'view' => t('Roles who can view posts in this state'),
       'update' => t('Roles who can edit posts in this state'),
       'delete' => t('Roles who can delete posts in this state '),
-    );
+    ];
     return $header;
   }
 
@@ -56,7 +56,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row = array();
+    $row = [];
 
     $workflow = $this->workflow;
     if ($workflow) {
@@ -73,7 +73,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
         return [];
       }
 
-      $view = $update = $delete = array();
+      $view = $update = $delete = [];
       $count = 0;
       foreach (workflow_access_get_workflow_access_by_sid($sid) as $rid => $access) {
         $count++;
@@ -84,31 +84,31 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
       // Allow view grants by default for anonymous and authenticated users,
       // if no grants were set up earlier.
       if (!$count) {
-        $view = array(
+        $view = [
           AccountInterface::ANONYMOUS_ROLE => AccountInterface::ANONYMOUS_ROLE,
           AccountInterface::AUTHENTICATED_ROLE =>AccountInterface::AUTHENTICATED_ROLE,
-        );
+        ];
       }
 
       $row['label_new'] = [
         '#type' => 'value',
-        '#markup' => t('@label', array('@label' => $state->label())),
+        '#markup' => t('@label', ['@label' => $state->label()]),
       ];
-      $row['view'] = array(
+      $row['view'] = [
         '#type' => 'checkboxes',
         '#options' => $roles,
         '#default_value' => $view,
-      );
-      $row['update'] = array(
+      ];
+      $row['update'] = [
         '#type' => 'checkboxes',
         '#options' => $roles,
         '#default_value' => $update,
-      );
-      $row['delete'] = array(
+      ];
+      $row['delete'] = [
         '#type' => 'checkboxes',
         '#options' => $roles,
         '#default_value' => $delete,
-      );
+      ];
     }
     return $row;
   }
@@ -124,11 +124,11 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
       }
 
       foreach ($access['view'] as $rid => $checked) {
-        $data[$rid] = array(
+        $data[$rid] = [
           'grant_view' => (!empty($access['view'][$rid])) ? (bool) $access['view'][$rid] : 0,
           'grant_update' => (!empty($access['update'][$rid])) ? (bool) $access['update'][$rid] : 0,
           'grant_delete' => (!empty($access['delete'][$rid])) ? (bool) $access['delete'][$rid] : 0,
-        );
+        ];
       }
       workflow_access_insert_workflow_access_by_sid($sid, $data);
 

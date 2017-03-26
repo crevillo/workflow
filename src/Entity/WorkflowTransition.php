@@ -113,7 +113,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * All arguments must be passed, when creating an object programmatically.
    * One argument $entity may be passed, only to directly call delete() afterwards.
    */
-  public function __construct(array $values = array(), $entityType = 'WorkflowTransition', $bundle = FALSE, $translations = array()) {
+  public function __construct(array $values = [], $entityType = 'WorkflowTransition', $bundle = FALSE, $translations = []) {
     // Please be aware that $entity_type and $entityType are different things!
     parent::__construct($values, $entityType, $bundle, $translations);
     // This transition is not scheduled.
@@ -131,7 +131,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * @return static
    *   The entity object.
    */
-  public static function create(array $values = array()) {
+  public static function create(array $values = []) {
     if (is_array($values) && isset($values[0])) {
       $value = $values[0];
 
@@ -187,7 +187,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       if (!$force_create) {
         drupal_set_message(
           t('Wrong call to constructor Workflow*Transition(%from_sid to %to_sid)',
-            array('%from_sid' => $from_sid, '%to_sid' => $to_sid)),
+            ['%from_sid' => $from_sid, '%to_sid' => $to_sid]),
           'error');
       }
     }
@@ -335,13 +335,13 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $force = $this->isForced();
 
     // Prepare an array of arguments for error messages.
-    $args = array(
+    $args = [
       '%user' => ($user) ? $user->getUsername() : '',
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
       'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
-    );
+    ];
 
     if (!$entity) {
       $message = 'User tried to execute a Transition without an entity.';
@@ -404,11 +404,11 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     if ($result == FALSE) {
       // @todo: There is a watchdog error, but no UI-error. Is this ok?
       $message = t('Attempt to go to nonexistent transition (from %from_sid to %to_sid)');
-      $t_args = array(
+      $t_args = [
         '%from_sid' => $this->getFromSid(),
         '%to_sid' => $this->getToSid(),
         'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
-      );
+      ];
       \Drupal::logger('workflow')->error($message, $t_args);
     }
 
@@ -465,13 +465,13 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
 
     // @todo: move below code to $this->isAllowed().
     // Prepare an array of arguments for error messages.
-    $args = array(
+    $args = [
       '%user' => $user->getUsername(),
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
       'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
-    );
+    ];
     // Check if the state has changed.
     // If so, check the permissions.
     $state_changed = ($from_sid != $to_sid);
@@ -555,7 +555,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     else {
       // The transition is allowed, but not scheduled.
       // Let other modules modify the comment. The transition (in context) contains all relevant data.
-      $context = array('transition' => $this);
+      $context = ['transition' => $this];
       \Drupal::moduleHandler()->alter('workflow_comment', $comment, $context);
       $this->setComment($comment);
 
@@ -581,12 +581,12 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
             else {
               $message = 'State of @type %label set to %state_name';
             }
-            $args = array(
+            $args = [
               '@type' => $entity_type_info->getLabel(),
               '%label' => $entity->label(),
               '%state_name' => $new_state->label(),
               'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
-            );
+            ];
             \Drupal::logger('workflow')->notice($message, $args);
           }
         }
@@ -886,7 +886,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields = array();
+    $fields = [];
 
     $fields['hid'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Transition ID'))
@@ -903,15 +903,15 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       ->setTranslatable(FALSE)
       ->setRevisionable(FALSE)
 //      ->setSetting('max_length', 32)
-//      ->setDisplayOptions('view', array(
+//      ->setDisplayOptions('view', [
 //        'label' => 'hidden',
 //        'type' => 'string',
 //        'weight' => -5,
-//      ))
-//      ->setDisplayOptions('form', array(
+//      ])
+//      ->setDisplayOptions('form', [
 //        'type' => 'string_textfield',
 //        'weight' => -5,
-//      ))
+//      ])
 //      ->setDisplayConfigurable('form', TRUE)
       ;
 
@@ -943,29 +943,29 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       ->setRevisionable(FALSE)
       ->setSetting('max_length', 32)
 //      ->setDisplayConfigurable('form', FALSE)
-//      ->setDisplayOptions('form', array(
+//      ->setDisplayOptions('form', [
 //        'type' => 'string_textfield',
 //        'weight' => -5,
-//      ))
+//      ])
 //      ->setDisplayConfigurable('view', FALSE)
-//      ->setDisplayOptions('view', array(
+//      ->setDisplayOptions('view', [
 //        'label' => 'hidden',
 //        'type' => 'string',
 //        'weight' => -5,
-//      ))
+//      ])
     ;
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language'))
       ->setDescription(t('The entity language code.'))
       ->setTranslatable(TRUE)
-      ->setDisplayOptions('view', array(
+      ->setDisplayOptions('view', [
         'type' => 'hidden',
-      ))
-      ->setDisplayOptions('form', array(
+      ])
+      ->setDisplayOptions('form', [
         'type' => 'language_select',
         'weight' => 2,
-      ));
+      ]);
 
     $fields['delta'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Delta'))
@@ -984,10 +984,10 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       ->setDescription(t('The {workflow_states}.sid the entity transitioned to.'))
       ->setSetting('target_type', 'workflow_state')
 // @todo D8: activate this. Test with both Form and Widget.
-//      ->setDisplayOptions('form', array(
+//      ->setDisplayOptions('form', [
 //        'type' => 'select',
 //        'weight' => -5,
-//      ))
+//      ])
 //      ->setDisplayConfigurable('form', TRUE)
       ->setReadOnly(TRUE);
 
@@ -1001,20 +1001,20 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
 //      ->setSetting('handler', 'default')
 //      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
 //      ->setTranslatable(TRUE)
-//      ->setDisplayOptions('view', array(
+//      ->setDisplayOptions('view', [
 //        'label' => 'hidden',
 //        'type' => 'author',
 //        'weight' => 0,
-//      ))
-//      ->setDisplayOptions('form', array(
+//      ])
+//      ->setDisplayOptions('form', [
 //        'type' => 'entity_reference_autocomplete',
 //        'weight' => 5,
-//        'settings' => array(
+//        'settings' => [
 //          'match_operator' => 'CONTAINS',
 //          'size' => '60',
 //          'placeholder' => '',
-//        ),
-//      ))
+//        ],
+//      ])
 //      ->setDisplayConfigurable('form', TRUE),
       ->setRevisionable(TRUE);
 
@@ -1023,16 +1023,16 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       ->setDescription(t('The time that the current transition was executed.'))
       ->setQueryable(FALSE)
 //      ->setTranslatable(TRUE)
-//      ->setDisplayOptions('view', array(
+//      ->setDisplayOptions('view', [
 //        'label' => 'hidden',
 //        'type' => 'timestamp',
 //        'weight' => 0,
-//      ))
+//      ])
 // @todo D8: activate this. Test with both Form and Widget.
-//      ->setDisplayOptions('form', array(
+//      ->setDisplayOptions('form', [
 //        'type' => 'datetime_timestamp',
 //        'weight' => 10,
-//      ))
+//      ])
 //      ->setDisplayConfigurable('form', TRUE);
       ->setRevisionable(TRUE);
 
@@ -1042,13 +1042,13 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
 // @todo D8: activate this. Test with both Form and Widget.
-//      ->setDisplayOptions('form', array(
+//      ->setDisplayOptions('form', [
 //        'type' => 'string_textarea',
 //        'weight' => 25,
-//        'settings' => array(
+//        'settings' => [
 //          'rows' => 4,
-//        ),
-//      ))
+//        ],
+//      ])
 //      ->setDisplayConfigurable('form', FALSE)
     ;
 

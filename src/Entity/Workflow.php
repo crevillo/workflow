@@ -64,7 +64,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
 // TODO D8-port Workflow: complete below variables. (Add get()-functions).
 // @see https://www.drupal.org/node/1809494
 // @see https://codedrop.com.au/blog/creating-custom-config-entities-drupal-8
-  public $options = array();
+  public $options = [];
 
   /**
    * The workflow-specific creation state.
@@ -74,8 +74,8 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   private $creation_sid = 0;
 
   // Attached States and Transitions.
-  public $states = array();
-  public $transitions = array();
+  public $states = [];
+  public $transitions = [];
 
   /**
    * Retrieves the workflow manager.
@@ -171,7 +171,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     if (count($states) < 1) {
       // That's all, so let's remind them to create some states.
       $message = t('Workflow %workflow has no states defined, so it cannot be assigned to content yet.',
-        array('%workflow' => $this->label()));
+        ['%workflow' => $this->label()]);
       drupal_set_message($message, 'warning');
 
       // Skip allowing this workflow.
@@ -183,7 +183,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     if (count($transitions) < 1) {
       // That's all, so let's remind them to create some transitions.
       $message = t('Workflow %workflow has no transitions defined, so it cannot be assigned to content yet.',
-        array('%workflow' => $this->label()));
+        ['%workflow' => $this->label()]);
       drupal_set_message($message, 'warning');
 
       // Skip allowing this workflow.
@@ -237,7 +237,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     /* @var $state WorkflowState */
     $state = WorkflowState::load($sid);
     if (!$state || $wid != $state->getWorkflowId()) {
-      $state = WorkflowState::create($values = array('id' => $sid, 'wid' => $wid));
+      $state = WorkflowState::create($values = ['id' => $sid, 'wid' => $wid]);
       if ($save) {
         $status = $state->save();
       }
@@ -335,16 +335,16 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     $wid = $this->id();
 
     if ($reset) {
-      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : array();
+      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : [];
     }
     elseif ($this->states === NULL) {
-      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : array();
+      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : [];
     }
-    elseif ($this->states === array()) {
-      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : array();
+    elseif ($this->states === []) {
+      $this->states = $wid ? WorkflowState::loadMultiple([], $wid, $reset) : [];
     }
     // Do not unset, but add to array - you'll remove global objects otherwise.
-    $states = array();
+    $states = [];
 
     foreach ($this->states as $state) {
       $id = $state->id();
@@ -380,7 +380,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   /**
    * {@inheritdoc}
    */
-  public function createTransition($from_sid, $to_sid, $values = array()) {
+  public function createTransition($from_sid, $to_sid, $values = []) {
     $config_transition = NULL;
 
     $workflow = $this;
@@ -413,8 +413,8 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
   /**
    * {@inheritdoc}
    */
-  public function getTransitions(array $ids = NULL, array $conditions = array()) {
-    $config_transitions = array();
+  public function getTransitions(array $ids = NULL, array $conditions = []) {
+    $config_transitions = [];
 
     // Get filters on 'from' states, 'to' states, roles.
     $from_sid = isset($conditions['from_sid']) ? $conditions['from_sid'] : FALSE;
@@ -452,17 +452,17 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
    * {@inheritdoc}
    */
   public function getTransitionsById($tid) {
-    return $this->getTransitions(array($tid));
+    return $this->getTransitions([$tid]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function getTransitionsByStateId($from_sid, $to_sid) {
-    $conditions = array(
+    $conditions = [
       'from_sid' => $from_sid,
       'to_sid' => $to_sid,
-    );
+    ];
     return $this->getTransitions(NULL, $conditions);
   }
 

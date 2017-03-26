@@ -11,7 +11,7 @@
 function workflow_access_schema() {
   // The D7-table 'workflow_access' is not used anymore.
   // The data is no in table 'config'.
-  return array();
+  return [];
 }
 
 /**

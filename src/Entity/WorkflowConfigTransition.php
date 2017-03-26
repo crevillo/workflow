@@ -49,7 +49,7 @@ class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfi
   public $id;
   public $from_sid;
   public $to_sid;
-  public $roles = array();
+  public $roles = [];
 
   // Extra fields.
   protected $wid;
@@ -61,7 +61,7 @@ class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfi
    * Entity class functions.
    */
 
-  public function __construct(array $values = array(), $entityType = NULL) {
+  public function __construct(array $values = [], $entityType = NULL) {
     // Please be aware that $entity_type and $entityType are different things!
     $result = parent::__construct($values, $entity_type = 'workflow_config_transition');
 

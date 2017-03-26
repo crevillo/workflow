@@ -108,7 +108,7 @@ class WorkflowCleanupSettingsForm extends FormBase {
           }
           if ($count) {
             drupal_set_message(t('@count transitions for the "@state" state have been deleted.',
-              array('@state' => $state_name, '@count' => $count)));
+              ['@state' => $state_name, '@count' => $count]));
           }
 
           // @todo: Remove history records too.
@@ -116,12 +116,12 @@ class WorkflowCleanupSettingsForm extends FormBase {
 //          $count = db_delete('workflow_node_history')->condition('sid', $sid)->execute();
           if ($count) {
             drupal_set_message(t('@count history records for the "@state" state have been deleted.',
-              array('@state' => $state_name, '@count' => $count)));
+              ['@state' => $state_name, '@count' => $count]));
           }
 
           $state->delete();
           drupal_set_message(t('The "@state" state has been deleted.',
-            array('@state' => $state_name)));
+            ['@state' => $state_name]));
         }
       }
     }

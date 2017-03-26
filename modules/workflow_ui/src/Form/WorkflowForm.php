@@ -14,8 +14,8 @@ class WorkflowForm extends EntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
-    $noyes = array(0 => t('No'), 1 => t('Yes'));
-    $fieldset_options = array(0 => t('No fieldset'), 1 => t('Collapsible fieldset'), 2 => t('Collapsed fieldset'));
+    $noyes = [0 => t('No'), 1 => t('Yes')];
+    $fieldset_options = [0 => t('No fieldset'), 1 => t('Collapsible fieldset'), 2 => t('Collapsed fieldset')];
     $workflow = $this->entity;
 
     $form['label'] = [
@@ -39,31 +39,31 @@ class WorkflowForm extends EntityForm {
       ],
     ];
 
-    $form['permissions'] = array(
+    $form['permissions'] = [
       '#type' => 'details',
       '#title' => t('Workflow permissions'),
       '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
       '#description' => t("To enable further Workflow functionality, go to the
         /admin/people/permissions page and select any roles that should have
         access to below and other functionalities."),
-    );
-    $form['permissions']['transition_execute'] = array(
+    ];
+    $form['permissions']['transition_execute'] = [
       '#type' => 'item',
       '#title' => t('Participate in workflow (create, execute transitions)'),
       '#markup' => t("You can determine which roles are enabled on the
         'Workflow Transitions & roles' configuration page. Use this to enable
         only the relevant roles. Some sites have too many roles to show on
         the configuration page."),
-    );
-    $form['permissions']['transition_schedule'] = array(
+    ];
+    $form['permissions']['transition_schedule'] = [
       '#type' => 'item',
       '#title' => t('Schedule state transition'),
       '#markup' => t("Workflow transitions may be scheduled to a moment in the
         future. Soon after the desired moment, the transition is executed by
         Cron. This may be hidden by settings in widgets, formatters or permissions."
       ),
-    );
-    $form['permissions']['history_tab'] = array(
+    ];
+    $form['permissions']['history_tab'] = [
       '#type' => 'item',
       '#title' => t('Access Workflow history tab'),
       '#markup' => t("You can determine if a tab 'Workflow history' is
@@ -71,42 +71,42 @@ class WorkflowForm extends EntityForm {
          the workflow.
          If you have multiple workflows per bundle, better disable this feature,
          and use, clone & adapt the Views display 'Workflow history per Entity'."),
-    );
+    ];
 
-    $form['basic'] = array(
+    $form['basic'] = [
       '#type' => 'details',
       '#title' => t('Workflow form settings'),
       // '#description' => t('Lorem ipsum.'),
       '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
-     );
+    ];
 
-    $form['basic']['fieldset'] = array(
+    $form['basic']['fieldset'] = [
       '#type' => 'select',
       '#options' => $fieldset_options,
       '#title' => t('Show the form in a fieldset?'),
       '#default_value' => isset($workflow->options['fieldset']) ? $workflow->options['fieldset'] : 0,
-    );
-    $form['basic']['options'] = array(
+    ];
+    $form['basic']['options'] = [
       '#type' => 'select',
       '#title' => t('How to show the available states'),
       '#required' => FALSE,
       '#default_value' => isset($workflow->options['options']) ? $workflow->options['options'] : 'radios',
       // '#multiple' => TRUE / FALSE,
-      '#options' => array(
+      '#options' => [
         // These options are taken from options.module
         'select' => 'Select list',
         'radios' => 'Radio buttons',
         // This option does not work properly on Comment Add form.
         'buttons' => 'Action buttons',
-      ),
+      ],
       '#description' => t("The Widget shows all available states. Decide which
       is the best way to show them."
       ),
-    );
+    ];
 
-    $form['basic']['name_as_title'] = array(
+    $form['basic']['name_as_title'] = [
       '#type' => 'checkbox',
-      '#attributes' => array('class' => array('container-inline')),
+      '#attributes' => ['class' => ['container-inline']],
       '#title' => t('Use the workflow name as the title of the workflow form'),
       '#default_value' => isset($workflow->options['name_as_title']) ? $workflow->options['name_as_title'] : 0,
       '#description' => t(
@@ -114,16 +114,16 @@ class WorkflowForm extends EntityForm {
              Checking the box will add the workflow name as the title of workflow
              section of the editing form.'
       ),
-    );
+    ];
 
-    $form['basic']['schedule_timezone'] = array(
+    $form['basic']['schedule_timezone'] = [
       '#type' => 'checkbox',
       '#title' => t('Show a timezone when scheduling a transition.'),
       '#required' => FALSE,
       '#default_value' => isset($workflow->options['schedule_timezone']) ? $workflow->options['schedule_timezone'] : 1,
-    );
+    ];
 
-    $form['comment'] = array(
+    $form['comment'] = [
       '#type' => 'details',
       '#title' => t('Comment'),
       '#description' => t(
@@ -132,75 +132,75 @@ class WorkflowForm extends EntityForm {
          then included in the content\'s workflow history.'
       ),
       '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
-    );
+    ];
 
     /*
-    $form['comment']['comment'] = array(
+    $form['comment']['comment'] = [
       '#type' => 'select',
       '#title' => t('Allow adding a comment to workflow transitions'),
       '#required' => FALSE,
-      '#options' => array(
+      '#options' => [
         // Use 0/1/2 to stay compatible with previous checkbox.
         0 => t('hidden'),
         1 => t('optional'),
         2 => t('required'),
-      ),
+      ],
       '#default_value' => $settings['widget']['comment'],
       '#description' => t('On the Workflow form, a Comment form can be included
             so that the person making the state change can record reasons for doing
             so. The comment is then included in the content\'s workflow history. This
             may be altered by settings in widgets, formatters or permissions.'
       ),
-    );
+    ];
     */
 
-    $form['comment']['comment_log_node'] = array(
+    $form['comment']['comment_log_node'] = [
       '#type' => 'select',
       '#required' => FALSE,
-      '#options' => array(
+      '#options' => [
         // Use 0/1/2 to stay compatible with previous checkbox.
         0 => t('hidden'),
         1 => t('optional'),
         2 => t('required'),
-      ),
-      '#attributes' => array('class' => array('container-inline')),
+      ],
+      '#attributes' => ['class' => ['container-inline']],
       '#title' => t('Show comment on the Content edit form'),
       '#default_value' => isset($workflow->options['comment_log_node']) ? $workflow->options['comment_log_node'] : 1,
 //      '#description' => t(
 //        'On the node editing form.'
 //      ),
-    );
+    ];
 
-    $form['comment']['comment_log_tab'] = array(
+    $form['comment']['comment_log_tab'] = [
       '#type' => 'select',
       '#required' => FALSE,
-      '#options' => array(
+      '#options' => [
         // Use 0/1/2 to stay compatible with previous checkbox.
         0 => t('hidden'),
         1 => t('optional'),
         2 => t('required'),
-      ),
-      '#attributes' => array('class' => array('container-inline')),
+      ],
+      '#attributes' => ['class' => ['container-inline']],
       '#title' => t('Show comment on the Workflow history tab of content'),
       '#default_value' => isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1,
 //      '#description' => t(
 //        'On the workflow tab.'
 //      ),
-    );
+    ];
 
-    $form['watchdog'] = array(
+    $form['watchdog'] = [
       '#type' => 'details',
       '#title' => t('Watchdog'),
       '#description' => t('Informational watchdog messages can be logged when a transition is executed (state of a node is changed).'),
       '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
-    );
+    ];
 
-    $form['watchdog']['watchdog_log'] = array(
+    $form['watchdog']['watchdog_log'] = [
       '#type' => 'checkbox',
       '#title' => t('Log watchdog messages upon state change'),
       '#default_value' => isset($workflow->options['watchdog_log']) ? $workflow->options['watchdog_log'] : 0,
       '#description' => t(''),
-    );
+    ];
 
     return parent::form($form, $form_state);
   }
@@ -224,7 +224,7 @@ class WorkflowForm extends EntityForm {
     // Prevent leading and trailing spaces.
     $entity->set('label', trim($entity->label()));
 
-    $entity->set('options', array(
+    $entity->set('options', [
         'name_as_title' => $form_state->getValue('name_as_title'),
         'fieldset' => $form_state->getValue('fieldset'),
         'options' => $form_state->getValue('options'),
@@ -232,7 +232,7 @@ class WorkflowForm extends EntityForm {
         'comment_log_node' => $form_state->getValue('comment_log_node'),
         'comment_log_tab' => $form_state->getValue('comment_log_tab'),
         'watchdog_log' => $form_state->getValue('watchdog_log'),
-      )
+      ]
     );
 
     $status = parent::save($form, $form_state);

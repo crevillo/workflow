@@ -27,24 +27,24 @@ class WorkflowDefaultWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
-//      'workflow_default' => array(
+    return [
+//      'workflow_default' => [
 //        'label' => t('Workflow'),
-//        'field types' => array('workflow'),
-//        'settings' => array(
+//        'field types' => ['workflow'],
+//        'settings' => [
 //          'fieldset' => 0,
 //          'name_as_title' => 1,
 //          'comment' => 1,
-//        ),
-//      ),
-    ) + parent::defaultSettings();
+//        ],
+//      ],
+      ] + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = [];
     // There are no settings. All is done at Workflow level.
     return $element;
   }
@@ -53,7 +53,7 @@ class WorkflowDefaultWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = array();
+    $summary = [];
     // There are no settings. All is done at Workflow level.
     return $summary;
   }
@@ -68,7 +68,7 @@ class WorkflowDefaultWidget extends WidgetBase {
     $field_id = $this->fieldDefinition->id();
     $entity_id = '';  // TODO D8-port
 
-    $form_id = implode('_', array('workflow_transition_form', $entity_id, $field_id));
+    $form_id = implode('_', ['workflow_transition_form', $entity_id, $field_id]);
     return $form_id;
   }
 
@@ -130,11 +130,11 @@ class WorkflowDefaultWidget extends WidgetBase {
 
       // Option 3: use the true Element.
       // $form = $this->element($form, $form_state, $transition);
-      //$element['workflow_transition'] = array(
+      //$element['workflow_transition'] = [
       //      '#type' => 'workflow_transition',
       //      '#title' => t('Workflow transition'),
       //      '#default_value' => $transition,
-      // );
+      // ];
 
     }
     else {
@@ -143,7 +143,7 @@ class WorkflowDefaultWidget extends WidgetBase {
       // (this is done by the Workflow module).
       // @see WorkflowState::getOptions();
       // @see WorkflowDefaultWidget::formElement();
-      $element = array();
+      $element = [];
       return $element;
 
       workflow_debug( __FILE__, __FUNCTION__, __LINE__, '', '');  // @todo D8-port: still test this snippet.

@@ -27,7 +27,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header = array();
+    $header = [];
 
     $workflow = $this->workflow;
     $states = $workflow->getStates($all = 'CREATION');
@@ -37,7 +37,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
       foreach ($states as $state) {
         // Don't allow transition TO (creation).
         if (!$state->isCreationState()) {
-          $header[$state->id()] = t('@label', array('@label' => $state->label()));
+          $header[$state->id()] = t('@label', ['@label' => $state->label()]);
         }
       }
     }
@@ -49,19 +49,19 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
    *
    * Builds a row for the following table:
    *   Transitions, for example:
-   *     18 => array(
-   *       20 => array(
+   *     18 => [
+   *       20 => [
    *         'author' => 1,
    *         1        => 0,
    *         2        => 1,
-   *       )
-   *     )
+   *       ]
+   *     ]
    *   means the transition from state 18 to state 20 can be executed by
    *   the content author or a user in role 2. The $transitions array should
    *   contain ALL transitions for the workflow.
    */
   public function buildRow(EntityInterface $entity) {
-    $row = array();
+    $row = [];
 
     $workflow = $this->workflow;
     if ($workflow) {
@@ -81,7 +81,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
         foreach ($states as $state) {
           $row['to'] = [
             '#type' => 'value',
-            '#markup' => t('@label', array('@label' => $from_state->label())),
+            '#markup' => t('@label', ['@label' => $from_state->label()]),
           ];
 
           foreach ($states as $to_state) {
@@ -144,7 +144,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
     }
     if (!$author_has_permission) {
       $form_state->setErrorByName('id', t('Please give the author permission to go from %creation to at least one state!',
-        array('%creation' => $creation_state->label())));
+        ['%creation' => $creation_state->label()]));
     }
 
     return;

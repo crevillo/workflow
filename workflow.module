@@ -59,7 +59,7 @@ function workflow_help($route_name, RouteMatchInterface $route_match) {
  * their main module or in a module.workflow.inc file.
  */
 function workflow_hook_info() {
-  $hooks['workflow'] = array('group' => 'workflow');
+  $hooks['workflow'] = ['group' => 'workflow'];
   return $hooks;
 }
 
@@ -246,10 +246,10 @@ function workflow_get_user_role_names($permission) {
 
   if (!$roles[$permission]) {
     // Copied from AccountForm::form().
-    $roles[$permission] = array_map(array('\Drupal\Component\Utility\Html', 'escape'),
-      array(
+    $roles[$permission] = array_map(['\Drupal\Component\Utility\Html', 'escape'],
+      [
         WORKFLOW_ROLE_AUTHOR_RID => '(' . t(WORKFLOW_ROLE_AUTHOR_NAME) . ')'
-      ) + user_role_names(FALSE, $permission));
+      ] + user_role_names(FALSE, $permission));
   }
 
   return $roles[$permission];
@@ -270,16 +270,16 @@ function workflow_get_user_role_names($permission) {
  *   An array of $sid => state->label(), grouped per Workflow.
  */
 function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = FALSE) {
-  $options = array();
+  $options = [];
 
   // Get the (user-dependent) options.
   // Since this function is only used in UI, it is save to use the global $user.
   $user = workflow_current_user();
 
-  foreach ($workflows = Workflow::loadMultiple($wid ? array($wid) : NULL) as $workflow) {
-    $workflow_options = array();
+  foreach ($workflows = Workflow::loadMultiple($wid ? [$wid] : NULL) as $workflow) {
+    $workflow_options = [];
 
-    $state = WorkflowState::create(array('wid' => $workflow->id()));
+    $state = WorkflowState::create(['wid' => $workflow->id()]);
     $workflow_options = $state->getOptions(NULL, '', $user, FALSE);
     if (!$grouped) {
       $options += $workflow_options;
@@ -303,7 +303,7 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
  *   An array of $wid => workflow->label().
  */
 function workflow_get_workflow_names($required = TRUE) {
-  $options = array();
+  $options = [];
 
   if (!$required) {
     $options[''] = t('- Select a value -');
@@ -515,7 +515,7 @@ function workflow_node_previous_state($entity, $field_name = '') {
  */
 function workflow_get_workflows_by_type($entity_bundle, $entity_type) {
 
-  static $map = array();
+  static $map = [];
 
   if (!isset($map[$entity_type][$entity_bundle])) {
     $wid = FALSE;
@@ -552,7 +552,7 @@ function workflow_get_workflows_by_type($entity_bundle, $entity_type) {
  *   An array of FieldStorageConfig objects.
  */
 function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name = '') {
-  $field_info = array();
+  $field_info = [];
 
   // Figure out the $entity's bundle and id.
   if ($entity) {

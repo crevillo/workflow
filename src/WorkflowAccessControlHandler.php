@@ -92,7 +92,7 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
   /**
    * {@inheritdoc}
    */
-  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = array(), $return_as_object = FALSE) {
+  public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
     workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
     $result = parent::createAccess($entity_bundle, $account, $context, TRUE)->cachePerPermissions();
     return $return_as_object ? $result : $result->isAllowed();

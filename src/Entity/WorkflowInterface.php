@@ -132,7 +132,7 @@ interface WorkflowInterface {
    *
    * @return mixed|null|static
    */
-  public function createTransition($from_sid, $to_sid, $values = array());
+  public function createTransition($from_sid, $to_sid, $values = []);
 
   /**
    * Sorts all Transitions for this workflow, according to State weight.
@@ -152,7 +152,7 @@ interface WorkflowInterface {
    *
    * @return \Drupal\workflow\Entity\WorkflowConfigTransition[]
    */
-  public function getTransitions(array $ids = NULL, array $conditions = array());
+  public function getTransitions(array $ids = NULL, array $conditions = []);
 
   public function getTransitionsById($tid);
 

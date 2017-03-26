@@ -30,26 +30,26 @@ class WorkflowTransitionElement extends FormElement {
    */
   public function getInfo() {
     $class = get_class($this);
-    return array(
+    return [
       '#input' => TRUE,
       '#return_value' => 1,
-      '#process' => array(
-        array($class, 'processTransition'),
-        array($class, 'processAjaxForm'),
-//        array($class, 'processGroup'),
-      ),
-      '#element_validate' => array(
-        array($class, 'validateTransition'),
-      ),
-      '#pre_render' => array(
-        array($class, 'preRenderTransition'),
-//        array($class, 'preRenderGroup'),
-      ),
+      '#process' => [
+        [$class, 'processTransition'],
+        [$class, 'processAjaxForm'],
+//        $class, 'processGroup'],
+      ],
+      '#element_validate' => [
+        [$class, 'validateTransition'],
+      ],
+      '#pre_render' => [
+        [$class, 'preRenderTransition'],
+//        $class, 'preRenderGroup'],
+      ],
 //      '#theme' => 'input__checkbox',
 //      '#theme' => 'input__textfield',
-      '#theme_wrappers' => array('form_element'),
+      '#theme_wrappers' => ['form_element'],
 //      '#title_display' => 'after',
-    );
+    ];
   }
 
   /**
@@ -134,7 +134,7 @@ class WorkflowTransitionElement extends FormElement {
       $current_sid = $from_sid = $transition->getFromSid();
       // The states may not be changed anymore.
       $to_state = $transition->getToState();
-      $options = array($to_state->id() => $to_state->label());
+      $options = [$to_state->id() => $to_state->label()];
       // We need the widget to edit the comment.
       $show_widget = TRUE;
       $default_value = $transition->getToSid();
@@ -178,7 +178,7 @@ class WorkflowTransitionElement extends FormElement {
     }
     else {
       // We are in trouble! A message is already set in workflow_node_current_state().
-      $options = array();
+      $options = [];
       $show_widget = FALSE;
     }
 
@@ -277,10 +277,10 @@ class WorkflowTransitionElement extends FormElement {
     $transition_is_scheduled = $transition->isScheduled();
     // Save the current value of the entity in the form, for later Workflow-module specific references.
     // We add prefix, since #tree == FALSE.
-    $element['workflow_transition'] = array(
+    $element['workflow_transition'] = [
       '#type' => 'value',
       '#value' => $transition,
-    );
+    ];
 
     // Decide if we show a widget or a formatter.
     // There is no need for a widget when the only option is the current sid.
@@ -312,16 +312,16 @@ class WorkflowTransitionElement extends FormElement {
       // TODO: repair the usage of $settings_title_as_name: no container if no details (schedule/comment).
       // Prepare a UI wrapper. This might be a fieldset.
       if ($settings_fieldset == 0) { // Use 'container'.
-        $element += array(
+        $element += [
           '#type' => 'container',
-        );
+        ];
       }
       else {
-        $element += array(
+        $element += [
           '#type' => 'details',
           '#collapsible' => TRUE,
           '#open' => ($settings_fieldset == 2) ? FALSE : TRUE,
-        );
+        ];
       }
 
       // This overrides BaseFieldDefinition. @todo: apply for form and widget.
@@ -330,17 +330,17 @@ class WorkflowTransitionElement extends FormElement {
       // State box. N.B. it is emptyu on Workflow Tab, Node View page.
       $help_text = isset($element['#description']) ? $element['#description'] : '';
       // This overrides BaseFieldDefinition. @todo: apply for form and widget.
-      $element['to_sid'] = array(
+      $element['to_sid'] = [
         '#type' => ($wid) ? $settings_options_type : 'select', // Avoid error with grouped options.
         '#title' => ($settings_title_as_name && !$transition->isExecuted())
-           ? t('Change @name state', array('@name' => $workflow->label()))
+           ? t('Change @name state', ['@name' => $workflow->label()])
            : t('Target state'),
         '#access' => TRUE,
         '#options' => $options,
-        // '#parents' => array('workflow'),
+        // '#parents' => 'workflow'],
         '#default_value' => $default_value,
         '#description' => $help_text,
-      );
+      ];
     }
 
     // Display scheduling form under certain conditions.
@@ -351,70 +351,70 @@ class WorkflowTransitionElement extends FormElement {
       $timestamp = $transition ? $transition->getTimestamp() : REQUEST_TIME;
       $hours = (!$transition_is_scheduled) ? '00:00' : format_date($timestamp, 'custom', 'H:i', $timezone);
       // Add a container, so checkbox and time stay together in extra fields.
-      $element['workflow_scheduling'] = array(
+      $element['workflow_scheduling'] = [
         '#type' => 'container',
         '#tree' => TRUE,
-      );
-      $element['workflow_scheduling']['scheduled'] = array(
+      ];
+      $element['workflow_scheduling']['scheduled'] = [
         '#type' => 'radios',
         '#title' => t('Schedule'),
-        '#options' => array(
+        '#options' => [
           '0' => t('Immediately'),
           '1' => t('Schedule for state change'),
-        ),
+        ],
         '#default_value' => $transition_is_scheduled ? '1' : '0',
-        '#attributes' => array(
+        '#attributes' => [
           // 'id' => 'scheduled_' . $form_id,
-          'class' => array(Html::getClass('scheduled_' .  $form_id)),
-        ),
-      );
-      $element['workflow_scheduling']['date_time'] = array(
+          'class' => [Html::getClass('scheduled_' .  $form_id)],
+        ],
+      ];
+      $element['workflow_scheduling']['date_time'] = [
         '#type' => 'details', // 'container',
         '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
-        '#attributes' => array('class' => array('container-inline')),
+        '#attributes' => ['class' => ['container-inline']],
         '#prefix' => '<div style="margin-left: 1em;">',
         '#suffix' => '</div>',
-        '#states' => array(
-          //'visible' => array(':input[id="' . 'scheduled_' . $form_id . '"]' => array('value' => '1')),
-          'visible' => array('input.' . Html::getClass('scheduled_' .  $form_id) => array('value' => '1')),
-        ),
-      );
-      $element['workflow_scheduling']['date_time']['workflow_scheduled_date'] = array(
+        '#states' => [
+          //'visible' => ':input[id="' . 'scheduled_' . $form_id . '"]' => 'value' => '1']],
+          'visible' => ['input.' . Html::getClass('scheduled_' .  $form_id) => ['value' => '1']],
+        ],
+      ];
+      $element['workflow_scheduling']['date_time']['workflow_scheduled_date'] = [
         '#type' => 'date',
         '#prefix' => t('At'),
-        '#default_value' => implode( '-', array(
+        '#default_value' => implode( '-', [
             'year' => date('Y', $timestamp),
             'month' => date('m', $timestamp),
             'day' => date('d', $timestamp),
-          )
+          ]
         )
-      );
-      $element['workflow_scheduling']['date_time']['workflow_scheduled_hour'] = array(
+      ];
+      $element['workflow_scheduling']['date_time']['workflow_scheduled_hour'] = [
         '#type' => 'textfield',
         '#title' => t('Time'),
         '#maxlength' => 7,
         '#size' => 6,
         '#default_value' => $hours,
-        '#element_validate' => array('_workflow_transition_form_element_validate_time'), // @todo D8-port: this is not called.
-      );
-      $element['workflow_scheduling']['date_time']['workflow_scheduled_timezone'] = array(
+        '#element_validate' => ['_workflow_transition_form_element_validate_time'], // @todo D8-port: this is not called.
+      ];
+      $element['workflow_scheduling']['date_time']['workflow_scheduled_timezone'] = [
         '#type' => $settings_schedule_timezone ? 'select' : 'hidden',
         '#title' => t('Time zone'),
         '#options' => $timezone_options,
-        '#default_value' => array($timezone => $timezone),
-      );
-      $element['workflow_scheduling']['date_time']['workflow_scheduled_help'] = array(
+        '#default_value' => [$timezone => $timezone],
+      ];
+      $element['workflow_scheduling']['date_time']['workflow_scheduled_help'] = [
         '#type' => 'item',
         '#prefix' => '<br />',
         '#description' => t('Please enter a time.
           If no time is included, the default will be midnight on the specified date.
-          The current time is: @time.', array('@time' => format_date(REQUEST_TIME, 'custom', 'H:i', $timezone))
+          The current time is: @time.', ['@time' => format_date(REQUEST_TIME, 'custom', 'H:i', $timezone)]
         ),
-      );
+      ];
     }
 
     // This overrides BaseFieldDefinition. @todo: apply for form and widget.
-    $element['comment'] = array(
+    $element['comment'] = [
       '#type' => 'textarea',
       '#required' => $settings_comment == '2',
       '#access' => $settings_comment !='0', // Align with action buttons.
@@ -422,7 +422,7 @@ class WorkflowTransitionElement extends FormElement {
       '#description' => t('A comment to put in the workflow log.'),
       '#default_value' => $transition ? $transition->getComment() : '',
       '#rows' => 2,
-    );
+    ];
 
     // TODO D8: make transition fieldable.
     // Add the fields from the WorkflowTransition.
@@ -488,7 +488,7 @@ class WorkflowTransitionElement extends FormElement {
     }
     else {
       $entity_id = $transition->getTargetEntityId();
-      drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', array('@id' => $entity_id)), 'error');
+      drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', ['@id' => $entity_id]), 'error');
       // The new state is still the previous state.
       return $transition;
     }
@@ -517,7 +517,7 @@ class WorkflowTransitionElement extends FormElement {
           // content is not associated to a workflow, old_sid is now 0. This may
           // happen in workflow_vbo, if you assign a state to non-relevant nodes.
           $entity_id = entity_id($entity_type, $entity);
-          drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', array('@id' => $entity_id)), 'error');
+          drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', ['@id' => $entity_id]), 'error');
           // The new state is still the previous state.
           $new_sid = $old_sid;
           return $new_sid;
@@ -528,11 +528,11 @@ class WorkflowTransitionElement extends FormElement {
     if ($scheduled) {
       // Fetch the (scheduled) timestamp to change the state.
       // Override $timestamp.
-      $scheduled_date_time = implode(' ', array(
+      $scheduled_date_time = implode(' ', [
         $schedule_values['workflow_scheduled_date'],
         $schedule_values['workflow_scheduled_hour'],
         // $schedule_values['workflow_scheduled_timezone'],
-      ));
+      ]);
       $timezone = $schedule_values['workflow_scheduled_timezone'];
       $old_timezone = date_default_timezone_get();
       date_default_timezone_set($timezone);

@@ -86,7 +86,7 @@ function workflow_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
   }
   else {
     // totest: when does this happen?
-    $default_submit_action = array();
+    $default_submit_action = [];
   }
   if (isset($default_submit_action)) {
     $actions = _workflow_transition_form_get_action_buttons($form, $workflow_element, $default_submit_action);
@@ -103,7 +103,7 @@ function workflow_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
  * @return array
  */
 function _workflow_transition_form_get_first_workflow_element(&$form) {
-  $workflow_element = array();
+  $workflow_element = [];
 
   // Find the first workflow.
   // (So this won't work with multiple workflows per entity.)
@@ -145,22 +145,22 @@ function _workflow_transition_form_get_action_buttons(array $form, array $workfl
     $same_state_button = ($sid == $current_sid);
     $workflow_submit_action = $default_submit_action;
     // Add target State ID and Field name, to set correct value in validate_buttons callback.
-    $workflow_submit_action['#workflow'] = array(
+    $workflow_submit_action['#workflow'] = [
       'field_name' => $field_name,
       'to_sid' => $sid,
-    );
+    ];
     // Keep option order. Put current state first.
     $workflow_submit_action['#weight'] = ($same_state_button) ? $min_weight : ++$option_weight;
     // Add/Overwrite some other settings.
     $workflow_submit_action['#access'] = TRUE;
     $workflow_submit_action['#value'] = $option_name;
-    $workflow_submit_action['#attributes'] = ($same_state_button) ? array('class' => array('form-save-default-button')) : array();
+    $workflow_submit_action['#attributes'] = ($same_state_button) ? ['class' => ['form-save-default-button']] : [];
     //$workflow_submit_action['#executes_submit_callback']  = TRUE;
     // Add class to workflow button.
     $workflow_submit_action['#attributes']['class'][] = Html::getClass('workflow_button_' . $option_name);
     // Append the form's #validate function, or it won't be called upon submit,
     // because the workflow buttons have its own #validate.
-    $workflow_submit_action['#validate'] = array();
+    $workflow_submit_action['#validate'] = [];
     $workflow_submit_action['#validate'][] = '_workflow_transition_form_validate_buttons';
     if (isset($default_submit_action['#validate'])) {
       $workflow_submit_action['#validate'] = $default_submit_action['#validate'];
