@@ -46,7 +46,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
    */
   public function getFormId() {
     return 'workflow_state_form';
-//    return parent::getFormId();
+    //return parent::getFormId();
   }
 
   /**
@@ -68,7 +68,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
     //  $header['label'] = $this->t('Label');
     $header['label_new'] = $this->t('Label');
     $header['id'] = $this->t('ID');
-    $header['sysid'] = $this->t('');
+    $header['sysid'] = '';
     $header['status'] = $this->t('Active');
     $header['reassign'] = $this->t('Reassign');
     $header['count'] = $this->t('Count');
@@ -85,7 +85,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
     if (!$workflow = workflow_ui_url_get_workflow()) {
-      workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+      workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     }
     $wid = $url_wid = $workflow->id();
 
@@ -103,7 +103,8 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
     // Make it impossible to reassign to the same state that is disabled.
     if ($state->isCreationState() || !$sid || !$state->isActive()) {
       $current_state_options = [];
-    } else {
+    }
+    else {
       $current_state = [$sid => $state_options[$sid]];
       $current_state_options = array_diff($state_options, $current_state);
     }
@@ -124,12 +125,12 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
       '#size' => 30,
       '#maxlength' => 255,
       '#default_value' => $label,
-      '#title' => NULL,  // This hides the red 'required' asterisk.
+      '#title' => NULL, // This hides the red 'required' asterisk.
       // '#required' => TRUE,
     ];
     $row['id'] = [
       '#type' => 'machine_name',
-      '#title' => NULL,  // This hides the red 'required' asterisk.
+      '#title' => NULL, // This hides the red 'required' asterisk.
       '#size' => 30,
       '#description' => NULL,
       '#disabled' => TRUE, // !$state->isNew(),
@@ -138,7 +139,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
       '#required' => FALSE,
       // @TODO D8-port: enable machine_name: interactive WorkflowState element.
       '#machine_name' => [
-        'exists' => [$this, 'exists'],  // Local helper function, at the bottom of this class.
+        'exists' => [$this, 'exists'], // Local helper function, at the bottom of this class.
 //        'source' => ['label_new'],
         'source' => ['states', $state->id(), 'label_new'],
 //        'replace_pattern' =>'([^a-z0-9_]+)|(^custom$)',
@@ -277,8 +278,8 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
         // Create the machine_name for new states.
         // N.B.: Keep machine_name in WorkflowState and ~ListBuillder aligned.
         if ($value['label_new'] && !$value['id']) {
-//          $message = 'Machine name is required.';
-//          $form_state->setErrorByName('machine_name', $this->t($message));
+          //$message = 'Machine name is required.';
+          //$form_state->setErrorByName('machine_name', $this->t($message));
         }
 
       }
@@ -331,7 +332,8 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
               $new_sid = NULL; // Do not reassign to new state.
               $message = 'Removing workflow states from content in the %workflow.';
               drupal_set_message($this->t($message, $args));
-            } else {
+            }
+            else {
               // Prepare the state delete function.
               $message = 'Reassigning content from %old_state to %new_state.';
               drupal_set_message($this->t($message, $args));

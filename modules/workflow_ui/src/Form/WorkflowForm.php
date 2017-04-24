@@ -4,6 +4,7 @@ namespace Drupal\workflow_ui\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\workflow\Entity\Workflow;
 
 /**
  * Provides the base form for workflow add and edit forms.
@@ -16,6 +17,7 @@ class WorkflowForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $noyes = [0 => t('No'), 1 => t('Yes')];
     $fieldset_options = [0 => t('No fieldset'), 1 => t('Collapsible fieldset'), 2 => t('Collapsed fieldset')];
+    /* @var $workflow Workflow */
     $workflow = $this->entity;
 
     $form['label'] = [
@@ -27,14 +29,14 @@ class WorkflowForm extends EntityForm {
       '#required' => TRUE,
     ];
 
-     $form['id'] = [
+    $form['id'] = [
       '#type' => 'machine_name',
       '#description' => t('A unique machine-readable name. Can only contain lowercase letters, numbers, and underscores.'),
       '#disabled' => !$this->entity->isNew(),
       '#default_value' => $this->entity->id(),
       '#machine_name' => [
         'exists' => [$this, 'exists'],
-        'replace_pattern' =>'([^a-z0-9_]+)|(^custom$)',
+        'replace_pattern' => '([^a-z0-9_]+)|(^custom$)',
         'error' => $this->t('The machine-readable name must be unique, and can only contain lowercase letters, numbers, and underscores. Additionally, it can not be the reserved word "custom".'),
       ],
     ];
@@ -152,7 +154,7 @@ class WorkflowForm extends EntityForm {
             may be altered by settings in widgets, formatters or permissions.'
       ),
     ];
-    */
+     */
 
     $form['comment']['comment_log_node'] = [
       '#type' => 'select',
@@ -166,9 +168,7 @@ class WorkflowForm extends EntityForm {
       '#attributes' => ['class' => ['container-inline']],
       '#title' => t('Show comment on the Content edit form'),
       '#default_value' => isset($workflow->options['comment_log_node']) ? $workflow->options['comment_log_node'] : 1,
-//      '#description' => t(
-//        'On the node editing form.'
-//      ),
+      //'#description' => t('On the node editing form.'),
     ];
 
     $form['comment']['comment_log_tab'] = [
@@ -183,9 +183,7 @@ class WorkflowForm extends EntityForm {
       '#attributes' => ['class' => ['container-inline']],
       '#title' => t('Show comment on the Workflow history tab of content'),
       '#default_value' => isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1,
-//      '#description' => t(
-//        'On the workflow tab.'
-//      ),
+      //'#description' => t('On the workflow tab.'),
     ];
 
     $form['watchdog'] = [
@@ -199,7 +197,7 @@ class WorkflowForm extends EntityForm {
       '#type' => 'checkbox',
       '#title' => t('Log watchdog messages upon state change'),
       '#default_value' => isset($workflow->options['watchdog_log']) ? $workflow->options['watchdog_log'] : 0,
-      '#description' => t(''),
+      '#description' => '',
     ];
 
     return parent::form($form, $form_state);
@@ -271,7 +269,7 @@ class WorkflowForm extends EntityForm {
       $form_state->setErrorByName('id', t('Please choose a non-numeric name for your workflow.'));
     }
 
-    return parent::validateForm($form, $form_state);
+    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -285,7 +283,8 @@ class WorkflowForm extends EntityForm {
    */
   public function exists($id) {
     $type = $this->entity->getEntityTypeId();
-    return (bool) $this->entityManager->getStorage($type)->load($id);
+
+    return (bool) $this->entityTypeManager->getStorage($type)->load($id);
   }
 
 }

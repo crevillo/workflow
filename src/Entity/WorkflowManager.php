@@ -16,7 +16,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
  * Manages entity type plugin definitions.
- *
  */
 class WorkflowManager implements WorkflowManagerInterface {
   use StringTranslationTrait;
@@ -204,7 +203,7 @@ class WorkflowManager implements WorkflowManagerInterface {
           $new_sid = $workflow->getFirstSid($entity, $field_name, $user);
         }
         $transition = WorkflowTransition::create([$old_sid, 'field_name' => $field_name]);
-        $transition->setValues($new_sid, $user->id(), REQUEST_TIME, $comment, TRUE);
+        $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
       else {
         // Transition already created in widget.
@@ -384,7 +383,7 @@ class WorkflowManager implements WorkflowManagerInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    * @param string $field_name
    *
-   * @return string $sid
+   * @return string
    *   The ID of the creation State for the Workflow of the field.
    */
   private static function getCreationStateId($entity, $field_name) {

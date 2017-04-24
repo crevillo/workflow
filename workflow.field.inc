@@ -59,7 +59,7 @@ function workflow_form_field_config_edit_form_alter(&$form, FormStateInterface $
  *
  * The module reuses the formatters defined in list.module.
  */
-function workflow_field_formatter_info_alter(&$info) {
+function workflow_formatter_info_alter(&$info) {
   $info['list_key']['field_types'][] = 'workflow';
   $info['list_default']['field_types'][] = 'workflow';
 }
@@ -72,7 +72,7 @@ function workflow_field_formatter_info_alter(&$info) {
  *
  * @see workflow_options_list()
  */
-function workflow_field_widget_info_alter(&$info) {
+function workflow_widget_info_alter(&$info) {
   $info['options_select']['field_types'][] = 'workflow';
   $info['options_buttons']['field_types'][] = 'workflow';
 }
@@ -85,8 +85,8 @@ function workflow_field_widget_info_alter(&$info) {
  * deprecated: workflow_options_list --> workflow_state_allowed_values
  */
 function workflow_state_allowed_values(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE, AccountInterface $user = NULL) {
-//function callback_allowed_values_function(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE) {
-// N.B. the parameter $user is added by Workflow module.
+  //function callback_allowed_values_function(FieldStorageDefinitionInterface $definition, FieldableEntityInterface $entity = NULL, &$cacheable = TRUE) {
+  // N.B. the parameter $user is added by Workflow module.
   $allowed_options = [];
 
   $user = workflow_current_user($user); // @todo #2287057: OK?
@@ -94,8 +94,9 @@ function workflow_state_allowed_values(FieldStorageDefinitionInterface $definiti
 
   if ($entity) {
     // Get the allowed new states for the entity's current state.
-    // TODO D8-port: overwrite getValue().
+    // @todo D8-port: overwrite getValue().
     // $sid = $value = $this->getValue();
+    /* @var $state WorkflowState */
     $sid = workflow_node_current_state($entity, $field_name);
     $state = WorkflowState::load($sid);
     $allowed_options = ($state) ? $state->getOptions($entity, $field_name, $user, FALSE) : [];
@@ -118,7 +119,7 @@ function workflow_state_allowed_values(FieldStorageDefinitionInterface $definiti
 /**
  * Creates a form element to show the current value of a Workflow state.
  *
- * @param EntityInterface $entity
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity this field is on.
  * @param string $field_name
  *   The field_name
@@ -147,7 +148,7 @@ function workflow_state_formatter($entity, $field_name, $current_sid = '') {
   // Generate a renderable array for the field. Use default language determination ($langcode = NULL).
   $element = $entity->$field_name->view($list_display);
 
-  // TODO D8: make weight better (even better: hook_field_extra_fields).
+  // @todo D8: make weight better (even better: hook_field_extra_fields).
   // Make sure the current value is before the form. (which has weight = 0.005)
   // $element['#weight'] = 0;
 

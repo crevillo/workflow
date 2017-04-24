@@ -33,9 +33,9 @@ function workflow_access_update_8001(&$sandbox) {
  * Remove table workflow_access. All current settings are lost!
  */
 function workflow_access_update_8002(&$sandbox) {
- // Remove the table. Data is now in config.
- $schema = \Drupal\Core\Database\Database::getConnection()->schema();
- $schema->dropTable('workflow_access');
- // Rebuild data.
- node_access_needs_rebuild(TRUE);
+  // Remove the table. Data is now in config.
+  $schema = \Drupal\Core\Database\Database::getConnection()->schema();
+  $schema->dropTable('workflow_access');
+  // Rebuild data.
+  node_access_needs_rebuild(TRUE);
 }

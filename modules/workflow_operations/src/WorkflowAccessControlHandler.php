@@ -16,8 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @see \Drupal\workflow\Entity\Workflow
  * @ingroup workflow_access
  */
-class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessControlHandler { // EntityAccessControlHandler { // implements EntityHandlerInterface {
-//class WorkflowAccessControlHandler extends EntityAccessControlHandler { // implements EntityHandlerInterface {
+class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessControlHandler {
 
   /**
    * This is a hack.
@@ -26,10 +25,12 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
    */
   public function __construct(EntityTypeInterface $entity_type = NULL) {
     if ($entity_type) {
-      return parent::__construct($entity_type);
+      parent::__construct($entity_type);
     }
-    //$this->entityTypeId = $entity_type->id();
-    $this->entityType = $entity_type;
+    else {
+      //$this->entityTypeId = $entity_type->id();
+      $this->entityType = $entity_type;
+    }
   }
 
   /**
@@ -46,12 +47,11 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
    * - module.routing.yml
    * - hook_entity_operation
    *
-   * @param \Drupal\workflow_operations\WorkflowTransitionInterface|NULL $transition
+   * @param \Drupal\workflow_operations\WorkflowTransitionInterface|null $transition
    *
    * @return \Drupal\Core\Access\AccessResult
    */
   public function revertAccess(WorkflowTransitionInterface $transition = NULL, AccountInterface $account = NULL, $return_as_object = TRUE) {
-//public function access(EntityInterface $entity, $operation, AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($transition) {
       // Called from hook_entity_operation
     }
@@ -80,32 +80,32 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
         /* @var $transition WorkflowTransitionInterface */
         $transition = $entity;
 
-      switch ($operation) {
-        case 'revert':
-          $is_owner = WorkflowManager::isOwner($user, $transition);
-          $type_id = $transition->getWorkflowId();
-          if ($transition->getFromSid() == $transition->getToSid()) {
-            // No access for same state transitions.
-            $result = AccessResult::forbidden();
-          }
-          elseif ($user->hasPermission("revert any $type_id workflow_transition")) {
-            // OK, add operation.
-            $result = AccessResult::allowed();
-          }
-          elseif ($is_owner && $user->hasPermission("revert own $type_id workflow_transition")) {
-            // OK, add operation.
-            $result = AccessResult::allowed();
-          }
-          else {
-            // No access.
-            $result = AccessResult::forbidden();
-          }
-          break;
+        switch ($operation) {
+          case 'revert':
+            $is_owner = WorkflowManager::isOwner($user, $transition);
+            $type_id = $transition->getWorkflowId();
+            if ($transition->getFromSid() == $transition->getToSid()) {
+              // No access for same state transitions.
+              $result = AccessResult::forbidden();
+            }
+            elseif ($user->hasPermission("revert any $type_id workflow_transition")) {
+              // OK, add operation.
+              $result = AccessResult::allowed();
+            }
+            elseif ($is_owner && $user->hasPermission("revert own $type_id workflow_transition")) {
+              // OK, add operation.
+              $result = AccessResult::allowed();
+            }
+            else {
+              // No access.
+              $result = AccessResult::forbidden();
+            }
+            break;
 
-        default:
-          $result = parent::access($entity, $operation, $account, $return_as_object)->cachePerPermissions();
-          break;
-      } // End of switch ($operation).
+          default:
+            $result = parent::access($entity, $operation, $account, $return_as_object)->cachePerPermissions();
+            break;
+        } // End of switch ($operation).
 
         break; // case
 
@@ -120,7 +120,7 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
    * {@inheritdoc}
    */
   public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
-    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     $result = parent::createAccess($entity_bundle, $account, $context, TRUE)->cachePerPermissions();
     return $return_as_object ? $result : $result->isAllowed();
   }
@@ -129,7 +129,7 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $transition, $operation, AccountInterface $account) {
-    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     return parent::checkAccess($transition, $operation, $account);
   }
 
@@ -137,7 +137,7 @@ class WorkflowAccessControlHandler extends \Drupal\workflow\WorkflowAccessContro
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     return AccessResult::allowedIf($account->hasPermission('create ' . $entity_bundle . ' content'))->cachePerPermissions();
   }
 

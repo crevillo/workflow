@@ -32,7 +32,7 @@ entity.workflow_transition.delete_form:
     _entity_access: 'workflow_transition.delete'
 
 ### The Workflow Transition History List (Tab)
-# TODO D8-port: make Workflow History tab happen for every entity_type.
+# @todo D8-port: make Workflow History tab happen for every entity_type.
 # @see workflow.routing.yml, workflow.links.task.yml, WorkflowTransitionListController.
 # A route for showing the Workflow history tab.
 entity.node.workflow_history:

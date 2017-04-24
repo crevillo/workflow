@@ -2,7 +2,6 @@
 
 namespace Drupal\workflow;
 
-use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\workflow\Entity\Workflow;
 
@@ -12,7 +11,6 @@ use Drupal\workflow\Entity\Workflow;
 class WorkflowPermissions {
 
   use StringTranslationTrait;
-  use UrlGeneratorTrait;
 
   /**
    * Returns an array of workflow type permissions.
@@ -33,7 +31,7 @@ class WorkflowPermissions {
   /**
    * Returns a list of workflow permissions for a given workflow type.
    *
-   * @param \Drupal\workflow\Entity\WorkflowType $type
+   * @param \Drupal\workflow\Entity\Workflow $type
    *   The workflow type.
    *
    * @return array

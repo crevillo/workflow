@@ -31,6 +31,9 @@ function workflow_uninstall() {
  * Let admins know that Workflow is in use.
  *
  * @todo: extend workflow_requirements() for use with Workflow Field API.
+ *
+ * @param $phase
+ * @return array
  */
 function workflow_requirements($phase) {
   $requirements = [];
@@ -44,7 +47,7 @@ function workflow_requirements($phase) {
     case 'runtime':
 //      workflow_debug(__FILE__), __FUNCTION__, __LINE__, $form_id);  // @todo D8-port: still test this snippet.
 
-/*
+      /*
       // Show info on admin/reports/status.
       $type_list = 'Not yet determined.';
 
@@ -64,15 +67,15 @@ function workflow_requirements($phase) {
           $type_list = current($types) . ' and ' . $last;
         }
       }
-*/
+       */
 
-/*
-      $requirements['workflow'] = [
+      /*
+      $requirements['workflow'] = array(
         'title' => $t('Workflow'),
-        'value' => $t('Workflow is active on the @types content types.', ['@types' => $type_list]),
+        'value' => $t('Workflow is active on the @types content types.', array('@types' => $type_list)),
         'severity' => REQUIREMENT_OK,
-      ];
-*/
+      );
+       */
       break;
 
   }
@@ -96,12 +99,10 @@ function workflow_schema() {
 
 /**
  * Drupal 8 updates.
- *
  */
 
 /**
  * Update from version beta1 to beta2 are not possible. Please re-install this module.
- *
  */
 function workflow_update_8001(&$sandbox) {
   drupal_set_message("Update from version beta1 to beta2 is not possible. Please re-install this module.");

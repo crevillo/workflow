@@ -10,7 +10,6 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @see \Drupal\workflow\Entity\WorkflowConfigTransition
  */
-//class WorkflowConfigTransitionLabelListBuilder extends ConfigEntityListBuilder implements FormInterface {
 class WorkflowConfigTransitionLabelForm extends WorkflowConfigTransitionFormBase {
 
   /**

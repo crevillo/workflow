@@ -61,14 +61,13 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
    */
   public $label;
 
-// TODO D8-port Workflow: complete below variables. (Add get()-functions).
-// @see https://www.drupal.org/node/1809494
-// @see https://codedrop.com.au/blog/creating-custom-config-entities-drupal-8
+  // TODO D8-port Workflow: complete below variables. (Add get()-functions).
+  // @see https://www.drupal.org/node/1809494
+  // @see https://codedrop.com.au/blog/creating-custom-config-entities-drupal-8
   public $options = [];
 
   /**
    * The workflow-specific creation state.
-   *
    */
   private $creation_state;
   private $creation_sid = 0;
@@ -143,8 +142,6 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
    * Given a wid, delete the workflow and its data.
    */
   public function delete() {
-    $wid = $this->id();
-
     if (!$this->isDeletable()) {
       // @todo: throw error if not workflow->isDeletable().
     }
@@ -239,7 +236,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     if (!$state || $wid != $state->getWorkflowId()) {
       $state = WorkflowState::create($values = ['id' => $sid, 'wid' => $wid]);
       if ($save) {
-        $status = $state->save();
+        $state->save();
       }
     }
 

@@ -14,7 +14,7 @@ use Drupal\workflow_operations\WorkflowAccessControlHandler;
  * @todo: Add support for every entity_type in Revert rules.
  */
 function workflow_operations_rules_event_info() {
-  workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+  workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
   $events = [
     'workflow_state_reverted' => [
       'group' => t('Workflow'),
@@ -29,9 +29,9 @@ function workflow_operations_rules_event_info() {
  * Core hooks: Change the operations column in a Entity list.
  * Add a 'revert' operation.
  *
- * @see EntityListBuilder::getOperations().
+ * @see EntityListBuilder::getOperations()
  *
- * @param \Drupal\Core\Entity\EntityInterface[] $entities
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  *
  * @return array
  */

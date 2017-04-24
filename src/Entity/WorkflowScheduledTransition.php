@@ -59,8 +59,8 @@ class WorkflowScheduledTransition extends WorkflowTransition {
   /**
    * {@inheritdoc}
    */
-  public function setValues($to_sid, $uid = NULL, $scheduled = REQUEST_TIME, $comment = '') {
-    parent::setValues($to_sid, $uid, $scheduled, $comment);
+  public function setValues($to_sid, $uid = NULL, $scheduled = NULL, $comment = '', $force_create = FALSE) {
+    parent::setValues($to_sid, $uid, $scheduled, $comment, $force_create);
   }
 
   /**
@@ -98,7 +98,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
       $field_name = $this->getFieldName();
       $executed_transition = WorkflowTransition::create([$current_sid, 'field_name' => $field_name]);
       $executed_transition->setTargetEntity($this->getTargetEntity());
-      $executed_transition->setValues($this->getToSid(), $this->getOwnerId(), REQUEST_TIME, $this->getComment());
+      $executed_transition->setValues($this->getToSid(), $this->getOwnerId(), \Drupal::time()->getRequestTime(), $this->getComment());
       return $executed_transition->save();  // <-- exit !!
     }
 
@@ -169,11 +169,11 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    * @param int $start
    * @param int $end
    *
-   * @return WorkflowScheduledTransition[] $transitions
+   * @return WorkflowScheduledTransition[]
    *   An array of transitions.
    */
   public static function loadBetween($start = 0, $end = 0) {
-    $transition_type = 'workflow_scheduled_transition'; // TODO get this from annotation.
+    $transition_type = 'workflow_scheduled_transition'; // @todo: get this from annotation.
 
     /* @var $query \Drupal\Core\Entity\Query\QueryInterface */
     $query = \Drupal::entityQuery($transition_type)
@@ -227,15 +227,15 @@ class WorkflowScheduledTransition extends WorkflowTransition {
       ->setDescription(t('The date+time this transition is scheduled for.'))
       ->setQueryable(FALSE)
 //      ->setTranslatable(TRUE)
-//      ->setDisplayOptions('view', [
+//      ->setDisplayOptions('view', array(
 //        'label' => 'hidden',
 //        'type' => 'timestamp',
 //        'weight' => 0,
-//      ])
-//      ->setDisplayOptions('form', [
+//      ))
+//      ->setDisplayOptions('form', array(
 //        'type' => 'datetime_timestamp',
 //        'weight' => 10,
-//      ])
+//      ))
 //      ->setDisplayConfigurable('form', TRUE);
       ->setRevisionable(TRUE);
 

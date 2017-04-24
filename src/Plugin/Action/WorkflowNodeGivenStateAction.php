@@ -39,31 +39,33 @@ class WorkflowNodeGivenStateAction extends WorkflowStateActionBase {
    * {@inheritdoc}
    */
   public function execute($object = NULL) {
-// D7: As advanced action with Trigger 'node':
-// - $entity is empty;
-// - $context['group'] = 'node'
-// - $context['hook'] = 'node_insert / _update / _delete'
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = NULL
-
-// D7: As advanced action with Trigger 'taxonomy':
-// - $entity is (Object) stdClass;
-// - $context['type'] = 'entity'
-// - $context['group'] = 'taxonomy'
-// - $context['hook'] = 'taxonomy_term_insert / _update / _delete'
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = NULL
-
-// D7: As advanced action with Trigger 'workflow API':
-// ...
-
-// D7: As VBO action:
-// - $entity is (Object) stdClass;
-// - $context['type'] = NULL
-// - $context['group'] = NULL
-// - $context['hook'] = NULL
-// - $context['node'] = (Object) stdClass
-// - $context['entity_type'] = 'node'
+    /*
+     * D7: As advanced action with Trigger 'node':
+     * - $entity is empty;
+     * - $context['group'] = 'node'
+     * - $context['hook'] = 'node_insert / _update / _delete'
+     * - $context['node'] = (Object) stdClass
+     * - $context['entity_type'] = NULL
+     *
+     * D7: As advanced action with Trigger 'taxonomy':
+     * - $entity is (Object) stdClass;
+     * - $context['type'] = 'entity'
+     * - $context['group'] = 'taxonomy'
+     * - $context['hook'] = 'taxonomy_term_insert / _update / _delete'
+     * - $context['node'] = (Object) stdClass
+     * - $context['entity_type'] = NULL
+     *
+     * D7: As advanced action with Trigger 'workflow API':
+     * ...
+     *
+     * D7: As VBO action:
+     * - $entity is (Object) stdClass;
+     * - $context['type'] = NULL
+     * - $context['group'] = NULL
+     * - $context['hook'] = NULL
+     * - $context['node'] = (Object) stdClass
+     * - $context['entity_type'] = 'node'
+     */
 
     if (!$transition = $this->getTransitionForExecution($object)) {
       drupal_set_message('The entity is not valid for this action.');

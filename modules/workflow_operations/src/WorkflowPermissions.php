@@ -16,18 +16,17 @@ class WorkflowPermissions extends \Drupal\workflow\WorkflowPermissions {
    *   The workflow type permissions.
    *   @see \Drupal\user\PermissionHandlerInterface::getPermissions()
    */
-//  public function workflowTypePermissions() {
-//    return parent::workflowTypePermissions();
-//  }
+  //public function workflowTypePermissions() {
+  //  return parent::workflowTypePermissions();
+  //}
 
   /**
    * Returns a list of workflow permissions for a given workflow type.
    *
-   * @param \Drupal\workflow\Entity\WorkflowType $type
+   * @param Workflow|\Drupal\workflow\Entity\Workflow $type
    *   The workflow type.
-   *
-   * @return array
-   *   An associative array of permission names and descriptions.
+   * @return array An associative array of permission names and descriptions.
+   * An associative array of permission names and descriptions.
    */
   protected function buildPermissions(Workflow $type) {
     $type_id = $type->id();
@@ -46,13 +45,15 @@ class WorkflowPermissions extends \Drupal\workflow\WorkflowPermissions {
         'description' => t('Edit the comment of any executed state transitions.'),
         'restrict access' => TRUE,
       ],
+      /*
       // Workflow has no 'delete' permissions.
-//      "delete own $type_id workflow_transition" => [
-//        'title' => $this->t('%type_name: Delete own content', $type_params),
-//      ],
-//      "delete any $type_id workflow_transition" => [
-//        'title' => $this->t('%type_name: Delete any content', $type_params),
-//      ],
+      "delete own $type_id workflow_transition" => [
+        'title' => $this->t('%type_name: Delete own content', $type_params),
+      ],
+      "delete any $type_id workflow_transition" => [
+        'title' => $this->t('%type_name: Delete any content', $type_params),
+      ],
+       */
       // D7->D8-Conversion of 'revert workflow' permission to "revert any/own $type_id transition"
       "revert own $type_id workflow_transition" => [
         'title' => $this->t('%type_name: Revert own state transition', $type_params),

@@ -47,7 +47,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
       'label_new' => t('State'),
       'view' => t('Roles who can view posts in this state'),
       'update' => t('Roles who can edit posts in this state'),
-      'delete' => t('Roles who can delete posts in this state '),
+      'delete' => t('Roles who can delete posts in this state'),
     ];
     return $header;
   }
@@ -60,6 +60,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
 
     $workflow = $this->workflow;
     if ($workflow) {
+      /* @var $state WorkflowState */
       $state = $entity;
       $sid = $state->id();
 
@@ -86,7 +87,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
       if (!$count) {
         $view = [
           AccountInterface::ANONYMOUS_ROLE => AccountInterface::ANONYMOUS_ROLE,
-          AccountInterface::AUTHENTICATED_ROLE =>AccountInterface::AUTHENTICATED_ROLE,
+          AccountInterface::AUTHENTICATED_ROLE => AccountInterface::AUTHENTICATED_ROLE,
         ];
       }
 
@@ -114,11 +115,11 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
   }
 
   /**
-   * Stores permission settings for workflow states.
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     foreach ($form_state->getValue($this->entitiesKey) as $sid => $access) {
-      // @todo: not waterproof; can be done smarter, using elementchildren()..
+      // @todo: not waterproof; can be done smarter, using elementchildren().
       if (!WorkflowState::load($sid)) {
         continue;
       }
@@ -136,7 +137,7 @@ class WorkflowAccessRoleForm extends WorkflowConfigTransitionFormBase {
       node_access_needs_rebuild(TRUE);
     }
 
-    drupal_set_message($this->t('The access settings have been saved.'));
+    parent::submitForm($form, $form_state);
   }
 
 }

@@ -4,6 +4,7 @@ namespace Drupal\workflow_ui\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\workflow\Entity\WorkflowState;
 
 /**
  * Defines a class to build a draggable listing of Workflow Config Transitions entities.
@@ -77,6 +78,8 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
     $states = $workflow->getStates($all = 'CREATION');
 
     if ($states) {
+      /* @var $from_state WorkflowState */
+      /* @var $to_state WorkflowState */
       switch ($entity_type) {
         case 'workflow_state':
           foreach ($states as $from_state) {
@@ -95,10 +98,10 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
               if ($to_state->isCreationState()) {
                 continue;
               }
-//          // Only  allow transitions from $from_state.
-//          if ($state->id() <> $from_state->id()) {
-//            continue;
-//          }
+//            // Only allow transitions from $from_state.
+//            if ($state->id() <> $from_state->id()) {
+//              continue;
+//            }
 
               // Load existing config_transitions. Create if not found.
               $config_transitions = $workflow->getTransitionsByStateId($from_sid, $to_sid);
@@ -146,7 +149,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
       '#type' => 'table',
       '#header' => $this->buildHeader(),
       '#empty' => t('There is no @label yet.', ['@label' => 'Transition']),
-      '#tabledrag' => [['action' => 'order', 'relationship' => 'sibling', 'group' => 'weight',],],
+      '#tabledrag' => [['action' => 'order', 'relationship' => 'sibling', 'group' => 'weight', ], ],
     ];
 
     $this->entities = $this->load();

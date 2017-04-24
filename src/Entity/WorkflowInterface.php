@@ -36,7 +36,7 @@ interface WorkflowInterface {
   /**
    * Returns if the Workflow may be deleted.
    *
-   * @return bool $is_deletable
+   * @return bool
    *   TRUE if a Workflow may safely be deleted.
    */
   public function isDeletable();
@@ -44,8 +44,7 @@ interface WorkflowInterface {
   /**
    * Create a new state for this workflow.
    *
-   * @param string $name
-   *   The untranslated human readable label of the state.
+   * @param string $sid
    * @param bool $save
    *   Indicator if the new state must be saved. Normally, the new State is
    *   saved directly in the database. This is because you can use States only
@@ -72,13 +71,13 @@ interface WorkflowInterface {
    * Uses WorkflowState::getOptions(), because this does an access check.
    * The first State ID is user-dependent!
    *
-   * @param EntityInterface|NULL $entity
+   * @param EntityInterface|null $entity
    *   The entity at hand. May be NULL (E.g., on a Field settings page).
    * @param $field_name
    * @param AccountInterface $user
    * @param bool $force
    *
-   * @return $sid
+   * @return string
    *   A State ID.
    */
   public function getFirstSid(EntityInterface $entity, $field_name, AccountInterface $user, $force = FALSE);
@@ -93,7 +92,7 @@ interface WorkflowInterface {
    * @param AccountInterface $user
    * @param bool $force
    *
-   * @return $sid
+   * @return string
    *   A State ID.
    */
   public function getNextSid(EntityInterface $entity, $field_name, AccountInterface $user, $force = FALSE);
@@ -106,6 +105,7 @@ interface WorkflowInterface {
    *   - TRUE = all, including Creation and Inactive;
    *   - FALSE = only Active states, not Creation;
    *   - 'CREATION' = only Active states, including Creation.
+   * @param bool $reset
    *
    * @return WorkflowState[]
    *   An array of WorkflowState objects.
@@ -115,8 +115,8 @@ interface WorkflowInterface {
   /**
    * Gets a state for a given workflow.
    *
-   * @param mixed $key
-   *   A state ID or state Name.
+   * @param string $sid
+   *   A state ID.
    *
    * @return WorkflowState
    *   A WorkflowState object.
@@ -144,7 +144,7 @@ interface WorkflowInterface {
   /**
    * Loads all allowed ConfigTransitions for this workflow.
    *
-   * @param array|NULL $ids
+   * @param array|null $ids
    *   Array of Transitions IDs. If NULL, show all transitions.
    * @param array $conditions
    *   $conditions['from_sid'] : if provided, a 'from' State ID.
@@ -157,7 +157,6 @@ interface WorkflowInterface {
   public function getTransitionsById($tid);
 
   /**
-   *
    * Get a specific transition.
    *
    * @param string $from_sid

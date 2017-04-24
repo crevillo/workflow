@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\workflow\Entity\WorkflowManager;
-use Drupal\workflow\Entity\WorkflowTransitionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -38,11 +37,11 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
     $account = $this->prepareUser($account);
     // $account = workflow_current_user($account);
 
-    /* @var $transition WorkflowTransitionInterface */
+    /* @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
     $transition = $entity;
 
     // This is only for Edit/Delete transition. For Add/create, use createAccess.
-    switch($entity->getEntityTypeId()) {
+    switch ($entity->getEntityTypeId()) {
       case 'workflow_transition':
       case 'workflow_scheduled_transition':
 
@@ -60,7 +59,6 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
               $result = AccessResult::allowed()->cachePerPermissions();
             }
             return $return_as_object ? $result : $result->isAllowed();
-            break;
 
           case 'delete':
             // The delete operation is not defined for Transitions.
@@ -81,10 +79,11 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
         break;
 
       case 'workflow_config_transition':
-        workflow_debug( __FILE__ , __FUNCTION__, __LINE__, $account->id(), $transition->getOwnerId());  // @todo D8-port: still test this snippet.
+        workflow_debug(__FILE__, __FUNCTION__, __LINE__, $account->id(), $transition->getOwnerId()); // @todo D8-port: still test this snippet.
         break;
     }
 
+    /* @var $result \Drupal\Core\Access\AccessResult */
     $result = parent::access($entity, $operation, $account, TRUE)->cachePerPermissions();
     return $return_as_object ? $result : $result->isAllowed();
   }
@@ -93,7 +92,8 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
    * {@inheritdoc}
    */
   public function createAccess($entity_bundle = NULL, AccountInterface $account = NULL, array $context = [], $return_as_object = FALSE) {
-    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
+    /* @var $result \Drupal\Core\Access\AccessResult */
     $result = parent::createAccess($entity_bundle, $account, $context, TRUE)->cachePerPermissions();
     return $return_as_object ? $result : $result->isAllowed();
   }
@@ -109,7 +109,7 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     return AccessResult::allowedIf($account->hasPermission('create ' . $entity_bundle . ' content'))->cachePerPermissions();
   }
 

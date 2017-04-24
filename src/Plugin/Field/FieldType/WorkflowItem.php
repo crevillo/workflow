@@ -11,7 +11,6 @@ use Drupal\Core\Url;
 use Drupal\options\Plugin\Field\FieldType\ListItemBase;
 use Drupal\workflow\Entity\Workflow;
 use Drupal\workflow\Entity\WorkflowState;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Plugin implementation of the 'workflow' field type.
@@ -29,9 +28,9 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  * )
  */
 class WorkflowItem extends ListItemBase {
-//class WorkflowItem extends FieldItemBase  implements OptionsProviderInterface {
-// TODO D8-port: perhaps even:
-//class WorkflowItem extends FieldStringItem {
+  //class WorkflowItem extends FieldItemBase implements OptionsProviderInterface {
+  // @todo D8-port: perhaps even:
+  //class WorkflowItem extends FieldStringItem {
 
   /**
    * {@inheritdoc}
@@ -76,14 +75,13 @@ class WorkflowItem extends ListItemBase {
     if (!isset($propertyDefinitions[$key])) {
 
       $propertyDefinitions[$key]['value'] = DataDefinition::create('string') // TODO D8-port : or 'any'
-      ->setLabel(t('Workflow state'))
+        ->setLabel(t('Workflow state'))
         ->addConstraint('Length', ['max' => 128])
         ->setRequired(TRUE);
 
-//      workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
-/*
- *
-       //    TODO D8-port: test this.
+      //workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+      /*
+      // @todo D8-port: test this.
       $propertyDefinitions[$key]['workflow_transition'] = DataDefinition::create('any')
         //    $properties['workflow_transition'] = DataDefinition::create('WorkflowTransition')
         ->setLabel(t('Transition'))
@@ -92,23 +90,24 @@ class WorkflowItem extends ListItemBase {
         ->setClass('\Drupal\workflow\Entity\WorkflowTransition')
         ->setSetting('date source', 'value');
 
-      $propertyDefinitions[$key]['display'] = [
+      $propertyDefinitions[$key]['display'] = array(
         'type' => 'boolean',
         'label' => t('Flag to control whether this file should be displayed when viewing content.'),
-      ];
-      $propertyDefinitions[$key]['description'] = [
+      );
+      $propertyDefinitions[$key]['description'] = array(
         'type' => 'string',
         'label' => t('A description of the file.'),
-      ];
-      $propertyDefinitions[$key]['display'] = [
+      );
+
+      $propertyDefinitions[$key]['display'] = array(
         'type' => 'boolean',
         'label' => t('Flag to control whether this file should be displayed when viewing content.'),
-      ];
-      $propertyDefinitions[$key]['description'] = [
+      );
+      $propertyDefinitions[$key]['description'] = array(
         'type' => 'string',
         'label' => t('A description of the file.'),
-      ];
-*/
+      );
+       */
     }
     return $propertyDefinitions[$key];
   }
@@ -126,13 +125,13 @@ class WorkflowItem extends ListItemBase {
    * {@inheritdoc}
    */
   public function onChange($property_name, $notify = TRUE) {
-//    workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
+    //workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
 
     // TODO D8: use this function onChange for adding a line in table workfow_transition_*
-//    // Enforce that the computed date is recalculated.
-//    if ($property_name == 'value') {
-//      $this->date = NULL;
-//    }
+    // Enforce that the computed date is recalculated.
+    //if ($property_name == 'value') {
+    //  $this->date = NULL;
+    //}
     parent::onChange($property_name, $notify);
   }
 
@@ -143,23 +142,23 @@ class WorkflowItem extends ListItemBase {
 
     return [
       'workflow_type' => '',
-//      'allowed_values' => [],
+      //'allowed_values' => [],
       'allowed_values_function' => 'workflow_state_allowed_values',
 
-// TODO D8-port: below settings may be (re)moved.
+      // @todo D8-port: below settings may be (re)moved.
       /*
-            'widget' => [
-              'options' => 'select',
-              'name_as_title' => 1,
-              'fieldset' => 0,
-              'hide' => 0,
-              'schedule' => 1,
-              'schedule_timezone' => 1,
-              'comment' => 1,
-            ],
-            'watchdog_log' => 1,
-      */
-      ] + parent::defaultStorageSettings();
+      'widget' => array(
+        'options' => 'select',
+        'name_as_title' => 1,
+        'fieldset' => 0,
+        'hide' => 0,
+        'schedule' => 1,
+        'schedule_timezone' => 1,
+        'comment' => 1,
+      ),
+      'watchdog_log' => 1,
+       */
+    ] + parent::defaultStorageSettings();
   }
 
   /**
@@ -176,14 +175,14 @@ class WorkflowItem extends ListItemBase {
     // Set message, if no 'validated' workflows exist.
     if (count($workflows) == 1) {
       drupal_set_message(
-        t('You must create at least one workflow before content can be
+        $this->t('You must create at least one workflow before content can be
           assigned to a workflow.'), 'warning'
       );
     }
 
     // Validate via annotation WorkflowFieldConstraint. Show a message for each error.
     $violation_list = $this->validate();
-    foreach ($violation_list->getIterator() as $violation){
+    foreach ($violation_list->getIterator() as $violation) {
       switch ($violation->getPropertyPath()) {
         case 'fieldnameOnComment':
           // A 'comment' field name MUST be equal to content field name.
@@ -203,7 +202,7 @@ class WorkflowItem extends ListItemBase {
     if (!$this->getSetting('workflow_type') && $field_storage->getTargetEntityTypeId() == 'comment') {
       $field_name = $field_storage->get('field_name');
       $workflows = [];
-      foreach(_workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name) as $key => $info) {
+      foreach (_workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name) as $key => $info) {
         if ($info->getName() == $field_name && ($info->getTargetEntityTypeId() !== 'comment')) {
           $wid = $info->getSetting('workflow_type');
           $workflow = Workflow::load($wid);
@@ -222,7 +221,7 @@ class WorkflowItem extends ListItemBase {
       '#default_value' => $wid,
       '#required' => TRUE,
       '#disabled' => $has_data,
-      '#description' => t('Choose the Workflow type. Maintain workflows
+      '#description' => $this->t('Choose the Workflow type. Maintain workflows
          <a href=":url">here</a>.', [':url' => $url->toString()]),
     ];
 
@@ -262,7 +261,7 @@ class WorkflowItem extends ListItemBase {
     return '';
   }
 
-  /*
+  /**
    * Generates a string representation of an array of 'allowed values'.
    *
    * This string format is suitable for edition in a textarea.
@@ -270,8 +269,6 @@ class WorkflowItem extends ListItemBase {
    * @param WorkflowState[] $states
    *   An array of WorkflowStates, where array keys are values and array values are
    *   labels.
-   * @param $wid
-   *   A Workflow ID.
    *
    * @return string
    *   The string representation of the $states array:
@@ -293,7 +290,7 @@ class WorkflowItem extends ListItemBase {
           $previous_wid = $state->getWorkflowId();
           $lines[] = $state->getWorkflow()->label() . "'s states: ";
         }
-        $label = t('@label', ['@label' => $state->label()]);
+        $label = $this->t('@label', ['@label' => $state->label()]);
 
         $lines[] = "   $key|$label";
       }

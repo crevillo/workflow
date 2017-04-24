@@ -42,7 +42,7 @@ interface WorkflowManagerInterface {
    * @param bool $force
    *   If set to TRUE, workflow permissions will be ignored.
    *
-   * @return string $to_sid
+   * @return string
    *   The resulting WorkflowState id.
    */
   public static function executeTransition(WorkflowTransitionInterface $transition, $force = FALSE);
@@ -68,8 +68,7 @@ interface WorkflowManagerInterface {
    * To keep things simple, this is done for both insert() and update().
    *
    * This is referenced in from WorkfowDefaultWidget::massageFormValues().
-   *
-   * @param \Drupal\workflow\Entity\Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    */
   public static function executeTransitionsOfEntity(EntityInterface $entity);
 
@@ -83,6 +82,8 @@ interface WorkflowManagerInterface {
    * Implements hook_WORKFLOW_insert().
    *
    * Make sure some roles are allowed to participate in a Workflow by default.
+   *
+   * @param Workflow $workflow
    */
   public static function participateUserRoles(Workflow $workflow);
 
@@ -131,7 +132,7 @@ interface WorkflowManagerInterface {
    *
    * @see \Drupal\Core\Entity\EntityManagerInterface::getFieldMap()
    */
-//  public function getFields($entity_type_id);
+  //public function getFields($entity_type_id);
 
   /**
    * Returns the attached fields (via Field UI)
@@ -149,7 +150,7 @@ interface WorkflowManagerInterface {
    * There is no need to use a page cache.
    * The performance is OK, and the cache gives problems when using Rules.
    *
-   * @param EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The entity to check. May be an EntityDrupalWrapper.
    * @param string $field_name
    *   The name of the field of the entity to check.
@@ -157,7 +158,7 @@ interface WorkflowManagerInterface {
    *   since it makes having multiple workflow per entity unpredictable.
    *   The found field_name will be returned in the param.
    *
-   * @return string $sid
+   * @return string
    *   The ID of the current state.
    */
   public static function getCurrentStateId(EntityInterface $entity, $field_name = '');
@@ -165,10 +166,10 @@ interface WorkflowManagerInterface {
   /**
    * Gets the previous state ID of a given entity.
    *
-   * @param EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    * @param string $field_name
    *
-   * @return string $sid
+   * @return string
    *   The ID of the previous state.
    */
   public static function getPreviousStateId(EntityInterface $entity, $field_name = '');
@@ -183,4 +184,4 @@ interface WorkflowManagerInterface {
    */
   public static function isOwner(AccountInterface $account, EntityInterface $entity = NULL);
 
-  }
+}

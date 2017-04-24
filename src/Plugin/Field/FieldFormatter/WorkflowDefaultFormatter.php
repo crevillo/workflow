@@ -37,7 +37,7 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
    */
   public static function defaultSettings() {
     return [
-      ] + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -248,4 +248,5 @@ class WorkflowDefaultFormatter extends FormatterBase implements ContainerFactory
   protected function workflowManager() {
     return \Drupal::service('workflow.manager');
   }
+
 }

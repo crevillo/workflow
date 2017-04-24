@@ -43,7 +43,7 @@ use Drupal\user\UserInterface;
  *   },
  * )
  */
-class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfigTransitionInterface{
+class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfigTransitionInterface {
 
   // Transition data.
   public $id;
@@ -57,7 +57,7 @@ class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfi
   // when exporting with json_encode().
   protected $workflow = NULL;
 
-  /**
+  /*
    * Entity class functions.
    */
 
@@ -88,6 +88,9 @@ class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfi
 //    return $transitions;
 //  }
 
+  /**
+   * {@inheritdoc}
+   */
   public function save() {
     $workflow = $this->getWorkflow();
 
@@ -155,13 +158,7 @@ class WorkflowConfigTransition extends ConfigEntityBase implements WorkflowConfi
    */
 
   /**
-   * Returns the Workflow object of this State.
-   *
-   * @param Workflow $workflow
-   *   An optional workflow object. Can be used as a setter.
-   *
-   * @return Workflow
-   *   Workflow object.
+   * {@inheritdoc}
    */
   public function getWorkflow() {
     if (!$this->workflow && $wid = $this->getWorkflowId()) {

@@ -63,10 +63,14 @@ function workflow_ui_help($route_name, RouteMatchInterface $route_match) {
         the workflow, it could say "move to the editing department for grammar
         review".');
   }
+  return [];
 }
 
 /**
  * Helper function to determine Workflow from Workflow UI URL.
+ *
+ * @param string $url
+ * @return Workflow
  */
 function workflow_ui_url_get_workflow($url = '' ) {
   /* @var $workflows \Drupal\workflow\Entity\Workflow[] */
@@ -93,6 +97,8 @@ function workflow_ui_url_get_workflow($url = '' ) {
  * Helper function to determine the title of the page.
  *
  * Used in file workflow_ui.routing.yml.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup
  */
 function workflow_ui_url_get_title() {
   $label = '';
@@ -109,6 +115,9 @@ function workflow_ui_url_get_title() {
 
 /**
  * Helper function to determine Workflow from Workflow UI URL.
+ *
+ * @param string $url
+ * @return mixed
  */
 function workflow_ui_url_get_form_type($url = '' ) {
   // For some reason, $_SERVER is not alowed as default.

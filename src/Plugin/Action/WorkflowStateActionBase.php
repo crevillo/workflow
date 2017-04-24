@@ -11,10 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\workflow\Element\WorkflowTransitionElement;
 use Drupal\workflow\Entity\Workflow;
 use Drupal\workflow\Entity\WorkflowTransition;
-use Drupal\workflow\Entity\WorkflowTransitionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Sets an entity to a new, given state.
@@ -57,7 +54,8 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
   }
 
   /**
-   * @return WorkflowTransitionInterface
+   * @param EntityInterface $entity
+   * @return \Drupal\workflow\Entity\WorkflowTransitionInterface
    */
   protected function getTransitionForExecution(EntityInterface $entity) {
     $user = workflow_current_user();
@@ -75,7 +73,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     }
 
     // In 'after saving new content', the node is already saved. Avoid second insert.
-    // Todo: clone?
+    // @todo: clone?
     $entity->enforceIsNew(FALSE);
 
     $config = $this->configuration;
@@ -93,13 +91,13 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       '%title' => $entity->label(),
       // "@" and "%" will automatically run check_plain().
       '%state' => workflow_get_sid_name($to_sid),
-      '%user' => $user->getUsername(),
+      '%user' => $user->getDisplayName(),
     ]);
     $force = $this->configuration['force'];
 
     $transition = WorkflowTransition::create([$current_sid, 'field_name' => $field_name]);
     $transition->setTargetEntity($entity);
-    $transition->setValues($to_sid, $user->id(), REQUEST_TIME, $comment);
+    $transition->setValues($to_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment);
     $transition->force($force);
 
     return $transition;
@@ -141,7 +139,8 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     $workflow = $wid ? Workflow::load($wid) : Workflow::create(['id' => 'dummy_action', 'label' => 'dummy_action']);
     $current_state = $workflow->getCreationState();
 
-    /* // @TODO D8-port for VBO
+    /*
+    // @todo D8-port for VBO
     // Show the current state and the Workflow form to allow state changing.
     // N.B. This part is replicated in hook_node_view, workflow_tab_page, workflow_vbo.
     if ($workflow) {
@@ -173,13 +172,13 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       $entity_id,
       $field_id
     ]);
-*/
+     */
     $to_sid = $config['to_sid'];
     $user = workflow_current_user();
     $comment = $config['comment'];
     $force = $config['force'];
     $transition = WorkflowTransition::create([$current_state, 'field_name' => $field_name]);
-    $transition->setValues($to_sid, $user->id(), REQUEST_TIME, $comment, TRUE);
+    $transition->setValues($to_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
 
     // Add the WorkflowTransitionForm to the page.
 
@@ -190,7 +189,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Remove the transition: generates an error upon saving the action definition.
     unset($form['workflow_transition']);
 
-    // Todo D8: add the entity form.
+    // @todo D8: add the entity form.
     //$form = \Drupal::getContainer()->get('entity.form_builder')->getForm($transition, 'add');
     // Remove the action button. The Entity itself has one.
     //unset($element['actions']);
@@ -203,7 +202,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Override the options widget.
     $form['to_sid']['#description'] = t('Please select the state that should be assigned when this action runs.');
 
-    // Add Field_name. @todo?? Add 'field_name' to WorkflowTransitionElement?
+    // Add Field_name. @todo: Add 'field_name' to WorkflowTransitionElement?
     $form['field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('Field name'),
@@ -213,7 +212,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       '#required' => TRUE,
       '#weight' => -20,
     ];
-    // Add Force. @todo?? Add 'force' to WorkflowTransitionElement?
+    // Add Force. @todo: Add 'force' to WorkflowTransitionElement?
     $form['force'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Force transition'),

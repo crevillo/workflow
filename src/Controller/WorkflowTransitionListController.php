@@ -60,11 +60,10 @@ class WorkflowTransitionListController extends EntityListController implements C
    * Generates an overview table of older revisions of a node,
    * but only if this::historyAccess() allows it.
    *
-   * @param \Drupal\node\NodeInterface $node
+   * @param EntityInterface $node
    *   A node object.
-   *
-   * @return array
-   *   An array as expected by drupal_render().
+   * @return array An array as expected by drupal_render().
+   * An array as expected by drupal_render().
    */
   public function historyOverview(EntityInterface $node = NULL) {
     $form = [];
@@ -73,7 +72,7 @@ class WorkflowTransitionListController extends EntityListController implements C
      * Get data from parameters.
      */
 
-    // TODO D8-port: make Workflow History tab happen for every entity_type.
+    // @todo D8-port: make Workflow History tab happen for every entity_type.
     // For workflow_tab_page with multiple workflows, use a separate view. See [#2217291].
     // @see workflow.routing.yml, workflow.links.task.yml, WorkflowTransitionListController.
     //    workflow_debug(__FILE__, __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
@@ -108,7 +107,7 @@ class WorkflowTransitionListController extends EntityListController implements C
      */
     $entity_type = 'workflow_transition';
     // $form = $this->listing('workflow_transition');
-    $list_builder = $this->entityManager()->getListBuilder($entity_type);
+    $list_builder = $this->entityTypeManager()->getListBuilder($entity_type);
     // Add the Node explicitly, since $list_builder expects a Transition.
     $list_builder->workflow_entity = $entity;
 
@@ -134,18 +133,17 @@ class WorkflowTransitionListController extends EntityListController implements C
    * @todo D8: remove this in favour of View 'Workflow history per entity'.
    * @todo D8-port: make this workf for non-Node entity types.
    *
-   * @param \Drupal\workflow\Controller\AccountInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
    *
    * @return \Drupal\Core\Access\AccessResult
    */
-
   public function historyAccess(AccountInterface $account) {
     static $access = [];
 
     $uid = ($account) ? $account->id() : -1;
 
-    // TODO D8-port: make Workflow History tab happen for every entity_type.
+    // @todo D8-port: make Workflow History tab happen for every entity_type.
     // @see workflow.routing.yml, workflow.links.task.yml, WorkflowTransitionListController.
     // ATM it only works for Nodes and Terms.
     // This is a hack. The Route should always pass an object.
@@ -184,7 +182,7 @@ class WorkflowTransitionListController extends EntityListController implements C
        * Determine if user has Access. Fill the cache.
        */
       // @todo: what to do with multiple workflow_fields per bundle? Use Views instead! Or introduce a setting.
-      // @TODO D8-port: workflow_tab_access: use proper 'WORKFLOW_TYPE' permissions
+      // @todo D8-port: workflow_tab_access: use proper 'WORKFLOW_TYPE' permissions
       foreach ($fields as $definition) {
         $type_id = $definition->getSetting('workflow_type');
         if ($account->hasPermission("access any $type_id workflow_transion overview")) {

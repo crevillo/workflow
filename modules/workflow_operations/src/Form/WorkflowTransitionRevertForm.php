@@ -5,6 +5,7 @@ namespace Drupal\workflow_operations\Form;
 use Drupal\Core\Entity\EntityConfirmFormBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element\Url;
 use Drupal\workflow\Entity\WorkflowTransition;
 use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
@@ -17,6 +18,9 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
     return 'workflow_transition_revert_confirm';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getQuestion() {
     /* @var $transition WorkflowTransitionInterface */
     $transition = $this->entity;
@@ -32,8 +36,10 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
     else {
       \Drupal::logger('workflow_revert')->error('Invalid state', []);
       drupal_set_message(t('Invalid transition. Your information has been recorded.'), 'error');
-//      drupal_goto($return_uri);
+      //drupal_goto($return_uri);
     }
+
+    return [];
   }
 
   public function getCancelUrl() {
@@ -52,9 +58,9 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-//  public function getDescription() {
-//    return '';
-//  }
+  //public function getDescription() {
+  //  return '';
+  //}
 
   /**
    * The fact that we need to overwrite this function, is an indicator that
@@ -67,11 +73,14 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
     return $this->entity;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, \Drupal\Core\Form\FormStateInterface $form_state) {
 
     // If Rules is available, signal the reversion.
     // @todo: move this Rules_invoke_event to hook outside this module.
-    if(\Drupal::moduleHandler()->moduleExists('rules')) {
+    if (\Drupal::moduleHandler()->moduleExists('rules')) {
       rules_invoke_event('workflow_state_reverted', $this->entity);
     }
 
@@ -116,7 +125,7 @@ class WorkflowTransitionRevertForm extends EntityConfirmFormBase {
 
     $transition = WorkflowTransition::create([$current_sid, 'field_name' => $field_name]);
     $transition->setTargetEntity($entity);
-    $transition->setValues($previous_sid, $user->id(), REQUEST_TIME, $comment);
+    $transition->setValues($previous_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment);
 
     return $transition;
   }

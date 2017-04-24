@@ -5,9 +5,11 @@
  * Provides node access permissions based on workflow states.
  */
 
+use Drupal\Core\Config\Config;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\Entity\Role;
 use Drupal\workflow\Entity\WorkflowTransition;
 use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
@@ -25,7 +27,7 @@ function workflow_access_help($route_name, RouteMatchInterface $route_match) {
         workflows to per entity type, Workflow Access supports only one
         workflow per entity type."
       );
-      $output .="<br>";
+      $output .= "<br>";
       $output .= t("WARNING: Use of the 'Edit any', 'Edit own', and even 'View
         published content' permissions for the content type may override these
         access settings. You may disable those permissions or
@@ -36,14 +38,14 @@ function workflow_access_help($route_name, RouteMatchInterface $route_match) {
         $output .= '<br>';
         $output .= t('WARNING: Organic Groups (OG) is present and may interfere
           with these settings.');
-//        $output .= ' ';
-//        $url = \Drupal\Core\Url::fromUri('admin/config/group/settings'); // @todo D8: FIXME when OG module is ported.
-//        $output .= t("In particular, if <a href=':url'>Strict node access
-//          permissions</a> is enabled, since this may override Workflow access
-//          settings.", [':url' => $url]);
+        //$output .= ' ';
+        //$url = \Drupal\Core\Url::fromUri('admin/config/group/settings'); // @todo D8: FIXME when OG module is ported.
+        //$output .= t("In particular, if <a href=':url'>Strict node access
+        //  permissions</a> is enabled, since this may override Workflow access
+        //  settings.", [':url' => $url]);
         $output .= t("In particular, if <i>Strict node access
-          permissions</i> is enabled, since this may override Workflow access
-          settings.");
+            permissions</i> is enabled, since this may override Workflow access
+            settings.");
       }
       break;
 
@@ -73,9 +75,14 @@ function workflow_access_workflow_operations($op, EntityInterface $entity = NULL
  * The problem is that node_access table uses Int, whereas the Role Id is string.
  */
 function workflow_access_entity_insert(EntityInterface $entity) {
-  return workflow_access_entity_update($entity);
+  workflow_access_entity_update($entity);
 }
 
+/**
+ * Implements hook_access_entity_update().
+ *
+ * @param EntityInterface $entity
+ */
 function workflow_access_entity_update(EntityInterface $entity) {
   if ($entity instanceof \Drupal\user\RoleInterface) {
     // Attend user to Rebuild data, because the weight of a role
@@ -111,18 +118,19 @@ function workflow_access_node_grants(AccountInterface $account, $op) {
  */
 function workflow_access_get_role_gid($rid) {
   // @todo D8: compare with content_access module.
-//  $config = \Drupal::configFactory()->getEditable('content_access.settings');
-//  $roles_gids = $config->get('content_access_roles_gids');
-//  return $roles_gids[$role];
+  //  $config = \Drupal::configFactory()->getEditable('content_access.settings');
+  //  $roles_gids = $config->get('content_access_roles_gids');
+  //  return $roles_gids[$role];
+
+  /* @var $role Role */
   $role = \Drupal\user\Entity\Role::load($rid);
-  $weight = 100;
-  // Avoid negative values.
+  $weight = 100; // Avoid negative values.
   if ($role) {
-    $weight = 100 + $role->getWeight();
+    $weight += $role->getWeight();
   }
   else {
     // For Author, no role exists.
-    $weight = 100 - 20;
+    $weight -= 20;
   }
 
   return $weight;
@@ -164,7 +172,7 @@ function workflow_access_node_access_records(\Drupal\node\NodeInterface $node) {
         /* @var $transition WorkflowTransitionInterface */
         $transition = WorkflowTransition::create([$old_sid, 'field_name' => $field_name]);
         $transition->setTargetEntity($node);
-        $transition->setValues($new_sid, $node->getOwnerId(), REQUEST_TIME, '');
+        $transition->setValues($new_sid, $node->getOwnerId(), \Drupal::time()->getRequestTime(), '');
 
         // Store the transition, so it can be easily fetched later on.
         // Store in an array, to prepare for multiple workflow_fields per entity.
@@ -184,7 +192,7 @@ function workflow_access_node_access_records(\Drupal\node\NodeInterface $node) {
   $count = 0;
   foreach ($node->workflow_transitions as $transition) {
     // @todo: add support for +1 workflows per entity.
-    if ($count++ == 1 ) {
+    if ($count++ == 1) {
       continue;
     }
 
@@ -250,7 +258,7 @@ function workflow_access_node_access_explain($row) {
  */
 function workflow_access_get_workflow_access_by_sid($sid) {
   $result = \Drupal::config('workflow_access.role')->get($sid);
-  if($result == NULL) {
+  if ($result == NULL) {
     // Avoid errors in calling function when no data available.
     $result = [];
   }
@@ -269,7 +277,7 @@ function workflow_access_delete_workflow_access_by_sid($sid) {
 /**
  * Given data, insert into workflow access - we never update.
  */
-function workflow_access_insert_workflow_access_by_sid($sid, &$data, \Drupal\Core\Config\Config $config = NULL) {
+function workflow_access_insert_workflow_access_by_sid($sid, &$data, Config $config = NULL) {
   $config = \Drupal::configFactory()->getEditable('workflow_access.role');
   $config
     ->set($sid, $data)

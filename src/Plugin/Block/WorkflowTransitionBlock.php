@@ -11,7 +11,7 @@ use Drupal\workflow\Entity\WorkflowTransition;
  * Provides a 'Workflow Transition form' block.
  * Credits to workflow_extensions module.
  *
- * @TODO D8-port: add cache options in configuration.
+ * @todo D8-port: add cache options in configuration.
  *    'cache' => DRUPAL_NO_CACHE, // DRUPAL_CACHE_PER_ROLE will be assumed.
  *
  * @Block(
@@ -20,13 +20,13 @@ use Drupal\workflow\Entity\WorkflowTransition;
  *   category = @Translation("Forms")
  * )
  */
-class WorkflowTransitionBlock extends BlockBase  {
+class WorkflowTransitionBlock extends BlockBase {
 
   /**
    * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
-    /* @var $entity EntityInterface */
+    /* @var $entity \Drupal\Core\Entity\EntityInterface */
     if (!$entity = workflow_url_get_entity()) {
       return AccessResult::forbidden();
     }
@@ -54,7 +54,7 @@ class WorkflowTransitionBlock extends BlockBase  {
     $form = [];
 
     // Get the entity for this form.
-    /* @var $entity EntityInterface */
+    /* @var $entity \Drupal\Core\Entity\EntityInterface */
     if (!$entity = workflow_url_get_entity()) {
       return $form;
     }
@@ -85,4 +85,5 @@ class WorkflowTransitionBlock extends BlockBase  {
   protected function entityFormBuilder() {
     return \Drupal::getContainer()->get('entity.form_builder');
   }
+
 }

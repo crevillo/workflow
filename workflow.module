@@ -22,8 +22,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\workflow\Entity\Workflow;
-use Drupal\workflow\Entity\WorkflowState;
 use Drupal\workflow\Entity\WorkflowScheduledTransition;
+use Drupal\workflow\Entity\WorkflowState;
 use Drupal\workflow\Entity\WorkflowTransition;
 use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
@@ -66,7 +66,8 @@ function workflow_hook_info() {
 /**
  * Implements hook_entity_type_build().
  *
- * @see https://www.drupal.org/node/2196275 "hook_entity_info() renamed to hook_entity_type_build()"
+ * @see https://www.drupal.org/node/2196275
+ * "hook_entity_info() renamed to hook_entity_type_build()"
  */
 function TODOworkflow_entity_type_build(array &$entity_types) {
   workflow_debug(__FILE__, __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
@@ -150,9 +151,11 @@ function workflow_entity_delete(EntityInterface $entity) {
     $entity_type = $field_config->get('entity_type');
     $field_name = $field_config->get('field_name');
     foreach (WorkflowScheduledTransition::loadMultipleByProperties($entity_type, [], [], $field_name) as $scheduled_transition) {
+      /* @var $scheduled_transition WorkflowTransitionInterface */
       $scheduled_transition->delete();
     }
     foreach (WorkflowTransition::loadMultipleByProperties($entity_type, [], [], $field_name) as $transition) {
+      /* @var $transition WorkflowTransitionInterface */
       $transition->delete();
     }
   }
@@ -170,9 +173,11 @@ function workflow_entity_delete(EntityInterface $entity) {
       $entity_id = $entity->id();
       $field_name = $field_storage->get('field_name');
       foreach (WorkflowScheduledTransition::loadMultipleByProperties($entity_type, [$entity_id], [], $field_name) as $scheduled_transition) {
+        /* @var $scheduled_transition WorkflowTransitionInterface */
         $scheduled_transition->delete();
       }
       foreach (WorkflowTransition::loadMultipleByProperties($entity_type, [$entity_id], [], $field_name) as $transition) {
+        /* @var $transition WorkflowTransitionInterface */
         $transition->delete();
       }
     }
@@ -185,7 +190,7 @@ function workflow_entity_delete(EntityInterface $entity) {
  * Given a timeframe, execute all scheduled transitions.
  */
 function workflow_cron() {
-  \Drupal::service('workflow.manager')->executeScheduledTransitionsBetween(0, REQUEST_TIME);
+  \Drupal::service('workflow.manager')->executeScheduledTransitionsBetween(0, \Drupal::time()->getRequestTime());
 }
 
 /**
@@ -193,6 +198,10 @@ function workflow_cron() {
  */
 
 /**
+ * @param WorkflowTransitionInterface $transition
+ * @param bool $force
+ * @return
+ *
  * @deprecated D8: @see WorkflowManager::executeTransition().
  */
 function workflow_execute_transition(WorkflowTransitionInterface $transition, $force = FALSE) {
@@ -266,7 +275,7 @@ function workflow_get_user_role_names($permission) {
  * @param bool $all
  *   Indicates to return all (TRUE) or active (FALSE) states of a workflow.
  *
- * @return array $options
+ * @return array
  *   An array of $sid => state->label(), grouped per Workflow.
  */
 function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = FALSE) {
@@ -279,6 +288,8 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
   foreach ($workflows = Workflow::loadMultiple($wid ? [$wid] : NULL) as $workflow) {
     $workflow_options = [];
 
+    /* @var $workflow Workflow */
+    /* @var $state WorkflowState */
     $state = WorkflowState::create(['wid' => $workflow->id()]);
     $workflow_options = $state->getOptions(NULL, '', $user, FALSE);
     if (!$grouped) {
@@ -299,7 +310,7 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
  *
  * @param bool $required
  *   Indicates if the resulting list contains a options value.
- * @return array $options
+ * @return array
  *   An array of $wid => workflow->label().
  */
 function workflow_get_workflow_names($required = TRUE) {
@@ -308,7 +319,8 @@ function workflow_get_workflow_names($required = TRUE) {
   if (!$required) {
     $options[''] = t('- Select a value -');
   }
-  foreach (Workflow::LoadMultiple() as $wid => $workflow) {
+  foreach (Workflow::loadMultiple() as $wid => $workflow) {
+    /* @var $workflow Workflow */
     if ($workflow->isValid()) {
       $options[$wid] = $workflow->label();
     }
@@ -319,6 +331,12 @@ function workflow_get_workflow_names($required = TRUE) {
 
 /**
  * Gets an Options list of field names.
+ *
+ * @param null $entity
+ * @param string $entity_type
+ * @param string $entity_bundle
+ * @param string $field_name
+ * @return array
  */
 function workflow_get_workflow_field_names($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name = '') {
   $result = [];
@@ -363,7 +381,7 @@ function workflow_get_sid_name($sid) {
  *
  * @return string
  */
-function workflow_get_field_name(EntityInterface $entity, $field_name = '') {
+function workflow_get_field_name(\Drupal\Core\Entity\EntityInterface $entity, $field_name = '') {
   if (!$entity) {
     // $entity may be empty on Entity Add page.
     $field_name = '';
@@ -383,7 +401,7 @@ function workflow_get_field_name(EntityInterface $entity, $field_name = '') {
  *
  * This is a hack. It should be solved by using $routematch.
  *
- * @param \Drupal\Core\Entity\EntityInterface|NULL $entity
+ * @param \Drupal\Core\Entity\EntityInterface|null $entity
  *
  * @return \Drupal\Core\Entity\EntityInterface
  */
@@ -402,7 +420,7 @@ function workflow_url_get_entity(EntityInterface $entity = NULL) {
     }
 
     // It was not a Node, try a Term.
-    if(!$entity) {
+    if (!$entity) {
       // On term pages, we get objects, or id's.
       $entity = $route_match->getParameter('taxonomy_term');
       if ($entity && is_object($entity)) {
@@ -440,6 +458,8 @@ function workflow_url_get_field_name() {
 /**
  * Helper function to get the entity from a route.
  *
+ * @param EntityInterface $entity
+ * @return mixed|string
  */
 function workflow_url_get_operation(EntityInterface $entity = NULL) {
   $url = \Drupal\Core\Url::fromRoute('<current>');
@@ -461,7 +481,7 @@ function workflow_url_get_operation(EntityInterface $entity = NULL) {
  * Wrapper function to get a UserInterface object.
  * We use UserInterface to check permissions.
  *
- * @param \Drupal\Core\Session\AccountInterface|NULL $account
+ * @param \Drupal\Core\Session\AccountInterface|null $account
  *
  * @return \Drupal\user\UserInterface
  */
@@ -480,7 +500,7 @@ function workflow_current_user(\Drupal\Core\Session\AccountInterface $account = 
  *
  * @deprecated : use \Drupal::service('workflow.manager')->getCurrentStateId()
  */
-function workflow_node_current_state(EntityInterface $entity, $field_name = '') {
+function workflow_node_current_state(\Drupal\Core\Entity\EntityInterface $entity, $field_name = '') {
   return \Drupal::service('workflow.manager')->getCurrentStateId($entity, $field_name);
 }
 
@@ -548,7 +568,7 @@ function workflow_get_workflows_by_type($entity_bundle, $entity_type) {
  * @param string $field_name
  *   Field name. Optional.
  *
- * @return Drupal\field\Entity\FieldStorageConfig[] $field_info
+ * @return Drupal\field\Entity\FieldStorageConfig[]
  *   An array of FieldStorageConfig objects.
  */
 function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name = '') {
@@ -566,7 +586,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
   $field_list = Drupal::entityManager()->getFieldMapByFieldType('workflow');
   foreach ($field_list as $e_type => $data) {
     if (!$entity_type || ($entity_type == $e_type)) {
-      foreach ($data as $f_name => $data) {
+      foreach ($data as $f_name => $value) {
         if (!$entity_bundle || isset($data['bundles'][$entity_bundle])) {
           if (!$field_name || ($field_name == $f_name)) {
             // Do not use the field_name as ID, but the unique <entity_type>.<field_name>
@@ -583,7 +603,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
 
 /**
  * Helper function for D8-port: Get some info on screen.
- * @see workflow_devel module
+ * @see workflow_devel-module
  *
  * Usage:
  *   workflow_debug( __FILE__, __FUNCTION__, __LINE__, '', '');  // @todo D8-port: still test this snippet.
@@ -593,7 +613,6 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
  * @param string $line
  * @param string $value1
  * @param string $value2
- *
  */
 function workflow_debug($class_name, $function_name, $line = '', $value1 = '', $value2 = '') {
   $debug_switch = FALSE;
@@ -603,7 +622,7 @@ function workflow_debug($class_name, $function_name, $line = '', $value1 = '', $
     return;
   }
 
-  $class_name_elements = explode( "\\" , $class_name);
+  $class_name_elements = explode( "\\", $class_name);
   $output = 'Testing... function ' . end($class_name_elements) . '::' . $function_name . '/' . $line;
   if ($value1) {
     $output .= ' = ' . $value1;

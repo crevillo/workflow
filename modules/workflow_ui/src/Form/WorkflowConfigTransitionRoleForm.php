@@ -5,6 +5,7 @@ namespace Drupal\workflow_ui\Form;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\workflow\Entity\WorkflowConfigTransition;
+use Drupal\workflow\Entity\WorkflowState;
 
 /**
  * Defines a class to build a listing of Workflow Config Transitions entities.
@@ -34,6 +35,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
     if ($states) {
       $header['label_new'] = t('From \ To');
 
+      /* @var $state WorkflowState */
       foreach ($states as $state) {
         // Don't allow transition TO (creation).
         if (!$state->isCreationState()) {
@@ -70,6 +72,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
       $from_state = $entity;
       $from_sid = $from_state->id();
 
+      /* @var $states WorkflowState[] */
       $states = $workflow->getStates($all = 'CREATION');
       if ($states) {
         // Only get the roles with proper permission + Author role.
@@ -78,12 +81,14 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
         // Prepare default value for 'stay_on_this_state'.
         $allow_all_roles = []; // array_combine (array_keys($roles) , array_keys($roles));
 
+        /* @var $state WorkflowState */
         foreach ($states as $state) {
           $row['to'] = [
             '#type' => 'value',
             '#markup' => t('@label', ['@label' => $from_state->label()]),
           ];
 
+          /* @var $to_state WorkflowState */
           foreach ($states as $to_state) {
             // Don't allow transition TO (creation).
             if ($to_state->isCreationState()) {
@@ -102,7 +107,7 @@ class WorkflowConfigTransitionRoleForm extends WorkflowConfigTransitionFormBase 
               $config_transition = $workflow->createTransition($from_sid, $to_sid);
             }
 
-            $row[$to_sid]['workflow_config_transition'] = ['#type' => 'value', '#value' => $config_transition,];
+            $row[$to_sid]['workflow_config_transition'] = ['#type' => 'value', '#value' => $config_transition, ];
             $row[$to_sid]['roles'] = [
               '#type' => $stay_on_this_state ? 'checkboxes' : 'checkboxes',
               '#options' => $stay_on_this_state ? [] : $roles,

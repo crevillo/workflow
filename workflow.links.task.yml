@@ -2,7 +2,7 @@
 #  class: \Drupal\Core\Menu\LocalTaskDefault
 #  deriver: \Drupal\workflow\Plugin\Derivative\WorkflowLocalTask
 
-# TODO D8-port: make Workflow History tab happen for every entity_type.
+# @todo D8-port: make Workflow History tab happen for every entity_type.
 # @see workflow.routing.yml, workflow.links.task.yml, WorkflowTransitionListController.
 entity.node.workflow_history:
   route_name: entity.node.workflow_history

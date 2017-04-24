@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Contains helper functions for WorkflowTransitionForm.
@@ -33,6 +34,8 @@ function _workflow_use_action_buttons($new_value = NULL) {
 }
 
 /**
+ * Implements hook_form_alter().
+ *
  * Form builder. Move action buttons next to the 'Save'/'Delete' buttons.
  *
  * This is only used if the set the 'options widget' to 'action buttons'.
@@ -85,7 +88,7 @@ function workflow_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
     unset($form['actions']['save']);
   }
   else {
-    // totest: when does this happen?
+    // @todo test: when does this happen?
     $default_submit_action = [];
   }
   if (isset($default_submit_action)) {
@@ -129,6 +132,7 @@ function _workflow_transition_form_get_first_workflow_element(&$form) {
  * @return array $actions
  */
 function _workflow_transition_form_get_action_buttons(array $form, array $workflow_element, array $default_submit_action) {
+  $actions = [];
   $current_sid = $workflow_element['to_sid']['#default_value'];
   /* @var $transition WorkflowTransitionInterface */
   $transition = $workflow_element['workflow_transition']['#value'];
@@ -209,7 +213,7 @@ function _workflow_transition_form_get_action_buttons(array $form, array $workfl
  *   A $field_name => $to_sid array.
  */
 function _workflow_transition_form_get_triggering_button(\Drupal\Core\Form\FormStateInterface $form_state) {
-  $result = ['field_name' =>  '', 'to_sid' =>''];
+  $result = ['field_name' => '', 'to_sid' => ''];
 
   $triggering_element = $form_state->getTriggeringElement();
   if (isset($triggering_element['#workflow'])) {
@@ -224,6 +228,9 @@ function _workflow_transition_form_get_triggering_button(\Drupal\Core\Form\FormS
  * Submit callback function for the Workflow Form / DefaultWidget.
  *
  * Validate form data for 'time' element.
+ * @param $element
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form
  */
 function _workflow_transition_form_element_validate_time($element, \Drupal\Core\Form\FormStateInterface &$form_state, $form) {
   if (!strtotime($element['#value'])) {
