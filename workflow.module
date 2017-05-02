@@ -587,7 +587,7 @@ function _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle
   foreach ($field_list as $e_type => $data) {
     if (!$entity_type || ($entity_type == $e_type)) {
       foreach ($data as $f_name => $value) {
-        if (!$entity_bundle || isset($data['bundles'][$entity_bundle])) {
+        if (!$entity_bundle || isset($value['bundles'][$entity_bundle])) {
           if (!$field_name || ($field_name == $f_name)) {
             // Do not use the field_name as ID, but the unique <entity_type>.<field_name>
             // since you cannot share the same field on multiple entity_types (unlike D7).
