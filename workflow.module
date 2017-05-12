@@ -224,13 +224,6 @@ function workflow_execute_transition(WorkflowTransitionInterface $transition, $f
  */
 
 /**
- * @deprecated D8: workflow_get_roles --> workflow_get_user_role_names
- */
-function workflow_get_roles($permission) {
-  return [];
-}
-
-/**
  * Retrieves the names of roles matching specified conditions.
  *
  * deprecated D8: workflow_get_roles --> workflow_get_user_role_names
@@ -280,6 +273,8 @@ function workflow_get_user_role_names($permission) {
  */
 function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = FALSE) {
   $options = [];
+
+  // @todo: implement $add parameter.
 
   // Get the (user-dependent) options.
   // Since this function is only used in UI, it is save to use the global $user.
