@@ -285,12 +285,15 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
   // Since this function is only used in UI, it is save to use the global $user.
   $user = workflow_current_user();
 
-  foreach ($workflows = Workflow::loadMultiple($wid ? [$wid] : NULL) as $workflow) {
-    $workflow_options = [];
+  /* @var $workflows Workflow[] */
+  $workflows = Workflow::loadMultiple($wid ? [$wid] : NULL);
+  // Do not group if only 1 Workflow is configured or selected.
+  $grouped = count($workflows) == 1 ? FALSE : $grouped;
 
-    /* @var $workflow Workflow */
+  foreach ($workflows as $wid => $workflow) {
+    $workflow_options = [];
     /* @var $state WorkflowState */
-    $state = WorkflowState::create(['wid' => $workflow->id()]);
+    $state = WorkflowState::create(['wid' => $wid]);
     $workflow_options = $state->getOptions(NULL, '', $user, FALSE);
     if (!$grouped) {
       $options += $workflow_options;
