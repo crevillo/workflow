@@ -69,7 +69,7 @@ function workflow_hook_info() {
  * @see https://www.drupal.org/node/2196275
  * "hook_entity_info() renamed to hook_entity_type_build()"
  */
-function TODOworkflow_entity_type_build(array &$entity_types) {
+function TODO_workflow_entity_type_build(array &$entity_types) {
   workflow_debug(__FILE__, __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
 
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
@@ -187,7 +187,7 @@ function workflow_entity_delete(EntityInterface $entity) {
 /**
  * Implements hook_cron().
  *
- * Given a timeframe, execute all scheduled transitions.
+ * Given a time frame, execute all scheduled transitions.
  */
 function workflow_cron() {
   \Drupal::service('workflow.manager')->executeScheduledTransitionsBetween(0, \Drupal::time()->getRequestTime());
@@ -286,7 +286,6 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
   $grouped = count($workflows) == 1 ? FALSE : $grouped;
 
   foreach ($workflows as $wid => $workflow) {
-    $workflow_options = [];
     /* @var $state WorkflowState */
     $state = WorkflowState::create(['wid' => $wid]);
     $workflow_options = $state->getOptions(NULL, '', $user, FALSE);
@@ -359,6 +358,7 @@ function workflow_get_sid_name($sid) {
   if (empty($sid)) {
     $label = 'No state';
   }
+  /** @noinspection PhpAssignmentInConditionInspection */
   elseif ($state = WorkflowState::load($sid)) {
     $label = $state->label();
   }
