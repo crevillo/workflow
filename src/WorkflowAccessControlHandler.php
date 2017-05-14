@@ -69,7 +69,7 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
             // @see workflow_operations.
           default:
             $type_id = $transition->getWorkflowId();
-            $result = parent::access($entity, $account, $return_as_object);
+            $result = parent::access($entity, $operation, $account, $return_as_object);
             //if ($account->hasPermission("bypass $type_id workflow_transition access")) {
             //  $result = AccessResult::allowed()->cachePerPermissions();
             //}
