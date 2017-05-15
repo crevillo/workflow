@@ -7,7 +7,7 @@ use Drupal\views\EntityViewsData;
 /**
  * Provides the views data for the workflow entity type.
  */
-class WorkflowScheduledTransitionViewsData extends EntityViewsData {
+class WorkflowScheduledTransitionViewsData extends WorkflowTransitionViewsData {
 
   /**
    * {@inheritdoc}
