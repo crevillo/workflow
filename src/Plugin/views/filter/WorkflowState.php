@@ -24,6 +24,8 @@ class WorkflowState extends ManyToOne {
    */
   public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
     parent::init($view, $display, $options);
-    $this->valueOptions = workflow_get_workflow_state_names($this->definition['wid'], $options['group_info']['widget'] == 'select');
+    $wid = isset($this->definition['wid']) ? $this->definition['wid'] : '';
+    $grouped = $options['group_info']['widget'] == 'select';
+    $this->valueOptions = workflow_get_workflow_state_names($wid, $grouped);
   }
 }
