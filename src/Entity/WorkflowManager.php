@@ -392,14 +392,16 @@ class WorkflowManager implements WorkflowManagerInterface {
     $field_config = $entity->get($field_name)->getFieldDefinition();
     $field_storage = $field_config->getFieldStorageDefinition();
     $wid = $field_storage->getSetting('workflow_type');
-    $workflow = Workflow::load($wid);
+    if ($wid) {
+      $workflow = Workflow::load($wid);
+      if (!$workflow) {
+        drupal_set_message(t('Workflow %wid cannot be loaded. Contact your system administrator.', ['%wid' => $wid]), 'error');
+      }
+      else {
+        $sid = $workflow->getCreationSid();
+      }
+    }
 
-    if ($workflow) {
-      $sid = $workflow->getCreationSid();
-    }
-    else {
-      drupal_set_message(t('Workflow !wid cannot be loaded. Contact your system administrator.', ['!wid' => $wid]), 'error');
-    }
     return $sid;
   }
 
