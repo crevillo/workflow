@@ -198,6 +198,10 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
     $wid = $workflow->getWorkflowId();
 
     $form = parent::buildForm($form, $form_state);
+    // Add a sticky header.
+    $form[$this->entitiesKey] += [
+      '#sticky' => TRUE,
+    ];
 
     // Build select options for reassigning states.
     // We put a blank state first for validation.

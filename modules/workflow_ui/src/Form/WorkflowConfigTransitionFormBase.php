@@ -148,6 +148,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
     $form[$this->entitiesKey] = [
       '#type' => 'table',
       '#header' => $this->buildHeader(),
+      '#sticky' => TRUE,
       '#empty' => t('There is no @label yet.', ['@label' => 'Transition']),
       '#tabledrag' => [['action' => 'order', 'relationship' => 'sibling', 'group' => 'weight', ], ],
     ];
