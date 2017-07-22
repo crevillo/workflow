@@ -70,13 +70,18 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    *   Drupal\Component\Plugin\Exception\PluginNotFoundException: The "entity:workflow_scheduled_transition:eerste" plugin does not exist. in Drupal\Core\Plugin\DefaultPluginManager->doGetDefinition() (line 60 of core\lib\Drupal\Component\Plugin\Discovery\DiscoveryTrait.php).
    */
   function validate() {
-    // return parent::validate();
+    // Since this function generates an error in one use case (using WorkflowTransitionForm)
+    // and is not called in the onther use case (using the Workflow Widget),
+    // this function is disabled for now.
+    // @todo: this function is only called in the WorkflowTransitionForm, not in the Widget.
+    // @todo: repair https://www.drupal.org/node/2896650
+
+    // The following is from return parent::validate();
     $this->validated = TRUE;
-    // $constraints = $this->getTypedData()->getConstraints();
-    // $violations = $this->getTypedData()->validate();
-    $violations = NULL; // new \Traversable();
+    //$violations = $this->getTypedData()->validate();
     // return new EntityConstraintViolationList($this, iterator_to_array($violations));
-    return new EntityConstraintViolationList($this, iterator_to_array($violations));
+    $violations = [];
+    return new EntityConstraintViolationList($this, $violations);
   }
 
   /**
@@ -93,7 +98,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
     // If executed, save in history.
     if ($this->is_executed) {
       // Be careful, we are not a WorkflowScheduleTransition anymore!
-      // No fuzzling around, just copy the ScheduledTransition to a normal one.
+      // No fuzzing around, just copy the ScheduledTransition to a normal one.
       $current_sid = $this->getFromSid();
       $field_name = $this->getFieldName();
       $executed_transition = WorkflowTransition::create([$current_sid, 'field_name' => $field_name]);
