@@ -23,6 +23,11 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *   handlers = {
  *     "access" = "Drupal\workflow\WorkflowAccessControlHandler",
  *     "list_builder" = "Drupal\workflow\WorkflowTransitionListBuilder",
+ *     "form" = {
+ *        "add" = "Drupal\workflow\Form\WorkflowTransitionForm",
+ *        "edit" = "Drupal\workflow\Form\WorkflowTransitionForm",
+ *        "delete" = "Drupal\Core\Entity\EntityDeleteForm",
+ *      },
  *     "views_data" = "Drupal\workflow\WorkflowScheduledTransitionViewsData",
  *   },
  *   base_table = "workflow_transition_schedule",

@@ -42,8 +42,31 @@ class WorkflowAccessControlHandler extends EntityAccessControlHandler implements
 
     // This is only for Edit/Delete transition. For Add/create, use createAccess.
     switch ($entity->getEntityTypeId()) {
-      case 'workflow_transition':
       case 'workflow_scheduled_transition':
+        switch ($operation) {
+          case 'update':
+            // This operation is not defined for Scheduled Transitions.
+            $result = AccessResult::forbidden();
+            break;
+
+          case 'delete':
+            // This operation is not defined for Scheduled Transitions.
+            $result = AccessResult::forbidden();
+            break;
+
+          case 'revert':
+            // This operation is not defined for Scheduled Transitions.
+            $result = AccessResult::forbidden();
+            break;
+
+          default:
+            $result = parent::access($entity, $operation, $account, $return_as_object);
+            break;
+        } // End of switch ($operation).
+
+        break;
+
+      case 'workflow_transition':
 
         switch ($operation) {
           case 'update':

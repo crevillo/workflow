@@ -616,9 +616,10 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public function post_execute($force = FALSE) {
-    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
+    // @todo D8-port: This function post_execute() is not yet used.
+    workflow_debug(__FILE__, __FUNCTION__, __LINE__); // @todo D8-port: Test this snippet.
 
-    $state_changed = ($from_sid != $to_sid);
+    $state_changed = ($this->getFromSid() != $this->getToSid());
     if ($state_changed || $this->getComment()) {
       $user = $this->getOwner();
       \Drupal::moduleHandler()->invokeAll('workflow', ['transition post', $this, $user]);
