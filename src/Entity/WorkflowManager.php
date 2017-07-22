@@ -130,6 +130,7 @@ class WorkflowManager implements WorkflowManagerInterface {
     foreach (WorkflowScheduledTransition::loadBetween($start, $end) as $scheduled_transition) {
       $field_name = $scheduled_transition->getFieldName();
       $entity = $scheduled_transition->getTargetEntity();
+      $from_sid = $scheduled_transition->getFromSid();
 
       // Make sure transition is still valid: the entity must still be in
       // the state it was in, when the transition was scheduled.
@@ -138,7 +139,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       if ($entity && ($entity->getEntityTypeId() !== 'comment')) {
         $current_sid = workflow_node_current_state($entity, $field_name);
       }
-      if ($current_sid && ($current_sid == $scheduled_transition->getFromSid())) {
+      if ($current_sid && ($current_sid == $from_sid)) {
 
         // If user didn't give a comment, create one.
         $comment = $scheduled_transition->getComment();
@@ -162,6 +163,14 @@ class WorkflowManager implements WorkflowManagerInterface {
         // was scheduled. Defer to the entity's current state and
         // abandon the scheduled transition.
         $scheduled_transition->delete();
+
+        $message = t('Scheduled Transition is discarded, since Entity has state ID %current_sid, instead of expected ID %from_sid.');
+        $t_args = [
+          '%current_sid' => $current_sid,
+          '%from_sid' => $from_sid,
+          'link' => $entity->link(t('View')),
+        ];
+        \Drupal::logger('workflow')->error($message, $t_args);
       }
     }
 
@@ -217,7 +226,13 @@ class WorkflowManager implements WorkflowManagerInterface {
           // but upon insert, the old version didn't have an ID, yet.
           $transition->setTargetEntity($entity);
         }
-        $transition->execute();
+
+        if ($transition->isScheduled()) {
+          $transition->save();
+        }
+        else {
+          $transition->execute();
+        }
       }
     }
   }

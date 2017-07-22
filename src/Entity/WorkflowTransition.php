@@ -1066,8 +1066,8 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $time = \Drupal::service('date.formatter')->format($transition->getTimestamp());
     // Do this extensive $user_name lines, for some troubles with Action.
     $user = $transition->getOwner();
-    $user_name = ($user) ? $user->getUsername() : 'unknown username';
-    $t_string = $this->getEntityTypeId() . ' ' . $this->id() . 'for workflow_type <i>' . $this->getWorkflowId() . '</i> ' . ($function ? ("in function '$function'") : '');
+    $user_name = ($user) ? $user->getAccountName() : 'unknown username';
+    $t_string = $this->getEntityTypeId() . ' ' . $this->id() . ' for workflow_type <i>' . $this->getWorkflowId() . '</i> ' . ($function ? ("in function '$function'") : '');
     $output[] = 'Entity  = ' . $this->getTargetEntityTypeId() . '/' . (($entity) ? ($entity->bundle() . '/' . $entity->id()) : '___/0') ;
     $output[] = 'Field   = ' . $transition->getFieldName();
     $output[] = 'From/To = ' . $transition->getFromSid() . ' > ' . $transition->getToSid() . ' @ ' . $time;

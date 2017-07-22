@@ -292,7 +292,12 @@ class WorkflowDefaultWidget extends WidgetBase {
         // Set the transition back, to be used in hook_entity_update().
         $item['workflow_transition'] = $transition;
         // Set the value at the proper location.
-        $item['value'] = $to_sid;
+        if ($transition && $transition->isScheduled()) {
+          $item['value'] = $from_sid;
+        }
+        else {
+          $item['value'] = $to_sid;
+        }
       }
     }
     return $values;
