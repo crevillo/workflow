@@ -175,8 +175,10 @@ class WorkflowItem extends ListItemBase {
     // Set message, if no 'validated' workflows exist.
     if (count($workflows) == 1) {
       drupal_set_message(
-        $this->t('You must create at least one workflow before content can be
-          assigned to a workflow.'), 'warning'
+        $this->t('You must <a href=":create">create at least one workflow</a>
+          before content can be assigned to a workflow.',
+          [':create' => \Drupal::url('entity.workflow_type.collection'),]
+        ), 'warning'
       );
     }
 
