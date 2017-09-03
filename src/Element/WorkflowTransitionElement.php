@@ -426,10 +426,6 @@ class WorkflowTransitionElement extends FormElement {
       '#rows' => 2,
     ];
 
-    // @todo D8: make transition fieldable.
-    // Add the fields from the WorkflowTransition.
-    // field_attach_form('WorkflowTransition', $transition, $element, $form_state);
-
     //@todo D8-port: test ActionButtons.
     // D7: Finally, add Submit buttons/Action buttons.
     // D8: In WorkflowTransitionForm, a default 'Submit' button is added over there.

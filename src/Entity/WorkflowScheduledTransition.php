@@ -31,7 +31,6 @@ use Drupal\Core\Field\BaseFieldDefinition;
  *     "views_data" = "Drupal\workflow\WorkflowScheduledTransitionViewsData",
  *   },
  *   base_table = "workflow_transition_schedule",
- *   fieldable = TRUE,
  *   translatable = FALSE,
  *   entity_keys = {
  *     "id" = "tid",
