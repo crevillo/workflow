@@ -38,7 +38,6 @@ use Drupal\user\UserInterface;
  *     "views_data" = "Drupal\workflow\WorkflowTransitionViewsData",
  *   },
  *   base_table = "workflow_transition_history",
- *   data_table = "workflow_transition_field_data",
  *   fieldable = TRUE,
  *   translatable = FALSE,
  *   entity_keys = {
