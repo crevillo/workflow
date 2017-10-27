@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\workflow_ui\Form;
+namespace Drupal\workflow\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;

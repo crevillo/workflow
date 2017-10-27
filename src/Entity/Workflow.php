@@ -18,8 +18,8 @@ use Drupal\Core\Session\AccountInterface;
  *     "storage" = "Drupal\workflow\Entity\WorkflowStorage",
  *     "list_builder" = "Drupal\workflow_ui\Controller\WorkflowListBuilder",
  *     "form" = {
- *        "add" = "Drupal\workflow_ui\Form\WorkflowForm",
- *        "edit" = "Drupal\workflow_ui\Form\WorkflowForm",
+ *        "add" = "Drupal\workflow\Form\WorkflowForm",
+ *        "edit" = "Drupal\workflow\Form\WorkflowForm",
  *        "delete" = "Drupal\Core\Entity\EntityDeleteForm",
  *      }
  *   },
@@ -113,7 +113,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     // Are we saving a new Workflow?
     // Make sure a Creation state exists.
     if ($status == SAVED_NEW) {
-      $state = $this->getCreationState();
+      $this->getCreationState();
     }
 
     return $status;
@@ -194,7 +194,6 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
    * {@inheritdoc}
    */
   public function isDeletable() {
-    $is_deletable = FALSE;
 
     // May not be deleted if assigned to a Field.
     foreach ($fields = _workflow_info_fields() as $field_info) {
@@ -210,9 +209,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     //     return $is_deletable;
     //   }
     // }
-    $is_deletable = TRUE;
-
-    return $is_deletable;
+    return TRUE;
   }
 
   /**
@@ -303,8 +300,6 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
    * {@inheritdoc}
    */
   public function getNextSid(EntityInterface $entity, $field_name, AccountInterface $user, $force = FALSE) {
-    $new_sid = FALSE;
-
     $current_sid = Workflow::workflowManager()->getCurrentStateId($entity, $field_name);
     /* @var $current_state WorkflowState */
     $current_state = WorkflowState::load($current_sid);
@@ -312,6 +307,7 @@ class Workflow extends ConfigEntityBase implements WorkflowInterface {
     // Loop over every option. To find the next one.
     $flag = $current_state->isCreationState();
     $new_sid = $current_state->id();
+
     foreach ($options as $sid => $name) {
       if ($flag) {
         $new_sid = $sid;
