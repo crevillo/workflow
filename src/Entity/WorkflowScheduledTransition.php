@@ -139,7 +139,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
         '%entity_title' => $entity->label(),
         '%state_name' => $state->label(),
         '%scheduled_date' => $this->getTimestampFormatted(),
-        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+        'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
       ];
       \Drupal::logger('workflow')->notice($message, $args);
       drupal_set_message(t($message, $args));

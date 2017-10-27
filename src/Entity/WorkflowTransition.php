@@ -333,7 +333,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+      'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
     ];
 
     if (!$entity) {
@@ -401,7 +401,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       $t_args = [
         '%from_sid' => $this->getFromSid(),
         '%to_sid' => $this->getToSid(),
-        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+        'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
       ];
       \Drupal::logger('workflow')->error($message, $t_args);
     }
@@ -472,7 +472,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+      'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
     ];
     // Check if the state has changed.
     // If so, check the permissions.
@@ -575,7 +575,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
               '@type' => $entity_type_info->getLabel(),
               '%label' => $entity->label(),
               '%state_name' => $new_state->label(),
-              'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+              'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
             ];
             \Drupal::logger('workflow')->notice($message, $args);
           }
