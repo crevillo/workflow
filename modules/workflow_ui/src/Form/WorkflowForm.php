@@ -240,7 +240,7 @@ class WorkflowForm extends EntityForm {
     $args = [
       '%label' => $entity->label(),
       '%action' => $action,
-      'link' => $entity->link(t('Edit')),
+      'link' => $entity->toLink(t('Edit'))->toString(),
     ];
     drupal_set_message($this->t('Workflow %label has been %action. Please maintain the permissions, states and transitions.', $args));
     $this->logger('workflow')->notice('Workflow %label has been %action.', $args);
