@@ -64,9 +64,9 @@ class WorkflowTransitionElement extends FormElement {
    * - Does not exceed the maximum length (via #maxlength).
    * - Cannot be changed after creation (via #disabled).
    *
-   * @param $element
+   * @param array $element Reference to the Form element
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param $complete_form
+   * @param array $complete_form
    */
   public static function validateTransition(&$element, FormStateInterface $form_state, &$complete_form) {
     workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
@@ -75,7 +75,13 @@ class WorkflowTransitionElement extends FormElement {
   /**
    * Generate an element.
    *
-   * This function is referenced in the Annoteation for this class.
+   * This function is referenced in the Annotation for this class.
+   *
+   * @param $element
+   * @param FormStateInterface $form_state
+   * @param $complete_form
+   *
+   * @return
    */
   public static function processTransition(&$element, FormStateInterface $form_state, &$complete_form) {
     workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
@@ -90,8 +96,15 @@ class WorkflowTransitionElement extends FormElement {
    * - TransitionDefaultWidget
    *
    * Usage:
-   *  @example $element['#default_value'] = $transition;
-   *  @example $element += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
+   * @example $element['#default_value'] = $transition;
+   * @example $element += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
+   *
+   * @param array $element Reference to the form element
+   * @param FormStateInterface $form_state
+   * @param array $complete_form
+   *
+   * @return array
+   *   The form element
    */
   public static function transitionElement(&$element, FormStateInterface $form_state, &$complete_form) {
     // $element = [];
@@ -186,8 +199,8 @@ class WorkflowTransitionElement extends FormElement {
 
     // Fetch the form ID. This is unique for each entity, to allow multiple form per page (Views, etc.).
     // Make it uniquer by adding the field name, or else the scheduling of
-    // multiple workflow_fields is not independent of eachother.
-    // If we are truely on a Transition form (so, not a Node Form with widget)
+    // multiple workflow_fields is not independent of each other.
+    // If we are indeed on a Transition form (so, not a Node Form with widget)
     // then change the form id, too.
     // $form_id = $this->getFormId();
     $form_id = 'workflow_transition_form'; //@todo D8-port: add $form_id for widget and History tab.
@@ -224,9 +237,6 @@ class WorkflowTransitionElement extends FormElement {
       ];
     }
     // Current sid and default value may differ in a scheduled transition.
-    // Set 'grouped' option. Only valid for select list and undefined/multiple workflows.
-    $settings_options_type = $workflow_settings['options'];
-    $grouped = ($settings_options_type == 'select');
 
     $workflow_settings['comment'] = $workflow_settings['comment_log_node']; // vs. ['comment_log_tab'];
     // @todo D8-port: remove following code.
@@ -329,7 +339,7 @@ class WorkflowTransitionElement extends FormElement {
       // This overrides BaseFieldDefinition. @todo: apply for form and widget.
       // The 'options' widget. May be removed later if 'Action buttons' are chosen.
       // The help text is not available for container. Let's add it to the
-      // State box. N.B. it is emptyu on Workflow Tab, Node View page.
+      // State box. N.B. it is empty on Workflow Tab, Node View page.
       $help_text = isset($element['#description']) ? $element['#description'] : '';
       // This overrides BaseFieldDefinition. @todo: apply for form and widget.
       $element['to_sid'] = [
@@ -429,12 +439,12 @@ class WorkflowTransitionElement extends FormElement {
     //@todo D8-port: test ActionButtons.
     // D7: Finally, add Submit buttons/Action buttons.
     // D8: In WorkflowTransitionForm, a default 'Submit' button is added over there.
-    // D8: in Entity Formm, a button per permitted state is added in workflow_form_alter().
+    // D8: in Entity Form, a button per permitted state is added in workflow_form_alter().
     if ($settings_options_type == 'buttons') {
       // D7: How do action buttons work? See also d.o. issue #2187151.
       // D7: Create 'action buttons' per state option. Set $sid property on each button.
       // 1. Admin sets ['widget']['options']['#type'] = 'buttons'.
-      // 2. This function formElelent() creates 'action buttons' per state option;
+      // 2. This function formElement() creates 'action buttons' per state option;
       //    sets $sid property on each button.
       // 3. User clicks button.
       // 4. Callback _workflow_transition_form_validate_buttons() sets proper State.
@@ -465,9 +475,10 @@ class WorkflowTransitionElement extends FormElement {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    * @param array $form
+   * @param FormStateInterface $form_state
    * @param array $item
    *
-   * @return \Drupal\workflow\Entity\WorkflowTransitionInterface
+   * @return WorkflowTransitionInterface
    */
   static public function copyFormItemValuesToEntity(EntityInterface $entity, array $form, FormStateInterface $form_state, array $item) {
     $user = workflow_current_user(); // @todo #2287057: verify if submit() really is only used for UI. If not, $user must be passed.
@@ -587,7 +598,7 @@ class WorkflowTransitionElement extends FormElement {
       }
     }
 
-    // Explicitely set $entity in case of ScheduleTransition. It is now returned as parameter, not result.
+    // Explicitly set $entity in case of ScheduleTransition. It is now returned as parameter, not result.
     $entity = $transition;
 
     return $transition;
