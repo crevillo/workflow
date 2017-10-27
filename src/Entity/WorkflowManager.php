@@ -8,8 +8,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Routing\UrlGeneratorInterface;
-use Drupal\Core\Routing\UrlGeneratorTrait;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -19,7 +17,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
  */
 class WorkflowManager implements WorkflowManagerInterface {
   use StringTranslationTrait;
-  use UrlGeneratorTrait;
 
   /**
    * The entity_type manager service.
@@ -57,7 +54,8 @@ class WorkflowManager implements WorkflowManagerInterface {
   protected $currentUser;
 
   /**
-   * Construct the WorkflowManager object.
+   * Construct the WorkflowManager object as a service.
+   * @see workflow.services.yml
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity_type manager service.
@@ -67,19 +65,16 @@ class WorkflowManager implements WorkflowManagerInterface {
    *   The config factory.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation service.
-   * @param \Drupal\Core\Routing\UrlGeneratorInterface $url_generator
-   *   The url generator service.
    *  @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, UrlGeneratorInterface $url_generator, ModuleHandlerInterface $module_handler, AccountInterface $current_user) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, QueryFactory $query_factory, ConfigFactoryInterface $config_factory, TranslationInterface $string_translation, ModuleHandlerInterface $module_handler, AccountInterface $current_user) {
     $this->entityTypeManager = $entity_type_manager;
     $this->queryFactory = $query_factory;
     $this->userConfig = $config_factory->get('user.settings');
     $this->stringTranslation = $string_translation;
-    $this->urlGenerator = $url_generator;
     $this->moduleHandler = $module_handler;
     $this->currentUser = $current_user;
   }
@@ -92,6 +87,22 @@ class WorkflowManager implements WorkflowManagerInterface {
       $transition->force($force);
     }
     $force = $transition->isForced();
+
+    if (!$to_sid = $transition->getToSid()) {
+      $from_sid = $transition->getFromSid();
+      $entity = $transition->getTargetEntity();
+      $message = "Transition is not executed for %title, since 'To' state %to_sid is invalid.";
+      $t_args = [
+        '%to_sid' => $to_sid,
+        '%from_sid' => $from_sid,
+        '%title' => $entity->label(),
+        'link' => $entity->toLink(t('View'))->toString(),
+      ];
+      \Drupal::logger('workflow')->error($message, $t_args);
+      drupal_set_message(t($message, $t_args), 'error');
+
+      return $from_sid;
+    }
 
     $update_entity = (!$transition->isScheduled() && !$transition->isExecuted());
 
@@ -168,7 +179,7 @@ class WorkflowManager implements WorkflowManagerInterface {
         $t_args = [
           '%current_sid' => $current_sid,
           '%from_sid' => $from_sid,
-          'link' => $entity->link(t('View')),
+          'link' => $entity->toLink(t('View'))->toString(),
         ];
         \Drupal::logger('workflow')->error($message, $t_args);
       }
