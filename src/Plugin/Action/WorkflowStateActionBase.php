@@ -185,7 +185,15 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Here, not the $element is added, but the entity form.
     $element = []; // Just to be explicit.
     $element['#default_value'] = $transition;
+
+    // Avoid Action Buttons. That removes the options box. No Buttons in config schreens!
+    $original_options = $transition->getWorkflow()->options['options'];
+    $transition->getWorkflow()->options['options'] = 'select';
+
+    // Generate and add the Workflow form element.
     $form += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
+    // Just to be sure, reset the options box setting.
+    $transition->getWorkflow()->options['options'] = $original_options;
     // Remove the transition: generates an error upon saving the action definition.
     unset($form['workflow_transition']);
 
