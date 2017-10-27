@@ -126,7 +126,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    *
    * @param array $values
-   *   $values[0] may contain a Worflow object or State object or State ID.
+   *   $values[0] may contain a Workflow object or State object or State ID.
    *
    * @return static
    *   The entity object.
@@ -136,11 +136,9 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       $value = $values[0];
       $values['wid'] = '';
       $values['from_sid'] = '';
-      if (is_string($value)) {
-        if ($state = WorkflowState::load($value)) {
-          $values['wid'] = $state->getWorkflowId();
-          $values['from_sid'] = $state->id();
-        }
+      if (is_string($value) && $state = WorkflowState::load($value)) {
+        $values['wid'] = $state->getWorkflowId();
+        $values['from_sid'] = $state->id();
       }
       elseif (is_object($value) && $value instanceof WorkflowState) {
         $state = $value;
@@ -154,9 +152,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       'timestamp' => \Drupal::time()->getRequestTime(),
       'uid' => \Drupal::currentUser()->id(),
     ];
-
-    $entity_manager = \Drupal::entityManager();
-    return $entity_manager->getStorage($entity_manager->getEntityTypeFromClass(get_called_class()))->create($values);
+    return parent::create($values);
   }
 
   /**
@@ -330,8 +326,6 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $user = $this->getOwner();
     $from_sid = $this->getFromSid();
     $to_sid = $this->getToSid();
-    $field_name = $this->getFieldName();
-    $force = $this->isForced();
 
     // Prepare an array of arguments for error messages.
     $args = [
@@ -339,7 +333,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
+      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
     ];
 
     if (!$entity) {
@@ -407,7 +401,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       $t_args = [
         '%from_sid' => $this->getFromSid(),
         '%to_sid' => $this->getToSid(),
-        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
+        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
       ];
       \Drupal::logger('workflow')->error($message, $t_args);
     }
@@ -478,7 +472,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       '%old' => $from_sid,
       '%new' => $to_sid,
       '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
+      'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
     ];
     // Check if the state has changed.
     // If so, check the permissions.
@@ -581,7 +575,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
               '@type' => $entity_type_info->getLabel(),
               '%label' => $entity->label(),
               '%state_name' => $new_state->label(),
-              'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
+              'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
             ];
             \Drupal::logger('workflow')->notice($message, $args);
           }
@@ -887,6 +881,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+    // @todo ? $fields = parent::baseFieldDefinitions($entity_type);
     $fields = [];
 
     $fields['hid'] = BaseFieldDefinition::create('integer')
@@ -1022,7 +1017,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $fields['timestamp'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Timestamp'))
       ->setDescription(t('The time that the current transition was executed.'))
-      ->setQueryable(FALSE)
+//      ->setQueryable(FALSE)
 //      ->setTranslatable(TRUE)
 //      ->setDisplayOptions('view', [
 //        'label' => 'hidden',

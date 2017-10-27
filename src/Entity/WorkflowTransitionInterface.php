@@ -41,8 +41,8 @@ interface WorkflowTransitionInterface extends WorkflowConfigTransitionInterface,
    * @param string $sort
    * @param string $transition_type
    *
-   * @return \Drupal\workflow\Entity\WorkflowTransitionInterface object representing one row from the {workflow_transition_history} table.
-   * object representing one row from the {workflow_transition_history} table.
+   * @return \Drupal\workflow\Entity\WorkflowTransitionInterface
+   *   Object representing one row from the {workflow_transition_history} table.
    */
   public static function loadByProperties($entity_type, $entity_id, array $revision_ids = [], $field_name = '', $langcode = '', $sort = 'ASC', $transition_type = '');
 
@@ -63,7 +63,7 @@ interface WorkflowTransitionInterface extends WorkflowConfigTransitionInterface,
    * @param string $sort
    *   Optional sort order. {'ASC'|'DESC'}
    * @param string $transition_type
-   *   The type trnastion to be fetched.
+   *   The type of the transition to be fetched.
    *
    * @return WorkflowTransitionInterface[]
    *   An array of transitions.
@@ -227,6 +227,16 @@ interface WorkflowTransitionInterface extends WorkflowConfigTransitionInterface,
    *  If the transition is forced. (Allow not-configured transitions).
    */
   public function isForced();
+
+  /**
+   * Set if a transition must be executed, even if transition is invalid
+   * or user not authorized.
+   *
+   * @param bool $force
+   *
+   * @return object
+   *   The transition itself
+   */
   public function force($force = TRUE);
 
   /**
