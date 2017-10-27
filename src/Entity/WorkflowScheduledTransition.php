@@ -74,7 +74,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
    */
   function validate() {
     // Since this function generates an error in one use case (using WorkflowTransitionForm)
-    // and is not called in the onther use case (using the Workflow Widget),
+    // and is not called in the other use case (using the Workflow Widget),
     // this function is disabled for now.
     // @todo: this function is only called in the WorkflowTransitionForm, not in the Widget.
     // @todo: repair https://www.drupal.org/node/2896650
@@ -139,7 +139,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
         '%entity_title' => $entity->label(),
         '%state_name' => $state->label(),
         '%scheduled_date' => $this->getTimestampFormatted(),
-        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->link(t('View')) : '',
+        'link' => ($this->getTargetEntityId()) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
       ];
       \Drupal::logger('workflow')->notice($message, $args);
       drupal_set_message(t($message, $args));
@@ -172,7 +172,7 @@ class WorkflowScheduledTransition extends WorkflowTransition {
   }
 
   /**
-   * Given a timeframe, get all scheduled transitions.
+   * Given a time frame, get all scheduled transitions.
    *
    * @param int $start
    * @param int $end
