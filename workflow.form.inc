@@ -94,6 +94,7 @@ function workflow_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_
   if (isset($default_submit_action)) {
     $actions = _workflow_transition_form_get_action_buttons($form, $workflow_element, $default_submit_action);
     // Place the button with the other action buttons.
+    $form['actions'] = isset($form['actions']) ? $form['actions'] : [];
     $form['actions'] += $actions;
   }
 }
