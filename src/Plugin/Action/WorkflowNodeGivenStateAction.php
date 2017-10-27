@@ -72,9 +72,6 @@ class WorkflowNodeGivenStateAction extends WorkflowStateActionBase {
       return;
     }
 
-    $force = $this->configuration['force'];
-    $transition->force();
-
     // Fire the transition.
     workflow_execute_transition($transition, $force);
   }
