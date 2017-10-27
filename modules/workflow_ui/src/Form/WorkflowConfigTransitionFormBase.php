@@ -48,7 +48,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
     // The $this->type and $this->entitiesKey must be set in the var section.
 
     // Get the Workflow from the page.
-    $this->workflow = workflow_ui_url_get_workflow();
+    $this->workflow = workflow_url_get_workflow();
   }
 
   /**
@@ -185,7 +185,7 @@ abstract class WorkflowConfigTransitionFormBase extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    return parent::validateForm($form, $form_state);
+    parent::validateForm($form, $form_state);
   }
 
 }

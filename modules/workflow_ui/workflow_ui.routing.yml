@@ -20,7 +20,7 @@ entity.workflow_state.collection:
     _entity_list: 'workflow_state'
 #    _controller: '\workflow\EntityWorkflowUIController::adminOverview'
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
   requirements:
     _permission: 'administer workflow'
 
@@ -31,7 +31,7 @@ entity.workflow_transition.collection:
   defaults:
     _form: 'Drupal\workflow_ui\Form\WorkflowConfigTransitionRoleForm'
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
   requirements:
     _permission: 'administer workflow'
 
@@ -41,6 +41,6 @@ entity.workflow_label.collection:
   defaults:
     _form: 'Drupal\workflow_ui\Form\WorkflowConfigTransitionLabelForm'
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
   requirements:
     _permission: 'administer workflow'

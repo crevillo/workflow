@@ -15,7 +15,7 @@ entity.workflow_type.canonical:
   defaults:
     _entity_form: 'workflow_type.edit'
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
   requirements:
     _permission: 'administer workflow'
 #   _entity_access: 'workflow.update'
@@ -34,7 +34,7 @@ entity.workflow_type.edit_form:
   defaults:
     _entity_form: 'workflow_type.edit'
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
   requirements:
     _permission: 'administer workflow'
 #   _entity_access: 'workflow.update'

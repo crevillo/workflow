@@ -14,7 +14,7 @@ entity.workflow_type.access_form:
   path: '/admin/config/workflow/workflow/{workflow_type}/access'
   defaults:
     _title: 'Edit Workflow'
-    _title_callback: 'workflow_ui_url_get_title'
+    _title_callback: 'workflow_url_get_title'
     _form: '\Drupal\workflow_access\Form\WorkflowAccessRoleForm'
   requirements:
     _permission: 'administer workflow'

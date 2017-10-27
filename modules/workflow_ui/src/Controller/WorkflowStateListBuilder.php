@@ -25,7 +25,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
 
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
-    if (!$workflow = workflow_ui_url_get_workflow()) {
+    if (!$workflow = workflow_url_get_workflow()) {
       // @todo: Generate error message.
       return $entities;
     }
@@ -84,7 +84,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
 
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
-    if (!$workflow = workflow_ui_url_get_workflow()) {
+    if (!$workflow = workflow_url_get_workflow()) {
       workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
     }
     $wid = $url_wid = $workflow->id();
@@ -192,7 +192,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
-    if (!$workflow = workflow_ui_url_get_workflow()) {
+    if (!$workflow = workflow_url_get_workflow()) {
       return $form;
     }
     $wid = $workflow->getWorkflowId();
@@ -280,7 +280,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
         }
 
         // Create the machine_name for new states.
-        // N.B.: Keep machine_name in WorkflowState and ~ListBuillder aligned.
+        // N.B.: Keep machine_name in WorkflowState and ~ListBuilder aligned.
         if ($value['label_new'] && !$value['id']) {
           //$message = 'Machine name is required.';
           //$form_state->setErrorByName('machine_name', $this->t($message));
@@ -302,7 +302,7 @@ class WorkflowStateListBuilder extends DraggableListBuilder {
 
     // Get the Workflow from the page.
     /* @var $workflow \Drupal\workflow\Entity\Workflow */
-    if (!$workflow = workflow_ui_url_get_workflow()) {
+    if (!$workflow = workflow_url_get_workflow()) {
       return ;
     }
 
