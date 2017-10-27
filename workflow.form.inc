@@ -160,6 +160,7 @@ function _workflow_transition_form_get_action_buttons(array $form, array $workfl
     $workflow_submit_action['#access'] = TRUE;
     $workflow_submit_action['#value'] = $option_name;
     $workflow_submit_action['#attributes'] = ($same_state_button) ? ['class' => ['form-save-default-button']] : [];
+    $workflow_submit_action['#button_type'] = ($same_state_button) ? 'primary' : ''; // @todo: works for node form and workflow tab, not for workflow block.
     //$workflow_submit_action['#executes_submit_callback']  = TRUE;
     // Add class to workflow button.
     $workflow_submit_action['#attributes']['class'][] = Html::getClass('workflow_button_' . $option_name);
