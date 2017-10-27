@@ -196,6 +196,8 @@ class WorkflowManager implements WorkflowManagerInterface {
    * {@inheritdoc}
    */
   public static function executeTransitionsOfEntity(EntityInterface $entity) {
+    $result = FALSE;
+
     // Avoid this hook on workflow objects.
     if (in_array($entity->getEntityTypeId(), [
       'workflow_type',
@@ -204,7 +206,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       'workflow_transition',
       'workflow_scheduled_transition',
     ])) {
-      return;
+      return $result;
     }
 
     $user = workflow_current_user();
@@ -239,13 +241,14 @@ class WorkflowManager implements WorkflowManagerInterface {
         }
 
         if ($transition->isScheduled()) {
-          $transition->save();
+          $result = $transition->save();
         }
         else {
-          $transition->execute();
+          $result = $transition->execute();
         }
       }
     }
+    return $result; // This result is only reliable for 1 active workflow.
   }
 
   /**
