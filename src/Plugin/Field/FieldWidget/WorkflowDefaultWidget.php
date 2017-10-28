@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\workflow\Element\WorkflowTransitionElement;
 use Drupal\workflow\Entity\Workflow;
 use Drupal\workflow\Entity\WorkflowTransition;
-use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
 /**
  * Plugin implementation of the 'workflow_default' widget.
@@ -40,24 +39,6 @@ class WorkflowDefaultWidget extends WidgetBase {
       ),
        */
     ] + parent::defaultSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element = [];
-    // There are no settings. All is done at Workflow level.
-    return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsSummary() {
-    $summary = [];
-    // There are no settings. All is done at Workflow level.
-    return $summary;
   }
 
   /**
@@ -96,6 +77,12 @@ class WorkflowDefaultWidget extends WidgetBase {
       return $element;
     }
 
+    if ($this->isDefaultValueWidget($form_state)) {
+      // On the Field settings page, User may not set a default value
+      // (this is done by the Workflow module).
+      return [];
+    }
+
     /* @var $item \Drupal\workflow\Plugin\Field\FieldType\WorkflowItem */
     $item = $items[$delta];
     /* @var $field_config \Drupal\field\Entity\FieldConfig */
@@ -112,75 +99,31 @@ class WorkflowDefaultWidget extends WidgetBase {
     $transition = WorkflowTransition::create([$from_sid, 'field_name' => $field_name]);
     $transition->setTargetEntity($entity);
 
-    if (!$this->isDefaultValueWidget($form_state)) {
-      // Here, on entity form, not the $element is added, but the entity form.
-      // Problem 1: adding the element, does not add added fields.
-      // Problem 2: adding the form, generates wrong UI.
-      // Problem 3: does not work on ScheduledTransition.
+    // Here, on entity form, not the $element is added, but the entity form.
+    // Problem 1: adding the element, does not add added fields.
+    // Problem 2: adding the form, generates wrong UI.
+    // Problem 3: does not work on ScheduledTransition.
 
-      // Step 1: use the Element.
-      $element['#default_value'] = $transition;
-      $element += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
+    // Step 1: use the Element.
+    $element['#default_value'] = $transition;
+    $element += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
 
-      // Step 2: use the Form, in order to get extra fields.
-      $entity_form_builder = \Drupal::getContainer()->get('entity.form_builder');
-      $workflow_form = $entity_form_builder->getForm($transition, 'add');
-      // Determine and add the attached fields.
-      $attached_fields = Workflow::workflowManager()->getAttachedFields('workflow_transition', $wid);
-      foreach ($attached_fields as $attached_field) {
-        $element[$attached_field] = $workflow_form[$attached_field];
-      }
-
-      // Option 3: use the true Element.
-      // $form = $this->element($form, $form_state, $transition);
-      //$element['workflow_transition'] = array(
-      //      '#type' => 'workflow_transition',
-      //      '#title' => t('Workflow transition'),
-      //      '#default_value' => $transition,
-      // );
-
+    // Step 2: use the Form, in order to get extra fields.
+    $entity_form_builder = \Drupal::getContainer()->get('entity.form_builder');
+    $workflow_form = $entity_form_builder->getForm($transition, 'add');
+    // Determine and add the attached fields.
+    $attached_fields = Workflow::workflowManager()->getAttachedFields('workflow_transition', $wid);
+    foreach ($attached_fields as $attached_field) {
+      $element[$attached_field] = $workflow_form[$attached_field];
     }
-    else {
-      // @todo D8: add a default value, so people can set a default comment.
-      // On the Field settings page, User may not set a default value
-      // (this is done by the Workflow module).
-      // @see WorkflowState::getOptions();
-      // @see WorkflowDefaultWidget::formElement();
-      $element = [];
-      return $element;
 
-      workflow_debug(__FILE__, __FUNCTION__, __LINE__, '', ''); // @todo D8-port: still test this snippet.
-
-      // @see workflow_form_field_config_edit_form_alter for other settings
-      // The Workflow field must have a value, so set to required.
-      // Unfortunately, we need hook_form_alter for this.
-      //$form['required']['#default_value'] = 1;
-      //$form['required']['#disabled'] = TRUE;
-
-      // Explicitly set default value to 'creation' and show element,
-      // so people can set a default comment.
-      /* @var $workflow Workflow */
-      $transition->to_sid = $workflow->getCreationSid();
-      /* @var $transition WorkflowTransitionInterface */
-      $transition->setExecuted(TRUE);
-
-      // @todo D8-port: use a proper WorkflowTransitionElement call.
-      $element['#default_value'] = $transition;
-      $element += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
-
-      // No action buttons on default field settings page.
-      // This is evaluated in hook_form_alter.
-      _workflow_use_action_buttons(FALSE);
-
-      // Make sure the options box is not hidden (when action buttons active).
-      //$element['to_sid']['#type'] = 'select';
-      $element['to_sid']['#title'] = 'Initial state';
-      $element['to_sid']['#access'] = TRUE;
-
-      unset($element['workflow_current_state']);
-
-      return $element;
-    };
+    // Option 3: use the true Element.
+    // $form = $this->element($form, $form_state, $transition);
+    //$element['workflow_transition'] = array(
+    //      '#type' => 'workflow_transition',
+    //      '#title' => t('Workflow transition'),
+    //      '#default_value' => $transition,
+    // );
 
     return $element;
   }
@@ -221,7 +164,7 @@ class WorkflowDefaultWidget extends WidgetBase {
     // WorkflowTransition object at this point. We need to convert it
     // back to the regular 'value' string format.
     foreach ($values as &$item) {
-      if (!empty($item) ) { // } && $item['value'] instanceof DrupalDateTime) {
+      if (!empty($item)) { // } && $item['value'] instanceof DrupalDateTime) {
 
         // The following can NOT be retrieved from the WorkflowTransition.
         /* @var $entity \Drupal\Core\Entity\EntityInterface */

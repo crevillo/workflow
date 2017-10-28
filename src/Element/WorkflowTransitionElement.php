@@ -436,10 +436,8 @@ class WorkflowTransitionElement extends FormElement {
       '#rows' => 2,
     ];
 
-    //@todo D8-port: test ActionButtons.
-    // D7: Finally, add Submit buttons/Action buttons.
-    // D8: In WorkflowTransitionForm, a default 'Submit' button is added over there.
-    // D8: in Entity Form, a button per permitted state is added in workflow_form_alter().
+    // In WorkflowTransitionForm, a default 'Submit' button is added over there.
+    // In Entity Form, a button per permitted state is added in workflow_form_alter().
     if ($settings_options_type == 'buttons') {
       // D7: How do action buttons work? See also d.o. issue #2187151.
       // D7: Create 'action buttons' per state option. Set $sid property on each button.
