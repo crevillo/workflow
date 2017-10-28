@@ -11,7 +11,7 @@ entity.workflow_type.collection:
     _permission: 'administer workflow'
 
 entity.workflow_type.canonical:
-  path: '/admin/config/workflow/workflow/{workflow_type}/edit'
+  path: '/admin/config/workflow/workflow/{workflow_type}'
   defaults:
     _entity_form: 'workflow_type.edit'
     _title: 'Edit Workflow'
@@ -30,7 +30,7 @@ entity.workflow_type.add_form:
 #   _entity_access: 'workflow.update'
 
 entity.workflow_type.edit_form:
-  path: '/admin/config/workflow/workflow/{workflow_type}/edit'
+  path: '/admin/config/workflow/workflow/{workflow_type}'
   defaults:
     _entity_form: 'workflow_type.edit'
     _title: 'Edit Workflow'

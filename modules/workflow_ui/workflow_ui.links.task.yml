@@ -11,12 +11,6 @@ workflow.ui.workflows:
   base_route: entity.workflow_type.collection
   weight: 1
 
-workflow.ui.workflow_edit:
-  title: 'Edit'
-  route_name: entity.workflow_type.edit_form
-  base_route: entity.workflow_type.edit_form
-  weight: -5
-
 workflow.ui.workflow_states:
   title: 'States'
   route_name: entity.workflow_state.collection

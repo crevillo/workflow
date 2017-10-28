@@ -38,9 +38,9 @@ use Drupal\Core\Session\AccountInterface;
  *     "options",
  *   },
  *   links = {
- *     "canonical" = "/admin/config/workflow/workflow",
  *     "collection" = "/admin/config/workflow/workflow",
- *     "edit-form" = "/admin/config/workflow/workflow/{workflow_type}/edit",
+ *     "canonical" = "/admin/config/workflow/workflow/{workflow_type}",
+ *     "edit-form" = "/admin/config/workflow/workflow/{workflow_type}",
  *     "delete-form" = "/admin/config/workflow/workflow/{workflow_type}/delete",
  *   },
  * )
