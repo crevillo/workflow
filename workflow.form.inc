@@ -11,26 +11,25 @@ use Drupal\workflow\Entity\WorkflowTransitionInterface;
 /**
  * Getter/Setter to tell if the action buttons are used.
  *
- * @param bool $new_value
- *   Options. If TRUE/FALSE, the value is set. If NULL, value is only 'getted'.
+ * @param string $button_type
+ *   Options. If empty, value is only getted, else the button type.
  *
- * @return bool
- *   Previous value. If TRUE, action buttons must be created.
+ * @return string
+ *   Previous value. If 'dropbutton'||'buttons', action buttons must be created.
  *
  * @see workflow_form_alter()
  * @see WorkflowDefaultWidget::formElement()
  *
  * Used to save some expensive operations on every form.
  */
-function _workflow_use_action_buttons($new_value = NULL) {
+function _workflow_use_action_buttons($button_type = '') {
   global $_workflow_use_actions_buttons;
 
-  $old_value = $_workflow_use_actions_buttons ? TRUE : FALSE;
   // Reset value if requested.
-  if ($new_value !== NULL) {
-    $_workflow_use_actions_buttons = $new_value;
+  if ($button_type) {
+    $_workflow_use_actions_buttons = $button_type;
   }
-  return $old_value;
+  return $_workflow_use_actions_buttons;
 }
 
 /**
@@ -159,6 +158,10 @@ function _workflow_transition_form_get_action_buttons(array $form, array $workfl
     // Add/Overwrite some other settings.
     $workflow_submit_action['#access'] = TRUE;
     $workflow_submit_action['#value'] = $option_name;
+    // Use one drop button, instead of several action buttons.
+    if ('dropbutton' == _workflow_use_action_buttons()) {
+      $workflow_submit_action['#dropbutton'] = 'save';
+    }
     $workflow_submit_action['#attributes'] = ($same_state_button) ? ['class' => ['form-save-default-button']] : [];
     $workflow_submit_action['#button_type'] = ($same_state_button) ? 'primary' : ''; // @todo: works for node form and workflow tab, not for workflow block.
     //$workflow_submit_action['#executes_submit_callback']  = TRUE;

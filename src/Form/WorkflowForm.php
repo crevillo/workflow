@@ -100,6 +100,7 @@ class WorkflowForm extends EntityForm {
         'radios' => 'Radio buttons',
         // This option does not work properly on Comment Add form.
         'buttons' => 'Action buttons',
+        'dropbutton' => 'Drop button',
       ],
       '#description' => t("The Widget shows all available states. Decide which
       is the best way to show them."

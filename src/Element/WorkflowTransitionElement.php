@@ -443,7 +443,7 @@ class WorkflowTransitionElement extends FormElement {
 
     // In WorkflowTransitionForm, a default 'Submit' button is added over there.
     // In Entity Form, a button per permitted state is added in workflow_form_alter().
-    if ($settings_options_type == 'buttons') {
+    if ($settings_options_type == 'buttons' || $settings_options_type == 'dropbutton') {
       // D7: How do action buttons work? See also d.o. issue #2187151.
       // D7: Create 'action buttons' per state option. Set $sid property on each button.
       // 1. Admin sets ['widget']['options']['#type'] = 'buttons'.
@@ -455,7 +455,7 @@ class WorkflowTransitionElement extends FormElement {
       // @todo: this does not work yet for the Add Comment form.
 
       // Performance: inform workflow_form_alter() to do its job.
-      _workflow_use_action_buttons(TRUE);
+      _workflow_use_action_buttons($settings_options_type);
 
       // Make sure the '#type' is not set to the invalid 'buttons' value.
       // It will be replaced by action buttons, but sometimes, the select box

@@ -125,33 +125,28 @@ class WorkflowTransitionForm extends ContentEntityForm {
       // Change the default submit button on the Workflow History tab.
       return $actions;
     }
-    else {
-      // Action buttons are activated.
 
-      // Find the first workflow.
-      // (So this won't work with multiple workflows per entity.)
-      $workflow_form = &$form;
+    // Find the first workflow.
+    // (So this won't work with multiple workflows per entity.)
+    // Quit if there is no Workflow on this page.
+    if (!$workflow_form = &$form) {
+      return $actions;
+    }
 
-      // Quit if there is no Workflow on this page.
-      if (!$workflow_form ) {
-        return $actions;
-      }
+    // Quit if there are no Workflow Action buttons.
+    // (If user has only 1 workflow option, there are no Action buttons.)
+    if (count($workflow_form['to_sid']['#options']) <= 1) {
+      return $actions;
+    }
 
-      // Quit if there are no Workflow Action buttons.
-      // (If user has only 1 workflow option, there are no Action buttons.)
-      if (count($workflow_form['to_sid']['#options']) <= 1) {
-        return $actions;
-      }
-
-      // Place the buttons. Remove the default 'Save' button.
-      // $actions += _workflow_transition_form_get_action_buttons($form, $workflow_form);
-      // Remove the default submit button from the form.
-      // unset($actions['submit']);
-      $default_submit_action = $actions['submit'];
-      $actions = _workflow_transition_form_get_action_buttons($form, $workflow_form, $default_submit_action);
-      foreach ($actions as $key => &$action) {
-        $action['#submit'] = $default_submit_action['#submit'];
-      }
+    // Place the buttons. Remove the default 'Save' button.
+    // $actions += _workflow_transition_form_get_action_buttons($form, $workflow_form);
+    // Remove the default submit button from the form.
+    // unset($actions['submit']);
+    $default_submit_action = $actions['submit'];
+    $actions = _workflow_transition_form_get_action_buttons($form, $workflow_form, $default_submit_action);
+    foreach ($actions as $key => &$action) {
+      $action['#submit'] = $default_submit_action['#submit'];
     }
 
     return $actions;
