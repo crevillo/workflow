@@ -27,7 +27,7 @@ interface WorkflowManagerInterface {
    *   and added to {workflow_transition_history} table.
    *   Then the entity wil be updated to reflect the new status.
    *
-   *  If $transition->isForced() == TRUE, transisiton permissions will be
+   *  If $transition->isForced() == TRUE, transition permissions will be
    *    bypassed.
    *
    * @usage
@@ -48,7 +48,7 @@ interface WorkflowManagerInterface {
   public static function executeTransition(WorkflowTransitionInterface $transition, $force = FALSE);
 
   /**
-   * Given a timeframe, execute all scheduled transitions.
+   * Given a time frame, execute all scheduled transitions.
    *
    * Implements hook_cron().
    *
@@ -67,8 +67,11 @@ interface WorkflowManagerInterface {
    * So, we cannot save Transition in the Widget, but only(?) in a hook.
    * To keep things simple, this is done for both insert() and update().
    *
-   * This is referenced in from WorkfowDefaultWidget::massageFormValues().
+   * This is referenced in from WorkflowDefaultWidget::massageFormValues().
    * @param \Drupal\Core\Entity\EntityInterface $entity
+   *
+   * @return
+   *   New state ID. If execution failed, FALSE or old state ID is returned,
    */
   public static function executeTransitionsOfEntity(EntityInterface $entity);
 
@@ -175,7 +178,7 @@ interface WorkflowManagerInterface {
   public static function getPreviousStateId(EntityInterface $entity, $field_name = '');
 
   /**
-   * Determins if User is owner/author of the entity.
+   * Determine if User is owner/author of the entity.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    * @param \Drupal\Core\Entity\EntityInterface $entity

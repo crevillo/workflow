@@ -213,6 +213,8 @@ class WorkflowManager implements WorkflowManagerInterface {
 
     foreach (_workflow_info_fields($entity) as $field_info) {
       $field_name = $field_info->getName();
+
+      // Transition is created in widget or WorkflowTransitionForm.
       /* @var $transition WorkflowTransitionInterface */
       $transition = $entity->$field_name->__get('workflow_transition');
       if (!$transition) {
@@ -227,10 +229,6 @@ class WorkflowManager implements WorkflowManagerInterface {
         $transition = WorkflowTransition::create([$old_sid, 'field_name' => $field_name]);
         $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
-      else {
-        // Transition already created in widget.
-        // or: we come from WorkflowTransitionForm.
-      }
 
       if ($transition) {
         if ($entity->getEntityTypeId() !== 'comment') {
@@ -240,6 +238,7 @@ class WorkflowManager implements WorkflowManagerInterface {
           $transition->setTargetEntity($entity);
         }
 
+        // Todo: add support for multiple workflows.
         if ($transition->isScheduled()) {
           $result = $transition->save();
         }
