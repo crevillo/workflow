@@ -175,15 +175,15 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       $field_id
     ]);
      */
-    $to_sid = $config['to_sid'];
     $user = workflow_current_user();
-    $comment = $config['comment'];
-    $force = $config['force'];
     $transition = WorkflowTransition::create([$current_state, 'field_name' => $field_name]);
-    $transition->setValues($to_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
-    // Properly derive other variables from Transition.
-    $entity = $transition->getTargetEntity();
-    $field_name = $transition->getFieldName();
+    $transition->setValues(
+      $to_sid = $config['to_sid'],
+      $user->id(),
+      \Drupal::time()->getRequestTime(),
+      $comment = $config['comment'],
+      $force = $config['force']
+  );
 
     // Add the WorkflowTransitionForm to the page.
 
@@ -198,25 +198,9 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     // Just to be sure, reset the options box setting.
     $transition->getWorkflow()->options['options'] = $original_options;
 
-    // Add Field_name. @todo: Add 'field_name' to WorkflowTransitionElement?
-    $element['field_name'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Field name'),
-      '#description' => $this->t('Choose the field name.'),
-      '#options' => workflow_get_workflow_field_names($entity),
-      '#default_value' => $field_name,
-      '#required' => TRUE,
-      '#weight' => -20,
-    ];
-    // Add Force. @todo: Add 'force' to WorkflowTransitionElement?
-    $element['force'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Force transition'),
-      '#description' => $this->t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
-      '#default_value' => $force,
-      '#weight' => -19,
-    ];
     // Make adaptations for VBO-form:
+    $element['field_name']['#access'] = TRUE;
+    $element['force']['#access'] = TRUE;
     $element['to_sid']['#description'] = t('Please select the state that should be assigned when this action runs.');
     $element['comment']['#title'] = $this->t('Message');
     $element['comment']['#description'] = $this->t('This message will be written into the workflow history log when the action

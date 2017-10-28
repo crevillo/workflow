@@ -117,7 +117,6 @@ class WorkflowTransitionElement extends FormElement {
     $transition = $element['#default_value'];
     /* @var $user \Drupal\Core\Session\AccountInterface */
     $user = \Drupal::currentUser();
-    $force = FALSE;
 
     /*
      * Derived input.
@@ -125,6 +124,7 @@ class WorkflowTransitionElement extends FormElement {
     $field_name = $transition->getFieldName();
     $workflow = $transition->getWorkflow();
     $wid = $transition->getWorkflowId();
+    $force = $transition->isForced();
 
     if ($transition->getTargetEntityTypeId() == 'comment') {
       /* @var $comment_entity CommentInterface */
@@ -167,10 +167,10 @@ class WorkflowTransitionElement extends FormElement {
 
       $current_sid = $from_sid = $transition->getFromSid();
       $current_state = $from_state = $transition->getFromState();
-      $options = ($current_state) ? $current_state->getOptions($entity, $field_name, $user, $force) : [];
-      $show_widget = ($from_state) ? $from_state->showWidget($entity, $field_name, $user, $force) : [];
+      $options = ($current_state) ? $current_state->getOptions($entity, $field_name, $user, FALSE) : [];
+      $show_widget = ($from_state) ? $from_state->showWidget($entity, $field_name, $user, FALSE) : [];
       $default_value = $from_sid;
-      $default_value = ($from_state && $from_state->isCreationState()) ? $workflow->getFirstSid($entity, $field_name, $user, $force) : $default_value;
+      $default_value = ($from_state && $from_state->isCreationState()) ? $workflow->getFirstSid($entity, $field_name, $user, FALSE) : $default_value;
       $default_value = ($transition->isScheduled()) ? $transition->getToSid() : $default_value;
     }
     elseif (!$entity) {
@@ -183,7 +183,7 @@ class WorkflowTransitionElement extends FormElement {
         $temp_state = $transition->getToState();
       }
       $options = ($temp_state)
-        ? $temp_state->getOptions($entity, $field_name, $user, $force)
+        ? $temp_state->getOptions($entity, $field_name, $user, FALSE)
         : workflow_get_workflow_state_names($wid, $grouped = TRUE, $all = FALSE);
       $show_widget = TRUE;
       $current_sid = $transition->getToSid(); // @todo
@@ -204,19 +204,6 @@ class WorkflowTransitionElement extends FormElement {
     // then change the form id, too.
     // $form_id = $this->getFormId();
     $form_id = 'workflow_transition_form'; //@todo D8-port: add $form_id for widget and History tab.
-    /*
-    if (!isset($form_state->getValue('build_info')['base_form_id'])) {
-      // Strange: on node form, the base_form_id is node_form,
-      // but on term form, it is not set.
-      // In both cases, it is OK.
-    }
-    else {
-      workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
-      if ($form_state['build_info']['base_form_id'] == 'workflow_transition_form') {
-        $form_state['build_info']['form_id'] = $form_id;
-      }
-    }
-     */
 
     /*
      * Output: generate the element.
@@ -320,40 +307,58 @@ class WorkflowTransitionElement extends FormElement {
 
       return $element; // <-- exit.
     }
-    else {
-      // @todo: repair the usage of $settings_title_as_name: no container if no details (schedule/comment).
-      // Prepare a UI wrapper. This might be a fieldset.
-      if ($settings_fieldset == 0) { // Use 'container'.
-        $element += [
-          '#type' => 'container',
-        ];
-      }
-      else {
-        $element += [
-          '#type' => 'details',
-          '#collapsible' => TRUE,
-          '#open' => ($settings_fieldset == 2) ? FALSE : TRUE,
-        ];
-      }
 
-      // This overrides BaseFieldDefinition. @todo: apply for form and widget.
-      // The 'options' widget. May be removed later if 'Action buttons' are chosen.
-      // The help text is not available for container. Let's add it to the
-      // State box. N.B. it is empty on Workflow Tab, Node View page.
-      $help_text = isset($element['#description']) ? $element['#description'] : '';
-      // This overrides BaseFieldDefinition. @todo: apply for form and widget.
-      $element['to_sid'] = [
-        '#type' => ($wid) ? $settings_options_type : 'select', // Avoid error with grouped options.
-        '#title' => ($settings_title_as_name && !$transition->isExecuted())
-           ? t('Change @name state', ['@name' => $workflow->label()])
-           : t('Target state'),
-        '#access' => TRUE,
-        '#options' => $options,
-        // '#parents' => array('workflow'),
-        '#default_value' => $default_value,
-        '#description' => $help_text,
+    // @todo: repair the usage of $settings_title_as_name: no container if no details (schedule/comment).
+    // Prepare a UI wrapper. This might be a fieldset.
+    if ($settings_fieldset == 0) { // Use 'container'.
+      $element += [
+        '#type' => 'container',
       ];
     }
+    else {
+      $element += [
+        '#type' => 'details',
+        '#collapsible' => TRUE,
+        '#open' => ($settings_fieldset == 2) ? FALSE : TRUE,
+      ];
+    }
+
+    $element['field_name'] = [
+      '#type' => 'select',
+      '#title' => t('Field name'),
+      '#description' => t('Choose the field name.'),
+      '#access' => FALSE, // Only show on VBO/Actions screen.
+      '#options' => workflow_get_workflow_field_names($entity),
+      '#default_value' => $field_name,
+      '#required' => TRUE,
+      '#weight' => -20,
+    ];
+    $element['force'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Force transition'),
+      '#description' => t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
+      '#access' => FALSE, // Only show on VBO/Actions screen.
+      '#default_value' => $force,
+      '#weight' => -19,
+    ];
+
+    // This overrides BaseFieldDefinition. @todo: apply for form and widget.
+    // The 'options' widget. May be removed later if 'Action buttons' are chosen.
+    // The help text is not available for container. Let's add it to the
+    // State box. N.B. it is empty on Workflow Tab, Node View page.
+    $help_text = isset($element['#description']) ? $element['#description'] : '';
+    // This overrides BaseFieldDefinition. @todo: apply for form and widget.
+    $element['to_sid'] = [
+      '#type' => ($wid) ? $settings_options_type : 'select', // Avoid error with grouped options.
+      '#title' => ($settings_title_as_name && !$transition->isExecuted())
+        ? t('Change @name state', ['@name' => $workflow->label()])
+        : t('Target state'),
+      '#access' => TRUE,
+      '#options' => $options,
+      // '#parents' => array('workflow'),
+      '#default_value' => $default_value,
+      '#description' => $help_text,
+    ];
 
     // Display scheduling form under certain conditions.
     if ($settings_schedule == TRUE) {
