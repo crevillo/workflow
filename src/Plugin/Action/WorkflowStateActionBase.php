@@ -27,8 +27,8 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
   /**
    * {@inheritdoc}
    */
-  public function calculateDependencies(){
-    return [
+  public function calculateDependencies() {
+    return parent::calculateDependencies() + [
       'module' => ['workflow',],
     ];
   }
@@ -44,12 +44,14 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $configuration = $this->configuration + [
+    $configuration = parent::defaultConfiguration();
+    $configuration += $this->configuration;
+    $configuration += [
       'field_name' => '',
       'to_sid' => '',
       'comment' => "New state is set by a triggered Action.",
       'force' => 0,
-      ];
+    ];
     return $configuration;
   }
 
@@ -123,15 +125,15 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     $field_name = $config['field_name'];
     $wids = workflow_get_workflow_names();
 
-    if (empty($field_name)) {
-      if (count($wids) > 1) {
-        drupal_set_message('You have more then one workflow in the system. Please first select the fieldname
+    if (empty($field_name) && count($wids) > 1) {
+      drupal_set_message('You have more then one workflow in the system. Please first select the field name
           and save the form. Then, revisit the form to set the correct state value.', 'warning');
-      }
+    }
+    if (empty($field_name)) {
       $wid = count($wids) ? array_keys($wids)[0] : '';
     }
     else {
-      $fields = _workflow_info_fields($entity = NULL, $entity_type = $config['type'], $entity_bundle = '', $field_name);
+      $fields = _workflow_info_fields($entity = NULL, $entity_type = '', $entity_bundle = '', $field_name);
       $wid = count($fields) ? reset($fields)->getSetting('workflow_type') : '';
     }
 
@@ -179,39 +181,25 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
     $force = $config['force'];
     $transition = WorkflowTransition::create([$current_state, 'field_name' => $field_name]);
     $transition->setValues($to_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
+    // Properly derive other variables from Transition.
+    $entity = $transition->getTargetEntity();
+    $field_name = $transition->getFieldName();
 
     // Add the WorkflowTransitionForm to the page.
 
-    // Here, not the $element is added, but the entity form.
     $element = []; // Just to be explicit.
     $element['#default_value'] = $transition;
 
-    // Avoid Action Buttons. That removes the options box. No Buttons in config schreens!
+    // Avoid Action Buttons. That removes the options box&more. No Buttons in config screens!
     $original_options = $transition->getWorkflow()->options['options'];
     $transition->getWorkflow()->options['options'] = 'select';
-
     // Generate and add the Workflow form element.
-    $form += WorkflowTransitionElement::transitionElement($element, $form_state, $form);
+    $element = WorkflowTransitionElement::transitionElement($element, $form_state, $form);
     // Just to be sure, reset the options box setting.
     $transition->getWorkflow()->options['options'] = $original_options;
-    // Remove the transition: generates an error upon saving the action definition.
-    unset($form['workflow_transition']);
-
-    // @todo D8: add the entity form.
-    //$form = \Drupal::getContainer()->get('entity.form_builder')->getForm($transition, 'add');
-    // Remove the action button. The Entity itself has one.
-    //unset($element['actions']);
-
-    // Make adaptations for VBO-form:
-    $entity = $transition->getTargetEntity();
-    $field_name = $transition->getFieldName();
-    $force = $this->configuration['force'];
-
-    // Override the options widget.
-    $form['to_sid']['#description'] = t('Please select the state that should be assigned when this action runs.');
 
     // Add Field_name. @todo: Add 'field_name' to WorkflowTransitionElement?
-    $form['field_name'] = [
+    $element['field_name'] = [
       '#type' => 'select',
       '#title' => $this->t('Field name'),
       '#description' => $this->t('Choose the field name.'),
@@ -221,20 +209,20 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       '#weight' => -20,
     ];
     // Add Force. @todo: Add 'force' to WorkflowTransitionElement?
-    $form['force'] = [
+    $element['force'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Force transition'),
       '#description' => $this->t('If this box is checked, the new state will be assigned even if workflow permissions disallow it.'),
       '#default_value' => $force,
       '#weight' => -19,
     ];
-    // Change comment field.
-    $form['comment'] = [
-      '#title' => $this->t('Message'),
-      '#description' => $this->t('This message will be written into the workflow history log when the action
-      runs. You may include the following variables: %state, %title, %user.'),
-      ] + $form['comment'];
+    // Make adaptations for VBO-form:
+    $element['to_sid']['#description'] = t('Please select the state that should be assigned when this action runs.');
+    $element['comment']['#title'] = $this->t('Message');
+    $element['comment']['#description'] = $this->t('This message will be written into the workflow history log when the action
+      runs. You may include the following variables: %state, %title, %user.');
 
+    $form['workflow_transition_action_config'] = $element;
     return $form;
   }
 
@@ -242,8 +230,10 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $configuration = $form_state->getValues();
-    unset($configuration['transition']); // No cluttered objects in datastorage.
+    $configuration = $form_state->getValue('workflow_transition_action_config');
+    // Remove the transition: generates an error upon saving the action definition.
+    unset($configuration['workflow_transition']);
+
     $this->configuration = $configuration;
   }
 
