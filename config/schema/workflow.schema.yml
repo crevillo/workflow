@@ -42,9 +42,6 @@ workflow.workflow.*:
         comment_log_node:
           type: integer
           label: 'Show comment on the Content edit form'
-        comment_log_tab:
-          type: integer
-          label: 'Show comment on the Workflow history tab of content'
         watchdog_log:
           type: integer
           label: 'Log watchdog messages upon state change'

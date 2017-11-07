@@ -126,65 +126,23 @@ class WorkflowForm extends EntityForm {
       '#default_value' => isset($workflow->options['schedule_timezone']) ? $workflow->options['schedule_timezone'] : 1,
     ];
 
-    $form['comment'] = [
-      '#type' => 'details',
-      '#title' => t('Comment'),
+    $form['basic']['comment_log_node'] = [
+      '#type' => 'select',
+      '#required' => FALSE,
+      '#options' => [
+        // Use 0/1/2 to stay compatible with previous checkbox.
+        0 => t('hidden'),
+        1 => t('optional'),
+        2 => t('required'),
+      ],
+      '#attributes' => ['class' => ['container-inline']],
+      '#title' => t('How to show the Comment subfield'),
+      '#default_value' => isset($workflow->options['comment_log_node']) ? $workflow->options['comment_log_node'] : 1,
       '#description' => t(
-        'A Comment form can be shown on the Workflow Transition form so that the person
+        'A Comment area can be shown on the Workflow Transition form so that the person
          making a state change can record reasons for doing so. The comment is
          then included in the content\'s workflow history.'
       ),
-      '#open' => TRUE, // Controls the HTML5 'open' attribute. Defaults to FALSE.
-    ];
-
-    /*
-    $form['comment']['comment'] = [
-      '#type' => 'select',
-      '#title' => t('Allow adding a comment to workflow transitions'),
-      '#required' => FALSE,
-      '#options' => [
-        // Use 0/1/2 to stay compatible with previous checkbox.
-        0 => t('hidden'),
-        1 => t('optional'),
-        2 => t('required'),
-      ],
-      '#default_value' => $settings['widget']['comment'],
-      '#description' => t('On the Workflow form, a Comment form can be included
-            so that the person making the state change can record reasons for doing
-            so. The comment is then included in the content\'s workflow history. This
-            may be altered by settings in widgets, formatters or permissions.'
-      ),
-    ];
-     */
-
-    $form['comment']['comment_log_node'] = [
-      '#type' => 'select',
-      '#required' => FALSE,
-      '#options' => [
-        // Use 0/1/2 to stay compatible with previous checkbox.
-        0 => t('hidden'),
-        1 => t('optional'),
-        2 => t('required'),
-      ],
-      '#attributes' => ['class' => ['container-inline']],
-      '#title' => t('Show comment on the Content edit form'),
-      '#default_value' => isset($workflow->options['comment_log_node']) ? $workflow->options['comment_log_node'] : 1,
-      //'#description' => t('On the node editing form.'),
-    ];
-
-    $form['comment']['comment_log_tab'] = [
-      '#type' => 'select',
-      '#required' => FALSE,
-      '#options' => [
-        // Use 0/1/2 to stay compatible with previous checkbox.
-        0 => t('hidden'),
-        1 => t('optional'),
-        2 => t('required'),
-      ],
-      '#attributes' => ['class' => ['container-inline']],
-      '#title' => t('Show comment on the Workflow history tab of content'),
-      '#default_value' => isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1,
-      //'#description' => t('On the workflow tab.'),
     ];
 
     $form['watchdog'] = [
@@ -229,7 +187,6 @@ class WorkflowForm extends EntityForm {
         'options' => $form_state->getValue('options'),
         'schedule_timezone' => $form_state->getValue('schedule_timezone'),
         'comment_log_node' => $form_state->getValue('comment_log_node'),
-        'comment_log_tab' => $form_state->getValue('comment_log_tab'),
         'watchdog_log' => $form_state->getValue('watchdog_log'),
       ]
     );

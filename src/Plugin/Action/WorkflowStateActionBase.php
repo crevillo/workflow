@@ -155,7 +155,7 @@ abstract class WorkflowStateActionBase extends ConfigurableActionBase implements
       $instance['widget']['settings']['submit_function'] = '';
       if (!$field_id) {
         // This is a Workflow Node workflow. Set widget options as in v7.x-1.2
-        $field['settings']['widget']['comment'] = isset($workflow->options['comment_log_tab']) ? $workflow->options['comment_log_tab'] : 1; // vs. ['comment_log_node'];
+        $field['settings']['widget']['comment'] = $workflow->options['comment_log_node']; // 'comment_log_tab' is removed;
         $field['settings']['widget']['current_status'] = TRUE;
         // As stated above, the options list is probably very long, so let's use select list.
         $field['settings']['widget']['options'] = 'select';

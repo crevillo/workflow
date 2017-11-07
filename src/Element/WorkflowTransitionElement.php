@@ -219,29 +219,12 @@ class WorkflowTransitionElement extends FormElement {
         'options' => "radios",
         'schedule_timezone' => 1,
         'comment_log_node' => "1",
-        'comment_log_tab' => "1",
         'watchdog_log' => TRUE,
       ];
     }
     // Current sid and default value may differ in a scheduled transition.
 
-    $workflow_settings['comment'] = $workflow_settings['comment_log_node']; // vs. ['comment_log_tab'];
-    // @todo D8-port: remove following code.
-    // workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
-    /*
-    // Change settings locally.
-    if (!$field_name) {
-      // This is a Workflow Node workflow. Set widget options as in v7.x-1.2
-      if ($form_state['build_info']['base_form_id'] == 'node_form') {
-        $workflow_settings['comment'] = isset($workflow_settings['comment_log_node']) ? $workflow_settings['comment_log_node'] : 1; // vs. ['comment_log_tab'];
-        $workflow_settings['current_status'] = TRUE;
-      }
-      else {
-        $workflow_settings['comment'] = isset($workflow_settings['comment_log_tab']) ? $workflow_settings['comment_log_tab'] : 1; // vs. ['comment_log_node'];
-        $workflow_settings['current_status'] = TRUE;
-      }
-    }
-    */
+    $workflow_settings['comment'] = $workflow_settings['comment_log_node']; // 'comment_log_tab' is removed;
 
     // Capture settings to format the form/widget.
     $settings_title_as_name = !empty($workflow_settings['name_as_title']);
