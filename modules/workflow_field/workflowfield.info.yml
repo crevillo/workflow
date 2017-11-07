@@ -3,3 +3,5 @@ description: 'A residual submodule. No need to enable this module for installati
 package: Workflow
 type: module
 core: 8.x
+
+hidden: TRUE
