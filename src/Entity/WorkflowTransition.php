@@ -113,7 +113,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * All arguments must be passed, when creating an object programmatically.
    * One argument $entity may be passed, only to directly call delete() afterwards.
    */
-  public function __construct(array $values = [], $entityType = 'WorkflowTransition', $bundle = FALSE, $translations = []) {
+  public function __construct(array $values = [], $entityType = 'workflow_transition', $bundle = FALSE, $translations = []) {
     // Please be aware that $entity_type and $entityType are different things!
     parent::__construct($values, $entityType, $bundle, $translations);
     // This transition is not scheduled.
