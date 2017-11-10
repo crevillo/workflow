@@ -114,9 +114,27 @@ function workflow_workflow_type_insert(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_insert().
+ */
+function workflow_entity_insert(EntityInterface $entity) {
+  _workflow_entity_update($entity);
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function workflow_entity_update(EntityInterface $entity) {
+  _workflow_entity_update($entity);
+}
+
+/**
  * Implements hook_entity_presave().
  */
-function workflow_entity_presave(EntityInterface $entity) {
+//function workflow_entity_presave(EntityInterface $entity) {
+//  _workflow_entity_update($entity);
+//}
+
+function _workflow_entity_update(EntityInterface $entity) {
   // Avoid this hook on workflow objects.
   if (in_array($entity->getEntityTypeId(), [
     'workflow_type',
