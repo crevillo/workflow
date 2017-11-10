@@ -117,24 +117,28 @@ function workflow_workflow_type_insert(EntityInterface $entity) {
  * Implements hook_entity_insert().
  */
 function workflow_entity_insert(EntityInterface $entity) {
-  _workflow_entity_update($entity);
-}
-
-/**
- * Implements hook_entity_update().
- */
-function workflow_entity_update(EntityInterface $entity) {
-  _workflow_entity_update($entity);
+  // Execute updates in hook_presave() to revert executions,
+  // Execute inserts in hook_insert, to have the Entity ID determined.
+    _workflow_execute_transitions($entity);
 }
 
 /**
  * Implements hook_entity_presave().
  */
-//function workflow_entity_presave(EntityInterface $entity) {
-//  _workflow_entity_update($entity);
-//}
+function workflow_entity_presave(EntityInterface $entity) {
+  if (!$entity->isNew()) {
+    // Avoid a double call.
+    _workflow_execute_transitions($entity);
+  }
+}
 
-function _workflow_entity_update(EntityInterface $entity) {
+/**
+ *  Execute transitions. if prohibited, restore original field value.
+ *  - insert: use hook_insert(), to have the Entity ID determined when saving transitions.
+ *  - update: use hook_presave() to revert executions,
+ *  - so, do not use hook_update().
+ */
+function _workflow_execute_transitions(EntityInterface $entity) {
   // Avoid this hook on workflow objects.
   if (in_array($entity->getEntityTypeId(), [
     'workflow_type',
@@ -147,8 +151,7 @@ function _workflow_entity_update(EntityInterface $entity) {
   }
 
   // Execute/save the transitions fom the widgets in the entity form.
-  $ret = \Drupal::service('workflow.manager')->executeTransitionsOfEntity($entity);
-
+  \Drupal::service('workflow.manager')->executeTransitionsOfEntity($entity);
 }
 
 /**

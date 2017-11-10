@@ -252,18 +252,9 @@ class WorkflowManager implements WorkflowManagerInterface {
 
       // If the transition failed, revert the entity workflow status.
       // For new entities, we do nothing: it has no original.
-      if (!$entity->isNew()) {
-        /** @var \Drupal\node\Entity\Node $nodeOriginal */
-        $nodeOriginal = $entity->original;
-
-        /** @var \Drupal\Core\Field\FieldItemList $field */
-        $field = $entity->getFields()[$field_name];
-
-        /** @var \Drupal\Core\Field\FieldItemList $fieldOriginal */
-        $fieldOriginal = $nodeOriginal->getFields()[$field_name];
-
-        // Revert the workflow status
-        $field->setValue($fieldOriginal->getValue());
+      if (isset($entity->original)) {
+        $originalValue = $entity->original->{$field_name}->value;
+        $entity->{$field_name}->setValue($originalValue);
       }
     }
   }
