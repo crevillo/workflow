@@ -260,6 +260,8 @@ class WorkflowState extends ConfigEntityBase {
         $field_name = $field_info->getName();
         $query = \Drupal::entityQuery($entity_type);
         $query->condition($field_name, $current_sid, '=');
+
+        // @todo D8: CommentForm & Deactivate WorkflowState
         $result = ($entity_type == 'comment') ? [] : $query->execute();
 
         foreach ($result as $entity_id) {

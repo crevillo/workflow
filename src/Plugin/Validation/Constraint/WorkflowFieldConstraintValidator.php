@@ -55,6 +55,7 @@ class WorkflowFieldConstraintValidator extends ConstraintValidator implements Co
   public function validate($entity, Constraint $constraint) {
     // Workflow field name on comment has special requirements.
     $field_storage = $entity->getFieldDefinition()->getFieldStorageDefinition();
+    // @todo D8: CommentForm & constraints
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
       if (!$this->isValidFieldname($field_storage, $entity->getEntity())) {
         $this->context->buildViolation($constraint->messageFieldname)

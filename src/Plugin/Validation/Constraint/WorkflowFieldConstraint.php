@@ -21,6 +21,7 @@ class WorkflowFieldConstraint extends CompositeConstraintBase {
    *
    * @var string
    */
+  // @todo D8: CommentForm & constraints on Field
   public $messageFieldname = 'A workflow field on a comment must have
     the same field_name as the commented Entity. Please maintain the entity
     first, or choose another field name.';

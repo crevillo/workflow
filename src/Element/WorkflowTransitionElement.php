@@ -126,6 +126,7 @@ class WorkflowTransitionElement extends FormElement {
     $wid = $transition->getWorkflowId();
     $force = $transition->isForced();
 
+    // @todo D8: CommentForm
     if ($transition->getTargetEntityTypeId() == 'comment') {
       /* @var $comment_entity CommentInterface */
       $comment_entity = $transition->getTargetEntity();
@@ -435,7 +436,7 @@ class WorkflowTransitionElement extends FormElement {
       // 3. User clicks button.
       // 4. Callback _workflow_transition_form_validate_buttons() sets proper State.
       // 5. Callback _workflow_transition_form_validate_buttons() sets Submit function.
-      // @todo: this does not work yet for the Add Comment form.
+      // @todo D8: CommentForm & Action buttons
 
       // Performance: inform workflow_form_alter() to do its job.
       _workflow_use_action_buttons($settings_options_type);

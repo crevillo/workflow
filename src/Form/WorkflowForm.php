@@ -98,7 +98,7 @@ class WorkflowForm extends EntityForm {
         // These options are taken from options.module
         'select' => 'Select list',
         'radios' => 'Radio buttons',
-        // This option does not work properly on Comment Add form.
+        // @todo D8: CommentForm & Action buttons on WorkflowForm
         'buttons' => 'Action buttons',
         'dropbutton' => 'Drop button',
       ],

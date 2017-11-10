@@ -145,11 +145,12 @@ class WorkflowManager implements WorkflowManagerInterface {
 
       // Make sure transition is still valid: the entity must still be in
       // the state it was in, when the transition was scheduled.
-      // Scheduling on comments is a testing error, and leads to 'recoverable error'.
+      // Scheduling on 'CommentForm' is a testing error, and leads to 'recoverable error'.
       $current_sid = '';
       if ($entity && ($entity->getEntityTypeId() !== 'comment')) {
         $current_sid = workflow_node_current_state($entity, $field_name);
       }
+
       if ($current_sid && ($current_sid == $from_sid)) {
 
         // If user didn't give a comment, create one.
@@ -230,6 +231,8 @@ class WorkflowManager implements WorkflowManagerInterface {
         $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
 
+      // @todo D8: CommentForm
+      $jvo = $entity->getEntityTypeId();
       if ($entity->getEntityTypeId() !== 'comment') {
         // We come from Content edit page, from widget.
         // Set the just-saved entity explicitly. Not necessary for update,

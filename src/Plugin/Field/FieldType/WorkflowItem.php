@@ -127,7 +127,7 @@ class WorkflowItem extends ListItemBase {
   public function onChange($property_name, $notify = TRUE) {
     //workflow_debug( __FILE__ , __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
 
-    // TODO D8: use this function onChange for adding a line in table workfow_transition_*
+    // TODO D8: use this function onChange for adding a line in table workflow_transition_*
     // Enforce that the computed date is recalculated.
     //if ($property_name == 'value') {
     //  $this->date = NULL;
@@ -142,22 +142,7 @@ class WorkflowItem extends ListItemBase {
 
     return [
       'workflow_type' => '',
-      //'allowed_values' => [],
       'allowed_values_function' => 'workflow_state_allowed_values',
-
-      // @todo D8-port: below settings may be (re)moved.
-      /*
-      'widget' => array(
-        'options' => 'select',
-        'name_as_title' => 1,
-        'fieldset' => 0,
-        'hide' => 0,
-        'schedule' => 1,
-        'schedule_timezone' => 1,
-        'comment' => 1,
-      ),
-      'watchdog_log' => 1,
-       */
     ] + parent::defaultStorageSettings();
   }
 
@@ -187,6 +172,7 @@ class WorkflowItem extends ListItemBase {
     foreach ($violation_list->getIterator() as $violation) {
       switch ($violation->getPropertyPath()) {
         case 'fieldnameOnComment':
+          // @todo D8: CommentForm & constraints on storageSettingsForm()
           // A 'comment' field name MUST be equal to content field name.
           // @todo: Still not waterproof. You could have a field on a non-relevant entity_type.
           drupal_set_message($violation->getMessage(), 'error');
@@ -198,6 +184,7 @@ class WorkflowItem extends ListItemBase {
       }
     }
 
+    // @todo D8: CommentForm & constraints on storageSettingsForm
     // Set the required workflow_type on 'comment' fields.
     // N.B. the following must BELOW the (count($workflows) == 1) snippet.
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
@@ -362,6 +349,7 @@ class WorkflowItem extends ListItemBase {
   public function getPossibleOptions(AccountInterface $account = NULL) {
     $allowed_options = [];
 
+    // @todo D8: CommentForm & getOptions()
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
       /* @var $comment \Drupal\comment\CommentInterface */
@@ -401,6 +389,7 @@ class WorkflowItem extends ListItemBase {
       return $allowed_options;
     }
 
+    // @todo D8: CommentForm & getOptions()
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
       /* @var $comment \Drupal\comment\CommentInterface */
