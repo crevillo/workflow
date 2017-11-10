@@ -223,8 +223,8 @@ class WorkflowManager implements WorkflowManagerInterface {
         // @todo D8: CommentForm : or from a Edit form with hidden widget.
         if ($entity->original) {
           // Editing a Node with hidden Widget. State change not possible, so bail out.
-          $entity->$field_name->value = $entity->original->$field_name->value;
-          continue;
+//          $entity->$field_name->value = $entity->original->$field_name->value;
+//          continue;
         }
 
         // Creating a Node with hidden Workflow Widget. Generate valid first transition.
