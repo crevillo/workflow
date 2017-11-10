@@ -294,7 +294,7 @@ function hook_field_widget_workflow_default_form_alter(&$element, \Drupal\Core\F
     // An example of customizing/overriding the workflow widget.
     // Beware, until now, you must do this twice: on the widget and on the form.
     if ($transition->getOwnerId() == 1) {
-      drupal_set_message('I got you, user 1, you will never schedule again,
+      drupal_set_message('(Test/Devel message) I got you, user 1, you will never schedule again,
         and you WILL document each state change!', 'warning');
       // Let's prohibit scheduling for user 1.
       $element['workflow_scheduling']['#access'] = FALSE;
@@ -332,7 +332,7 @@ function hook_form_workflow_transition_form_alter(&$form, FormStateInterface $fo
   // An example of customizing/overriding the workflow widget.
   // Beware, until now, you must do this twice: on the widget and on the form.
   if ($transition->getOwnerId() == 1) {
-    drupal_set_message('I got you, user 1, you will never schedule again,
+    drupal_set_message('(Test/Devel message) I got you, user 1, you will never schedule again,
         and you WILL document each state change!', 'warning');
     // Let's prohibit scheduling for user 1.
     $workflow_element['workflow_scheduling']['#access'] = FALSE;
