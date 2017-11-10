@@ -125,19 +125,19 @@ class WorkflowTransitionElement extends FormElement {
     $workflow = $transition->getWorkflow();
     $wid = $transition->getWorkflowId();
     $force = $transition->isForced();
-    $entity = $transition->getTargetEntity();
-    $entity_type = $transition->getTargetEntityTypeId();
-    $entity_id = $transition->getTargetEntityId();
-
     // @todo D8: CommentForm with correct element = OK
     if ($transition->getTargetEntityTypeId() == 'comment') {
       /* @var $comment_entity CommentInterface */
       $comment_entity = $transition->getTargetEntity();
       $entity = ($comment_entity) ? $comment_entity->getCommentedEntity() : NULL;
-      $entity_type = ($comment_entity) ? $comment_entity->getCommentedEntityTypeId() : '';
-      $entity_id = ($comment_entity) ? $comment_entity->getCommentedEntityId() : '';
       $transition->from_sid = $entity->$field_name->value;
+      $transition->setTargetEntity($entity);
+//      $entity_type = ($comment_entity) ? $comment_entity->getCommentedEntityTypeId() : '';
+//      $entity_id = ($comment_entity) ? $comment_entity->getCommentedEntityId() : '';
     }
+    $entity = $transition->getTargetEntity();
+    $entity_type = $transition->getTargetEntityTypeId();
+    $entity_id = $transition->getTargetEntityId();
 
     if ($transition->isExecuted()) {
       // We are editing an existing/executed/not-scheduled transition.

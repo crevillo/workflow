@@ -145,32 +145,16 @@ class WorkflowManager implements WorkflowManagerInterface {
 
       // Make sure transition is still valid: the entity must still be in
       // the state it was in, when the transition was scheduled.
+      if (!$entity) {
+        continue;
+      }
       // Scheduling on 'CommentForm' is a testing error, and leads to 'recoverable error'.
-      $current_sid = '';
-      if ($entity && ($entity->getEntityTypeId() !== 'comment')) {
-        $current_sid = workflow_node_current_state($entity, $field_name);
+      if ($entity->getEntityTypeId() == 'comment') {
+        continue;
       }
 
-      if ($current_sid && ($current_sid == $from_sid)) {
-
-        // If user didn't give a comment, create one.
-        $comment = $scheduled_transition->getComment();
-        if (empty($comment)) {
-          $scheduled_transition->addDefaultComment();
-        }
-
-        // Do transition. Force it because user who scheduled was checked.
-        // The scheduled transition is not scheduled anymore, and is also deleted from DB.
-        // A watchdog message is created with the result.
-        $scheduled_transition->schedule(FALSE);
-        $scheduled_transition->force(TRUE);
-        self::executeTransition($scheduled_transition, TRUE);
-
-        if (!$field_name) {
-          $clear_cache = TRUE;
-        }
-      }
-      else {
+      $current_sid = workflow_node_current_state($entity, $field_name);
+      if (!$current_sid || ($current_sid != $from_sid)) {
         // Entity is not in the same state it was when the transition
         // was scheduled. Defer to the entity's current state and
         // abandon the scheduled transition.
@@ -183,6 +167,24 @@ class WorkflowManager implements WorkflowManagerInterface {
           'link' => $entity->toLink(t('View'))->toString(),
         ];
         \Drupal::logger('workflow')->error($message, $t_args);
+        continue;
+      }
+
+      // If user didn't give a comment, create one.
+      $comment = $scheduled_transition->getComment();
+      if (empty($comment)) {
+        $scheduled_transition->addDefaultComment();
+      }
+
+      // Do transition. Force it because user who scheduled was checked.
+      // The scheduled transition is not scheduled anymore, and is also deleted from DB.
+      // A watchdog message is created with the result.
+      $scheduled_transition->schedule(FALSE);
+      $scheduled_transition->force(TRUE);
+      self::executeTransition($scheduled_transition, TRUE);
+
+      if (!$field_name) {
+        $clear_cache = TRUE;
       }
     }
 
@@ -241,11 +243,12 @@ class WorkflowManager implements WorkflowManagerInterface {
       }
 
       // @todo D8: CommentForm & executeTransitionsOfEntity()
-      if ($entity->getEntityTypeId() !== 'comment') {
+      $transition->setTargetEntity($entity);
+      if ($entity->getEntityTypeId() == 'comment') {
         // We come from Content edit page, from widget.
         // Set the just-saved entity explicitly. Not necessary for update,
         // but upon insert, the old version didn't have an ID, yet.
-        $transition->setTargetEntity($entity);
+        $transition->setTargetEntity($entity->getCommentedEntity());
       }
 
       if ($transition->isScheduled()) {
