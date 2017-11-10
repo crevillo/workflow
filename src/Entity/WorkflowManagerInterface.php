@@ -69,9 +69,6 @@ interface WorkflowManagerInterface {
    *
    * This is referenced in from WorkflowDefaultWidget::massageFormValues().
    * @param \Drupal\Core\Entity\EntityInterface $entity
-   *
-   * @return
-   *   New state ID. If execution failed, FALSE or old state ID is returned,
    */
   public static function executeTransitionsOfEntity(EntityInterface $entity);
 

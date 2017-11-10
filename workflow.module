@@ -149,25 +149,6 @@ function _workflow_entity_update(EntityInterface $entity) {
   // Execute/save the transitions fom the widgets in the entity form.
   $ret = \Drupal::service('workflow.manager')->executeTransitionsOfEntity($entity);
 
-  // If the workflow transition failed,
-  // we revert the entity workflow status.
-  if ($ret === FALSE && !$entity->isNew()) {
-    /** @var \Drupal\node\Entity\Node $nodeOriginal */
-    $nodeOriginal = $entity->original;
-
-    foreach (_workflow_info_fields($entity) as $field_info) {
-      $field_name = $field_info->getName();
-
-      /** @var \Drupal\Core\Field\FieldItemList $field */
-      $field = $entity->getFields()[$field_name];
-
-      /** @var \Drupal\Core\Field\FieldItemList $fieldOriginal */
-      $fieldOriginal = $nodeOriginal->getFields()[$field_name];
-
-      // Revert the workflow status
-      $field->setValue($fieldOriginal->getValue());
-    }
-  }
 }
 
 /**

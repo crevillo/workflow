@@ -230,24 +230,42 @@ class WorkflowManager implements WorkflowManagerInterface {
         $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
 
-      if ($transition) {
-        if ($entity->getEntityTypeId() !== 'comment') {
-          // We come from Content edit page, from widget.
-          // Set the just-saved entity explicitly. Not necessary for update,
-          // but upon insert, the old version didn't have an ID, yet.
-          $transition->setTargetEntity($entity);
-        }
+      if ($entity->getEntityTypeId() !== 'comment') {
+        // We come from Content edit page, from widget.
+        // Set the just-saved entity explicitly. Not necessary for update,
+        // but upon insert, the old version didn't have an ID, yet.
+        $transition->setTargetEntity($entity);
+      }
 
-        // Todo: add support for multiple workflows.
-        if ($transition->isScheduled()) {
-          $result = $transition->save();
-        }
-        else {
-          $result = $transition->execute();
-        }
+      if ($transition->isScheduled()) {
+        $executed = $transition->save(); // Returns a positive integer.
+      }
+      else {
+        // Execute and check the result.
+        $new_sid = $transition->execute();
+        $executed = ($new_sid == $transition->getToSid()) ? TRUE : FALSE;
+      }
+
+      if ($executed) {
+        continue;
+      }
+
+      // If the transition failed, revert the entity workflow status.
+      // For new entities, we do nothing: it has no original.
+      if (!$entity->isNew()) {
+        /** @var \Drupal\node\Entity\Node $nodeOriginal */
+        $nodeOriginal = $entity->original;
+
+        /** @var \Drupal\Core\Field\FieldItemList $field */
+        $field = $entity->getFields()[$field_name];
+
+        /** @var \Drupal\Core\Field\FieldItemList $fieldOriginal */
+        $fieldOriginal = $nodeOriginal->getFields()[$field_name];
+
+        // Revert the workflow status
+        $field->setValue($fieldOriginal->getValue());
       }
     }
-    return $result; // This result is only reliable for 1 active workflow.
   }
 
   /**
