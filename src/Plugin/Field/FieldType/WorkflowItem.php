@@ -349,18 +349,16 @@ class WorkflowItem extends ListItemBase {
   public function getPossibleOptions(AccountInterface $account = NULL) {
     $allowed_options = [];
 
-    // @todo D8: CommentForm & getOptions()
+    $cacheable = TRUE;
+    $entity = $this->getEntity();
+
+    // D8=OK: For Workflow on CommentForm, get the CommentedEntity.
     $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
       /* @var $comment \Drupal\comment\CommentInterface */
       $comment = $this->getEntity();
       $entity = $comment->getCommentedEntity();
     }
-    else {
-      $entity = $this->getEntity();
-    }
-
-    $cacheable = TRUE;
 
     // Use the 'allowed_values_function' to calculate the options.
     $allowed_options = workflow_state_allowed_values($field_storage, $entity, $cacheable, $account);

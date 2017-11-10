@@ -219,7 +219,16 @@ class WorkflowManager implements WorkflowManagerInterface {
       /* @var $transition WorkflowTransitionInterface */
       $transition = $entity->$field_name->__get('workflow_transition');
       if (!$transition) {
-        // We come from creating an entity via entity_form, with core widget.
+        // We come from creating/editing an entity via entity_form, with core widget or hidden Workflow widget.
+        // @todo D8: CommentForm : or from a Edit form with hidden widget.
+        if ($entity->original) {
+          // Editing a Node with hidden Widget. State change not possible, so bail out.
+          $entity->$field_name->value = $entity->original->$field_name->value;
+          continue;
+        }
+
+        // Creating a Node with hidden Workflow Widget. Generate valid first transition.
+        // @todo D8: Test Creating a non-Node Entity with hidden Workflow widget.
         $comment = '';
         $old_sid = workflow_node_previous_state($entity, $field_name);
         $new_sid = $entity->$field_name->value;
@@ -231,8 +240,7 @@ class WorkflowManager implements WorkflowManagerInterface {
         $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
 
-      // @todo D8: CommentForm
-      $jvo = $entity->getEntityTypeId();
+      // @todo D8: CommentForm & executeTransitionsOfEntity()
       if ($entity->getEntityTypeId() !== 'comment') {
         // We come from Content edit page, from widget.
         // Set the just-saved entity explicitly. Not necessary for update,

@@ -63,7 +63,6 @@ class WorkflowFieldConstraintValidator extends ConstraintValidator implements Co
           ->addViolation();
       }
     }
-
   }
 
   /**

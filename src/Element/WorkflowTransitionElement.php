@@ -125,8 +125,11 @@ class WorkflowTransitionElement extends FormElement {
     $workflow = $transition->getWorkflow();
     $wid = $transition->getWorkflowId();
     $force = $transition->isForced();
+    $entity = $transition->getTargetEntity();
+    $entity_type = $transition->getTargetEntityTypeId();
+    $entity_id = $transition->getTargetEntityId();
 
-    // @todo D8: CommentForm
+    // @todo D8: CommentForm with correct element = OK
     if ($transition->getTargetEntityTypeId() == 'comment') {
       /* @var $comment_entity CommentInterface */
       $comment_entity = $transition->getTargetEntity();
@@ -134,11 +137,6 @@ class WorkflowTransitionElement extends FormElement {
       $entity_type = ($comment_entity) ? $comment_entity->getCommentedEntityTypeId() : '';
       $entity_id = ($comment_entity) ? $comment_entity->getCommentedEntityId() : '';
       $transition->from_sid = $entity->$field_name->value;
-    }
-    else {
-      $entity = $transition->getTargetEntity();
-      $entity_type = $transition->getTargetEntityTypeId();
-      $entity_id = $transition->getTargetEntityId();
     }
 
     if ($transition->isExecuted()) {
@@ -467,27 +465,33 @@ class WorkflowTransitionElement extends FormElement {
    *
    * @return WorkflowTransitionInterface
    */
-  static public function copyFormItemValuesToEntity(EntityInterface $entity, array $form, FormStateInterface $form_state, array $item) {
+  static public function copyFormItemValuesToEntity(EntityInterface $transition, array $form, FormStateInterface $form_state, array $item) {
     $user = workflow_current_user(); // @todo #2287057: verify if submit() really is only used for UI. If not, $user must be passed.
+
+    // @todo D8=OK: CommentForm with correct element processing
     /* @var $transition WorkflowTransitionInterface */
-    $transition = $entity;
+    if ($transition->getTargetEntityTypeId() == 'comment') {
+      /* @var $comment_entity CommentInterface */
+      $comment_entity = $transition->getTargetEntity();
+      $commented_entity = $comment_entity->getCommentedEntity();
+      $transition->setTargetEntity($commented_entity);
+    }
 
     /**
      * Derived input
      */
     // Make sure we have subset ['workflow_scheduled_date_time']
-    if (isset($item['to_sid'])) {
-      // In WorkflowTransitionForm, we receive the complete $form_state.
-      // Remember, the workflow_scheduled element is not set on 'add' page.
-      $scheduled = !empty($item['workflow_scheduling']['scheduled']);
-      $schedule_values = ($scheduled) ? $item['workflow_scheduling']['date_time'] : [];
-    }
-    else {
+    if (!isset($item['to_sid'])) {
       $entity_id = $transition->getTargetEntityId();
       drupal_set_message(t('Error: content @id has no workflow attached. The data is not saved.', ['@id' => $entity_id]), 'error');
       // The new state is still the previous state.
       return $transition;
     }
+
+    // In WorkflowTransitionForm, we receive the complete $form_state.
+    // Remember, the workflow_scheduled element is not set on 'add' page.
+    $scheduled = !empty($item['workflow_scheduling']['scheduled']);
+    $schedule_values = ($scheduled) ? $item['workflow_scheduling']['date_time'] : [];
 
     // Get user input from element.
     $to_sid = $item['to_sid'];
@@ -584,9 +588,6 @@ class WorkflowTransitionElement extends FormElement {
         $transition->{$attached_field} = $form_state->getUserInput()[$attached_field];
       }
     }
-
-    // Explicitly set $entity in case of ScheduleTransition. It is now returned as parameter, not result.
-    $entity = $transition;
 
     return $transition;
   }
