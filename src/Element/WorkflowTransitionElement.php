@@ -425,7 +425,6 @@ class WorkflowTransitionElement extends FormElement {
       // 3. User clicks button.
       // 4. Callback _workflow_transition_form_validate_buttons() sets proper State.
       // 5. Callback _workflow_transition_form_validate_buttons() sets Submit function.
-      // @todo D8: CommentForm & Action buttons
 
       // Performance: inform workflow_form_alter() to do its job.
       _workflow_use_action_buttons($settings_options_type);
