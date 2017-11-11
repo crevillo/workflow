@@ -72,7 +72,7 @@ function workflow_hook_info() {
 function TODO_workflow_entity_type_build(array &$entity_types) {
   workflow_debug(__FILE__, __FUNCTION__, __LINE__);  // @todo D8-port: still test this snippet.
 
-  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
+  /** @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   // Add a form controller for a custom entity form without overriding the
   // default entity form. To override the default entity form,
   // use hook_entity_type_alter().
@@ -127,7 +127,7 @@ function workflow_entity_insert(EntityInterface $entity) {
  */
 function workflow_entity_presave(EntityInterface $entity) {
   if (!$entity->isNew()) {
-    // Avoid a double call.
+    // Avoid a double call by hook_entity_presave and hook_entity_insert.
     _workflow_execute_transitions($entity);
   }
 }
@@ -168,11 +168,11 @@ function workflow_entity_delete(EntityInterface $entity) {
     $entity_type = $field_config->get('entity_type');
     $field_name = $field_config->get('field_name');
     foreach (WorkflowScheduledTransition::loadMultipleByProperties($entity_type, [], [], $field_name) as $scheduled_transition) {
-      /* @var $scheduled_transition WorkflowTransitionInterface */
+      /** @var $scheduled_transition WorkflowTransitionInterface */
       $scheduled_transition->delete();
     }
     foreach (WorkflowTransition::loadMultipleByProperties($entity_type, [], [], $field_name) as $transition) {
-      /* @var $transition WorkflowTransitionInterface */
+      /** @var $transition WorkflowTransitionInterface */
       $transition->delete();
     }
   }
@@ -185,16 +185,16 @@ function workflow_entity_delete(EntityInterface $entity) {
   ])) {
     // A 'normal' entity is deleted.
     foreach ($fields = _workflow_info_fields($entity) as $field_id => $field_storage) {
-      /* @var $field_storage FieldStorageConfig */
+      /** @var $field_storage FieldStorageConfig */
       $entity_type = $field_storage->getTargetEntityTypeId();
       $entity_id = $entity->id();
       $field_name = $field_storage->get('field_name');
       foreach (WorkflowScheduledTransition::loadMultipleByProperties($entity_type, [$entity_id], [], $field_name) as $scheduled_transition) {
-        /* @var $scheduled_transition WorkflowTransitionInterface */
+        /** @var $scheduled_transition WorkflowTransitionInterface */
         $scheduled_transition->delete();
       }
       foreach (WorkflowTransition::loadMultipleByProperties($entity_type, [$entity_id], [], $field_name) as $transition) {
-        /* @var $transition WorkflowTransitionInterface */
+        /** @var $transition WorkflowTransitionInterface */
         $transition->delete();
       }
     }
@@ -302,13 +302,13 @@ function workflow_get_workflow_state_names($wid = '', $grouped = FALSE, $all = F
   // Since this function is only used in UI, it is save to use the global $user.
   $user = workflow_current_user();
 
-  /* @var $workflows Workflow[] */
+  /** @var $workflows Workflow[] */
   $workflows = Workflow::loadMultiple($wid ? [$wid] : NULL);
   // Do not group if only 1 Workflow is configured or selected.
   $grouped = count($workflows) == 1 ? FALSE : $grouped;
 
   foreach ($workflows as $wid => $workflow) {
-    /* @var $state WorkflowState */
+    /** @var $state WorkflowState */
     $state = WorkflowState::create(['wid' => $wid]);
     $workflow_options = $state->getOptions(NULL, '', $user, FALSE);
     if (!$grouped) {
@@ -339,7 +339,7 @@ function workflow_get_workflow_names($required = TRUE) {
     $options[''] = t('- Select a value -');
   }
   foreach (Workflow::loadMultiple() as $wid => $workflow) {
-    /* @var $workflow Workflow */
+    /** @var $workflow Workflow */
     if ($workflow->isValid()) {
       $options[$wid] = $workflow->label();
     }
@@ -409,7 +409,7 @@ function workflow_get_field_name(\Drupal\Core\Entity\EntityInterface $entity, $f
   elseif (!$field_name) {
     $fields = _workflow_info_fields($entity);
     $field = reset($fields);
-    /* @var $field \Drupal\field\Entity\FieldStorageConfig */
+    /** @var $field \Drupal\field\Entity\FieldStorageConfig */
     $field_name = $field->getName();
   }
 
@@ -469,7 +469,7 @@ function workflow_url_get_entity(EntityInterface $entity = NULL) {
  * @return string|null $field_name
  */
 function workflow_url_get_field_name() {
-  /* @var $route_match \Drupal\Core\Routing\RouteMatchInterface */
+  /** @var $route_match \Drupal\Core\Routing\RouteMatchInterface */
   $route_match = \Drupal::routeMatch();
   $field_name = $route_match->getParameter('field_name');
   return $field_name;
@@ -478,10 +478,9 @@ function workflow_url_get_field_name() {
 /**
  * Helper function to get the entity from a route.
  *
- * @param EntityInterface $entity
  * @return mixed|string
  */
-function workflow_url_get_operation(EntityInterface $entity = NULL) {
+function workflow_url_get_operation() {
   $url = \Drupal\Core\Url::fromRoute('<current>');
   // The last part of the path is the operation: edit, workflow, devel.
   $url_parts = explode('/', $url->toString());
@@ -660,7 +659,7 @@ function workflow_debug($class_name, $function_name, $line = '', $value1 = '', $
  * @return Workflow
  */
 function workflow_url_get_workflow($url = '' ) {
-  /* @var $workflows \Drupal\workflow\Entity\Workflow[] */
+  /** @var $workflows \Drupal\workflow\Entity\Workflow[] */
   static $workflows = [];
 
   // For some reason, $_SERVER is not allowed as default.
@@ -691,7 +690,7 @@ function workflow_url_get_title() {
   $label = '';
 
   // Get the Workflow from the page.
-  /* @var $workflow \Drupal\workflow\Entity\Workflow */
+  /** @var $workflow \Drupal\workflow\Entity\Workflow */
   if ($workflow = workflow_url_get_workflow()) {
     $label = $workflow->label();
   }

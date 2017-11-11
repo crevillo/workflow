@@ -2,6 +2,7 @@
 
 namespace Drupal\workflow\Entity;
 
+use Drupal\comment\Entity\Comment;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -82,58 +83,6 @@ class WorkflowManager implements WorkflowManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public static function executeTransition(WorkflowTransitionInterface $transition, $force = FALSE) {
-    if ($force) {
-      $transition->force($force);
-    }
-    $force = $transition->isForced();
-
-    if (!$to_sid = $transition->getToSid()) {
-      $from_sid = $transition->getFromSid();
-      $entity = $transition->getTargetEntity();
-      $message = "Transition is not executed for %title, since 'To' state %to_sid is invalid.";
-      $t_args = [
-        '%to_sid' => $to_sid,
-        '%from_sid' => $from_sid,
-        '%title' => $entity->label(),
-        'link' => $entity->toLink(t('View'))->toString(),
-      ];
-      \Drupal::logger('workflow')->error($message, $t_args);
-      drupal_set_message(t($message, $t_args), 'error');
-
-      return $from_sid;
-    }
-
-    $update_entity = (!$transition->isScheduled() && !$transition->isExecuted());
-
-    // Save the (scheduled) transition.
-    if ($update_entity) {
-      // Update the workflow field of the entity.
-      $entity = $transition->getTargetEntity();
-      $field_name = $transition->getFieldName();
-      $to_sid = $transition->getToSid();
-
-      // N.B. Align the following functions:
-      // - WorkflowDefaultWidget::massageFormValues();
-      // - WorkflowManager::executeTransition().
-      $entity->$field_name->workflow_transition = $transition;
-      $entity->$field_name->value = $to_sid;
-
-      $entity->save();
-    }
-    else {
-      // We create a new transition, or update an existing one.
-      // Do not update the entity itself.
-      // Validate transition, save in history table and delete from schedule table.
-      $to_sid = $transition->execute();
-    }
-
-    return $to_sid;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function executeScheduledTransitionsBetween($start = 0, $end = 0) {
     $clear_cache = FALSE;
 
@@ -148,8 +97,9 @@ class WorkflowManager implements WorkflowManagerInterface {
       if (!$entity) {
         continue;
       }
-      // Scheduling on 'CommentForm' is a testing error, and leads to 'recoverable error'.
+      // Scheduling on 'CommentForm' is a testing error/not supported, and leads to 'recoverable error'.
       if ($entity->getEntityTypeId() == 'comment') {
+        workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
         continue;
       }
 
@@ -180,8 +130,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       // The scheduled transition is not scheduled anymore, and is also deleted from DB.
       // A watchdog message is created with the result.
       $scheduled_transition->schedule(FALSE);
-      $scheduled_transition->force(TRUE);
-      self::executeTransition($scheduled_transition, TRUE);
+      $scheduled_transition->executeAndUpdateEntity(TRUE);
 
       if (!$field_name) {
         $clear_cache = TRUE;
@@ -199,7 +148,6 @@ class WorkflowManager implements WorkflowManagerInterface {
    * {@inheritdoc}
    */
   public static function executeTransitionsOfEntity(EntityInterface $entity) {
-    $result = FALSE;
 
     // Avoid this hook on workflow objects.
     if (in_array($entity->getEntityTypeId(), [
@@ -209,7 +157,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       'workflow_transition',
       'workflow_scheduled_transition',
     ])) {
-      return $result;
+      return;
     }
 
     $user = workflow_current_user();
@@ -218,7 +166,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       $field_name = $field_info->getName();
 
       // Transition is created in widget or WorkflowTransitionForm.
-      /* @var $transition WorkflowTransitionInterface */
+      /** @var $transition WorkflowTransitionInterface */
       $transition = $entity->$field_name->__get('workflow_transition');
       if (!$transition) {
         // We come from creating/editing an entity via entity_form, with core widget or hidden Workflow widget.
@@ -248,6 +196,7 @@ class WorkflowManager implements WorkflowManagerInterface {
         // We come from Content edit page, from widget.
         // Set the just-saved entity explicitly. Not necessary for update,
         // but upon insert, the old version didn't have an ID, yet.
+        /** @var $entity Comment */
         $transition->setTargetEntity($entity->getCommentedEntity());
       }
 

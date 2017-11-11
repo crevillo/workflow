@@ -13,41 +13,6 @@ use Drupal\Core\Session\AccountInterface;
 interface WorkflowManagerInterface {
 
   /**
-   * Executes a transition (change state of an entity), from OUTSIDE the entity.
-   *
-   * Use WorkflowManager::executeTransition() to start a State Change from
-   *   outside an entity, e.g., workflow_cron().
-   * Use $transition->execute() to start a State Change from within an entity.
-   *
-   * A Scheduled Transition ($transition->isScheduled() == TRUE) will be
-   *   un-scheduled and saved in the history table.
-   *   The entity will not be updated.
-   * If $transition->isScheduled() == FALSE, the Transition will be
-   *   removed from the {workflow_transition_scheduled} table (if necessary),
-   *   and added to {workflow_transition_history} table.
-   *   Then the entity wil be updated to reflect the new status.
-   *
-   *  If $transition->isForced() == TRUE, transition permissions will be
-   *    bypassed.
-   *
-   * @usage
-   *   $transition->force($force);
-   *   $transition->schedule(FALSE);
-   *   $to_sid = Workflow::workflowManager()->executeTransition($transition);
-   *
-   * @see workflow_execute_transition()
-   *
-   * @param \Drupal\workflow\Entity\WorkflowTransitionInterface $transition
-   *   A WorkflowTransition or WorkflowScheduledTransition.
-   * @param bool $force
-   *   If set to TRUE, workflow permissions will be ignored.
-   *
-   * @return string
-   *   The resulting WorkflowState id.
-   */
-  public static function executeTransition(WorkflowTransitionInterface $transition, $force = FALSE);
-
-  /**
    * Given a time frame, execute all scheduled transitions.
    *
    * Implements hook_cron().

@@ -71,7 +71,7 @@ class WorkflowDefaultWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
     $wid = $this->getFieldSetting('workflow_type');
-    /* @var $workflow Workflow */
+    /** @var $workflow Workflow */
     if (!$workflow = Workflow::load($wid)) {
       // @todo: add error message.
       return $element;
@@ -83,11 +83,11 @@ class WorkflowDefaultWidget extends WidgetBase {
       return [];
     }
 
-    /* @var $item \Drupal\workflow\Plugin\Field\FieldType\WorkflowItem */
+    /** @var $item \Drupal\workflow\Plugin\Field\FieldType\WorkflowItem */
     $item = $items[$delta];
-    /* @var $field_config \Drupal\field\Entity\FieldConfig */
+    /** @var $field_config \Drupal\field\Entity\FieldConfig */
     $field_config = $item->getFieldDefinition();
-    /* @var $field_storage \Drupal\field\Entity\FieldStorageConfig */
+    /** @var $field_storage \Drupal\field\Entity\FieldStorageConfig */
     $field_storage = $field_config->getFieldStorageDefinition();
 
     $field_name = $field_storage->get('field_name');
@@ -95,7 +95,7 @@ class WorkflowDefaultWidget extends WidgetBase {
     $from_sid = workflow_node_current_state($entity, $field_name);
 
     // Create a transition, to pass to the form. No need to use setValues().
-    /* @var $transition WorkflowTransition */
+    /** @var $transition WorkflowTransition */
     $transition = WorkflowTransition::create([$from_sid, 'field_name' => $field_name]);
     $transition->setTargetEntity($entity);
 
@@ -167,16 +167,15 @@ class WorkflowDefaultWidget extends WidgetBase {
       if (!empty($item)) { // } && $item['value'] instanceof DrupalDateTime) {
 
         // The following can NOT be retrieved from the WorkflowTransition.
-        /* @var $entity \Drupal\Core\Entity\EntityInterface */
+        /** @var $entity \Drupal\Core\Entity\EntityInterface */
         $entity = $form_state->getFormObject()->getEntity();
-        /* @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
+        /** @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
         $transition = $item['workflow_transition'];
         $field_name = $transition->getFieldName();
         // N.B. Use a proprietary version of copyFormValuesToEntity,
         // where $entity/$transition is passed by reference.
-        // $this->copyFormValuesToEntity($entity, $form, $form_state);
-        /* @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
-        $transition = WorkflowTransitionElement::copyFormItemValuesToEntity($transition, $form, $form_state, $item);
+        /** @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
+        $transition = WorkflowTransitionElement::copyFormValuesToTransition($transition, $form, $form_state, $item);
 
         // Try to execute the transition. Return $from_sid when error.
         if (!$transition) {

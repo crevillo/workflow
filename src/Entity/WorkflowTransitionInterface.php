@@ -88,6 +88,34 @@ interface WorkflowTransitionInterface extends WorkflowConfigTransitionInterface,
   public function execute($force = FALSE);
 
   /**
+   * Executes a transition (change state of an entity), from OUTSIDE the entity.
+   *
+   * Use $transition->executeAndUpdateEntity() to start a State Change from
+   *   outside an entity, e.g., workflow_cron().
+   * Use $transition->execute() to start a State Change from within an entity.
+   *
+   * A Scheduled Transition ($transition->isScheduled() == TRUE) will be
+   *   un-scheduled and saved in the history table.
+   *   The entity will not be updated.
+   * If $transition->isScheduled() == FALSE, the Transition will be
+   *   removed from the {workflow_transition_scheduled} table (if necessary),
+   *   and added to {workflow_transition_history} table.
+   *   Then the entity wil be updated to reflect the new status.
+   *
+   * @usage
+   *   $to_sid = $transition->->executeAndUpdateEntity($force);
+   *
+   * @see workflow_execute_transition()
+   *
+   * @param bool $force
+   *   If set to TRUE, workflow permissions will be ignored.
+   *
+   * @return string
+   *   The resulting WorkflowState id.
+   */
+  public function executeAndUpdateEntity($force = FALSE);
+
+  /**
    * Invokes 'transition post'.
    * Adds the possibility to invoke the hook from elsewhere.
    *

@@ -81,7 +81,8 @@ class WorkflowTransitionElement extends FormElement {
    * @param FormStateInterface $form_state
    * @param $complete_form
    *
-   * @return
+   * @return array
+   *   The Workflow element
    */
   public static function processTransition(&$element, FormStateInterface $form_state, &$complete_form) {
     workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
@@ -113,9 +114,9 @@ class WorkflowTransitionElement extends FormElement {
      * Input.
      */
     // A Transition object must have been set explicitly.
-    /* @var $transition WorkflowTransitionInterface */
+    /** @var $transition WorkflowTransitionInterface */
     $transition = $element['#default_value'];
-    /* @var $user \Drupal\Core\Session\AccountInterface */
+    /** @var $user \Drupal\Core\Session\AccountInterface */
     $user = \Drupal::currentUser();
 
     /*
@@ -127,7 +128,7 @@ class WorkflowTransitionElement extends FormElement {
     $force = $transition->isForced();
     // @todo D8: CommentForm with correct element = OK
     if ($transition->getTargetEntityTypeId() == 'comment') {
-      /* @var $comment_entity CommentInterface */
+      /** @var $comment_entity CommentInterface */
       $comment_entity = $transition->getTargetEntity();
       $entity = ($comment_entity) ? $comment_entity->getCommentedEntity() : NULL;
       $transition->from_sid = $entity->$field_name->value;
@@ -458,20 +459,20 @@ class WorkflowTransitionElement extends FormElement {
    * - parameter 1 is returned as result, to be able to create a new Transition object.
    * - parameter 3 is not $form_state (from Form), but an $item array (from Widget).
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $transition
    * @param array $form
    * @param FormStateInterface $form_state
    * @param array $item
    *
    * @return WorkflowTransitionInterface
    */
-  static public function copyFormItemValuesToEntity(EntityInterface $transition, array $form, FormStateInterface $form_state, array $item) {
+  static public function copyFormValuesToTransition(EntityInterface $transition, array $form, FormStateInterface $form_state, array $item) {
     $user = workflow_current_user(); // @todo #2287057: verify if submit() really is only used for UI. If not, $user must be passed.
 
     // @todo D8=OK: CommentForm with correct element processing
-    /* @var $transition WorkflowTransitionInterface */
+    /** @var $transition WorkflowTransitionInterface */
     if ($transition->getTargetEntityTypeId() == 'comment') {
-      /* @var $comment_entity CommentInterface */
+      /** @var $comment_entity CommentInterface */
       $comment_entity = $transition->getTargetEntity();
       $commented_entity = $comment_entity->getCommentedEntity();
       $transition->setTargetEntity($commented_entity);
@@ -557,7 +558,7 @@ class WorkflowTransitionElement extends FormElement {
       $transition_entity = $transition->getTargetEntity();
       $field_name = $transition->getFieldName();
       $from_sid = $transition->getFromSid();
-      /* @var $transition WorkflowTransitionInterface */
+      /** @var $transition WorkflowTransitionInterface */
       $transition = WorkflowScheduledTransition::create([$from_sid, 'field_name' => $field_name]);
       $transition->setTargetEntity($transition_entity);
       $transition->setValues($to_sid, $user->id(), $timestamp, $comment);

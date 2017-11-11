@@ -6,7 +6,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\workflow\Element\WorkflowTransitionElement;
-use Drupal\workflow\Entity\Workflow;
+use Drupal\workflow\Entity\WorkflowTransitionInterface;
 
 /**
  * Provides a Transition Form to be used in the Workflow Widget.
@@ -24,11 +24,11 @@ class WorkflowTransitionForm extends ContentEntityForm {
    */
   public function getFormId() {
 
-    /* @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
+    /** @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
     $transition = $this->entity;
     $field_name = $transition->getFieldName();
 
-    /* @var $entity \Drupal\Core\Entity\EntityInterface */
+    /** @var $entity \Drupal\Core\Entity\EntityInterface */
     // Entity may be empty on VBO bulk form.
     // $entity = $transition->getTargetEntity();
     // Compose Form Id from string + Entity Id + Field name.
@@ -82,7 +82,7 @@ class WorkflowTransitionForm extends ContentEntityForm {
     // This might cause baseFieldDefinitions to appear twice.
     $form = parent::form($form, $form_state);
 
-    /* @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
+    /** @var $transition \Drupal\workflow\Entity\WorkflowTransitionInterface */
     $transition = $this->entity;
 
     // Do not pass the element, but the form.
@@ -156,12 +156,13 @@ class WorkflowTransitionForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildEntity(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
     $entity = clone $this->entity;
     // N.B. Use a proprietary version of copyFormValuesToEntity,
     // where $entity is passed by reference.
     // $this->copyFormValuesToEntity($entity, $form, $form_state);
     $item = $form_state->getValues();
-    $entity = WorkflowTransitionElement::copyFormItemValuesToEntity($entity, $form, $form_state, $item);
+    $entity = WorkflowTransitionElement::copyFormValuesToTransition($entity, $form, $form_state, $item);
 
     // Mark the entity as NOT requiring validation. (Used in validateForm().)
     $entity->setValidationRequired(FALSE);
@@ -188,8 +189,9 @@ class WorkflowTransitionForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     // Execute transition and update the attached entity.
-    $entity = $this->getEntity();
-    return Workflow::workflowManager()->executeTransition($entity);
+    /** @var WorkflowTransitionInterface $transition */
+    $transition = $this->getEntity();
+    return $transition->executeAndUpdateEntity();
   }
 
   /*************************************************************************
