@@ -249,7 +249,7 @@ class WorkflowItem extends ListItemBase {
 
         '#field_has_data' => $has_data,
         '#field_name' => $this->getFieldDefinition()->getName(),
-        '#entity_type' => $this->getEntity()->getEntityTypeId(),
+        '#entity_type' => ($this->getEntity()) ? $this->getEntity()->getEntityTypeId() : '',
         '#allowed_values' => $allowed_values,
         '#description' => $this->allowedValuesDescription(),
       ];
