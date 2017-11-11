@@ -320,34 +320,21 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
   public function isValid() {
     // Load the entity, if not already loaded.
     // This also sets the (empty) $revision_id in Scheduled Transitions.
-    /** @var $entity \Drupal\Core\Entity\EntityInterface */
     $entity = $this->getTargetEntity();
-    /** @var $user \Drupal\user\UserInterface */
-    $user = $this->getOwner();
-    $from_sid = $this->getFromSid();
-    $to_sid = $this->getToSid();
-
-    // Prepare an array of arguments for error messages.
-    $args = [
-      '%user' => ($user) ? $user->getDisplayName() : '',
-      '%old' => $from_sid,
-      '%new' => $to_sid,
-      '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
-    ];
 
     if (!$entity) {
+      // @todo: There is a watchdog error, but no UI-error. Is this OK?
       $message = 'User tried to execute a Transition without an entity.';
-      \Drupal::logger('workflow')->error($message, $args);
+      $this->logError($message);
       return FALSE;  // <-- exit !!!
     }
     if (!$this->getFromState()) {
       // @todo: the page is not correctly refreshed after this error.
-      drupal_set_message($message = t('You tried to set a Workflow State, but
-        the entity is not relevant. Please contact your system administrator.'),
-        'error');
-      $message = 'Setting a non-relevant Entity from state %old to %new';
-      \Drupal::logger('workflow')->error($message, $args);
+      $message = t('You tried to set a Workflow State, but
+        the entity is not relevant. Please contact your system administrator.');
+      drupal_set_message($message, 'error');
+      $message = 'Setting a non-relevant Entity from state %sid1 to %sid2';
+      $this->logError($message);
       return FALSE;  // <-- exit !!!
     }
 
@@ -363,16 +350,17 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
      * Get early permissions of user, and bail out to avoid extra hook-calls.
      */
 
+    if ($force) {
+      // $force allows Rules to cause transition.
+      return TRUE;
+    }
+
     // Determine if user is owner of the entity.
     $is_owner = WorkflowManager::isOwner($user, $this->getTargetEntity());
     // Check allow-ability of state change if user is not superuser (might be cron).
     $type_id = $this->getWorkflowId();
     if ($user->hasPermission("bypass $type_id workflow_transition access")) {
       // Superuser is special. And $force allows Rules to cause transition.
-      return TRUE;
-    }
-    if ($force) {
-      // $force allows Rules to cause transition.
       return TRUE;
     }
     // Determine if user is owner of the entity.
@@ -396,14 +384,9 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     }
 
     if ($result == FALSE) {
-      // @todo: There is a watchdog error, but no UI-error. Is this ok?
-      $message = t('Attempt to go to nonexistent transition (from %from_sid to %to_sid)');
-      $t_args = [
-        '%from_sid' => $this->getFromSid(),
-        '%to_sid' => $this->getToSid(),
-        'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
-      ];
-      \Drupal::logger('workflow')->error($message, $t_args);
+      // @todo: There is a watchdog error, but no UI-error. Is this OK?
+      $message = t('Attempt to go to nonexistent transition (from %sid1 to %sid2)');
+      $this->logError($message);
     }
 
     return $result;
@@ -426,11 +409,8 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $comment = $this->getComment();
 
     static $static_info = NULL;
-    if (!isset($static_info[$entity->id()][$field_name][$this->id()])) {
-      // OK. Prepare for next round. Do not set last_sid!!
-      $static_info[$entity->id()][$field_name][$this->id()] = $from_sid;
-    }
-    else {
+
+    if (isset($static_info[$entity->id()][$field_name][$this->id()])) {
       // Error: this Transition is already executed.
       // On the development machine, execute() is called twice, when
       // on an Edit Page, the entity has a scheduled transition, and
@@ -441,11 +421,15 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       // - try adapting code of transition->save() to avoid second record.
       // - avoid executing twice.
       $message = 'Transition is executed twice in a call. The second call for
-        @id is not executed.';
-      \Drupal::logger('workflow')->error($message, ['@id' => $entity->id()]);
+        @entity_type %entity_id is not executed.';
+      $this->logError($message);
+
       // Return the result of the last call.
       return $static_info[$entity->id()][$field_name][$this->id()]; // <-- exit !!!
     }
+
+    // OK. Prepare for next round. Do not set last_sid!!
+    $static_info[$entity->id()][$field_name][$this->id()] = $from_sid;
 
     // Make sure $force is set in the transition, too.
     if ($force) {
@@ -466,61 +450,33 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     }
 
     // @todo: move below code to $this->isAllowed().
-    // Prepare an array of arguments for error messages.
-    $args = [
-      '%user' => $user->getDisplayName(),
-      '%old' => $from_sid,
-      '%new' => $to_sid,
-      '%label' => $entity->label(),
-      'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
-    ];
-    // Check if the state has changed.
-    // If so, check the permissions.
+    // If the state has changed, check the permissions.
     $state_changed = ($from_sid != $to_sid);
     if ($state_changed) {
-      // State has changed. Do some checks upfront.
 
+      // Make sure this transition is allowed by workflow module Admin UI.
       if (!$force) {
-        // Make sure this transition is allowed by workflow module Admin UI.
         $user->addRole(WORKFLOW_ROLE_AUTHOR_RID);
-        if (!$this->isAllowed($user, $force)) {
-          $message = 'User %user not allowed to go from state %old to %new';
-          \Drupal::logger('workflow')->error($message, $args);
-          // If incorrect, quit.
-          return FALSE;  // <-- exit !!!
-        }
       }
-      else {
-        // OK. All state changes allowed.
+      if (!$this->isAllowed($user, $force)) {
+        $message = 'User %user not allowed to go from state %sid1 to %sid2';
+        $this->logError($message);
+        return FALSE;  // <-- exit !!!
       }
-
-      // As of 8.x-1.x, below hook() is removed, in favour of below hook 'transition pre'.
-//      if (!$force) {
-//        // Make sure this transition is allowed by custom module.
-//        // @todo D8: replace all parameters that are included in $transition.
-//        // @todo: in case of error, there is a log, but no UI error.
-//        $permitted = \Drupal::moduleHandler()->invokeAll('workflow', ['transition permitted', $this, $user]);
-//        // Stop if a module says so.
-//        if (in_array(FALSE, $permitted, TRUE)) {
-//          \Drupal::logger('workflow')->notice('Transition vetoed by module.', $args);
-//          return FALSE;  // <-- exit !!!
-//        }
-//      }
-//      else {
-//        // OK. All state changes allowed.
-//      }
 
       // Make sure this transition is valid and allowed for the current user.
       // Invoke a callback indicating a transition is about to occur.
       // Modules may veto the transition by returning FALSE.
       // (Even if $force is TRUE, but they shouldn't do that.)
+      // P.S. The D7 hook_workflow 'transition permitted' is removed, in favour of below hook_workflow 'transition pre'.
       $permitted = \Drupal::moduleHandler()->invokeAll('workflow', ['transition pre', $this, $user]);
       // Stop if a module says so.
       if (in_array(FALSE, $permitted, TRUE)) {
-        \Drupal::logger('workflow')->notice('Transition vetoed by module.', $args);
+        // @todo: There is a watchdog error, but no UI-error. Is this OK?
+        $message = 'Transition vetoed by module.';
+        $this->logError($message);
         return FALSE;  // <-- exit !!!
       }
-
     }
     elseif ($this->getComment()) {
       // No need to ask permission for adding comments.
@@ -563,21 +519,13 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
         if ($state_changed) {
           $workflow = $this->getWorkflow();
           if (($new_state = $this->getToState()) && !empty($workflow->options['watchdog_log'])) {
-            $entity_type = $this->getTargetEntityTypeId();
-            $entity_type_info = \Drupal::entityManager()->getDefinition($entity_type);
             if ($this->getEntityTypeId() == 'workflow_scheduled_transition') {
-              $message = 'Scheduled state change of @type %label to %state_name executed';
+              $message = 'Scheduled state change of @entity_type_label %entity_label to %sid2 executed';
+              $this->logError($message);
+              return FALSE;  // <-- exit !!!
             }
-            else {
-              $message = 'State of @type %label set to %state_name';
-            }
-            $args = [
-              '@type' => $entity_type_info->getLabel(),
-              '%label' => $entity->label(),
-              '%state_name' => $new_state->label(),
-              'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
-            ];
-            \Drupal::logger('workflow')->notice($message, $args);
+            $message = 'State of @entity_type_label %entity_label set to %sid2';
+            $this->logError($message);
           }
         }
 
@@ -608,27 +556,25 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public function executeAndUpdateEntity($force = FALSE) {
-    $entity = $this->getTargetEntity();
+    $to_sid = $this->getToSid();
+
 
     // Generate error and stop if transition has no new State.
-    if (!$to_sid = $this->getToSid()) {
-      $from_sid = $this->getFromSid();
-      $message = "Transition is not executed for %title, since 'To' state %to_sid is invalid.";
+    if (!$to_sid) {
       $t_args = [
-        '%to_sid' => $to_sid,
-        '%from_sid' => $from_sid,
-        '%title' => $entity->label(),
-        'link' => $entity->toLink(t('View'))->toString(),
+        '%sid2' => $this->getToState()->label(),
+        '%entity_label' => $this->getTargetEntity()->label(),
       ];
-      \Drupal::logger('workflow')->error($message, $t_args);
+      $message = "Transition is not executed for %entity_label, since 'To' state %sid2 is invalid.";
+      $this->logError($message);
       drupal_set_message(t($message, $t_args), 'error');
 
-      return $from_sid;
+      return $this->getFromSid();
     }
 
     // Save the (scheduled) transition.
-    $update_entity = (!$this->isScheduled() && !$this->isExecuted());
-    if ($update_entity) {
+    $do_update_entity = (!$this->isScheduled() && !$this->isExecuted());
+    if ($do_update_entity) {
       $this->_updateEntity();
     }
     else {
@@ -1099,6 +1045,31 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     ;
 
     return $fields;
+  }
+
+  /**
+   * Generate a Watchdog error
+   *
+   * @param $message
+   * @param $from_sid
+   * @param $to_sid
+   */
+  public function logError($message, $from_sid = '', $to_sid = '') {
+
+    // Prepare an array of arguments for error messages.
+    $entity = $this->getTargetEntity();
+    $t_args = [
+      /** @var $user \Drupal\user\UserInterface */
+      '%user' => ($user = $this->getOwner()) ? $user->getDisplayName() : '',
+      '%sid1' => ($from_sid) ? $from_sid : $this->getFromState()->label(),
+      '%sid2' => ($to_sid) ? $to_sid : $this->getToState()->label(),
+      '%entity_id' => $this->getTargetEntityId(),
+      '%entity_label' => $entity ? $entity->label() : '',
+      '@entity_type' => ($entity) ? $entity->getEntityTypeId() : '',
+      '@entity_type_label' => ($entity) ? $entity->getEntityType()->getLabel() : '',
+      'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
+    ];
+    \Drupal::logger('workflow')->error($message, $t_args);
   }
 
   /**

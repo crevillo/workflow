@@ -108,15 +108,9 @@ class WorkflowManager implements WorkflowManagerInterface {
         // Entity is not in the same state it was when the transition
         // was scheduled. Defer to the entity's current state and
         // abandon the scheduled transition.
+        $message = t('Scheduled Transition is discarded, since Entity has state ID %sid1, instead of expected ID %sid2.');
+        $scheduled_transition->logError($message, $current_sid, $from_sid);
         $scheduled_transition->delete();
-
-        $message = t('Scheduled Transition is discarded, since Entity has state ID %current_sid, instead of expected ID %from_sid.');
-        $t_args = [
-          '%current_sid' => $current_sid,
-          '%from_sid' => $from_sid,
-          'link' => $entity->toLink(t('View'))->toString(),
-        ];
-        \Drupal::logger('workflow')->error($message, $t_args);
         continue;
       }
 
