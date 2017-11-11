@@ -97,11 +97,6 @@ class WorkflowManager implements WorkflowManagerInterface {
       if (!$entity) {
         continue;
       }
-      // @todo D8: CommentForm & Scheduled Transition: testing error/not supported, and leads to 'recoverable error'.
-      if ($entity->getEntityTypeId() == 'comment') {
-        workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
-        continue;
-      }
 
       $current_sid = workflow_node_current_state($entity, $field_name);
       if (!$current_sid || ($current_sid != $from_sid)) {
