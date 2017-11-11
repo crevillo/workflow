@@ -85,7 +85,7 @@ class WorkflowItem extends ListItemBase {
       $propertyDefinitions[$key]['workflow_transition'] = DataDefinition::create('any')
         //    $properties['workflow_transition'] = DataDefinition::create('WorkflowTransition')
         ->setLabel(t('Transition'))
-        ->setDescription(t('The computed WokflowItem object.'))
+        ->setDescription(t('The computed WorkflowItem object.'))
         ->setComputed(TRUE)
         ->setClass('\Drupal\workflow\Entity\WorkflowTransition')
         ->setSetting('date source', 'value');
@@ -112,6 +112,20 @@ class WorkflowItem extends ListItemBase {
     return $propertyDefinitions[$key];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getEntity() {
+    $entity = parent::getEntity();
+
+    // For Workflow on CommentForm, get the CommentedEntity.
+    if ($entity->getEntityTypeId() == 'comment') {
+      /** @var $entity \Drupal\comment\CommentInterface */
+      $entity = $entity->getCommentedEntity();
+    }
+
+    return $entity;
+  }
 
   /**
    * {@inheritdoc}
@@ -162,13 +176,14 @@ class WorkflowItem extends ListItemBase {
       drupal_set_message(
         $this->t('You must <a href=":create">create at least one workflow</a>
           before content can be assigned to a workflow.',
-          [':create' => \Drupal::url('entity.workflow_type.collection'),]
+          [':create' => Url::fromRoute('entity.workflow_type.collection')->toString(),]
         ), 'warning'
       );
     }
 
     // Validate via annotation WorkflowFieldConstraint. Show a message for each error.
     $violation_list = $this->validate();
+    /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
     foreach ($violation_list->getIterator() as $violation) {
       switch ($violation->getPropertyPath()) {
         case 'fieldnameOnComment':
@@ -202,7 +217,7 @@ class WorkflowItem extends ListItemBase {
 
     // Let the user choose between the available workflow types.
     $wid = $this->getSetting('workflow_type');
-    $url = Url::fromRoute('entity.workflow_type.collection');
+    $url = Url::fromRoute('entity.workflow_type.collection')->toString();
     $element['workflow_type'] = [
       '#type' => 'select',
       '#title' => $this->t('Workflow type'),
@@ -211,7 +226,7 @@ class WorkflowItem extends ListItemBase {
       '#required' => TRUE,
       '#disabled' => $has_data,
       '#description' => $this->t('Choose the Workflow type. Maintain workflows
-         <a href=":url">here</a>.', [':url' => $url->toString()]),
+         <a href=":url">here</a>.', [':url' => $url]),
     ];
 
     // Get a string representation to show all options.
@@ -270,7 +285,7 @@ class WorkflowItem extends ListItemBase {
     $wid = $this->getSetting('workflow_type');
 
     $previous_wid = -1;
-    /* @var $state WorkflowState */
+    /** @var $state WorkflowState */
     foreach ($states as $key => $state) {
       // Only show enabled states.
       if ($state->isActive()) {
@@ -349,18 +364,10 @@ class WorkflowItem extends ListItemBase {
   public function getPossibleOptions(AccountInterface $account = NULL) {
     $allowed_options = [];
 
-    $cacheable = TRUE;
-    $entity = $this->getEntity();
-
-    // D8=OK: For Workflow on CommentForm, get the CommentedEntity.
-    $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
-    if ($field_storage->getTargetEntityTypeId() == 'comment') {
-      /* @var $comment \Drupal\comment\CommentInterface */
-      $comment = $this->getEntity();
-      $entity = $comment->getCommentedEntity();
-    }
-
     // Use the 'allowed_values_function' to calculate the options.
+    $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
+    $entity = $this->getEntity();
+    $cacheable = TRUE;
     $allowed_options = workflow_state_allowed_values($field_storage, $entity, $cacheable, $account);
 
     return $allowed_options;
@@ -387,20 +394,10 @@ class WorkflowItem extends ListItemBase {
       return $allowed_options;
     }
 
-    // @todo D8: CommentForm & getOptions()
-    $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
-    if ($field_storage->getTargetEntityTypeId() == 'comment') {
-      /* @var $comment \Drupal\comment\CommentInterface */
-      $comment = $this->getEntity();
-      $entity = $comment->getCommentedEntity();
-    }
-    else {
-      $entity = $this->getEntity();
-    }
-
-    $cacheable = TRUE;
-
     // Use the 'allowed_values_function' to calculate the options.
+    $field_storage = $this->getFieldDefinition()->getFieldStorageDefinition();
+    $entity = $this->getEntity();
+    $cacheable = TRUE;
     $allowed_options = workflow_state_allowed_values($field_storage, $entity, $cacheable, $account);
 
     return $allowed_options;

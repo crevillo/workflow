@@ -97,7 +97,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       if (!$entity) {
         continue;
       }
-      // Scheduling on 'CommentForm' is a testing error/not supported, and leads to 'recoverable error'.
+      // @todo D8: CommentForm & Scheduled Transition: testing error/not supported, and leads to 'recoverable error'.
       if ($entity->getEntityTypeId() == 'comment') {
         workflow_debug( __FILE__, __FUNCTION__, __LINE__); // @todo D8-port: still test this snippet.
         continue;
@@ -109,7 +109,7 @@ class WorkflowManager implements WorkflowManagerInterface {
         // was scheduled. Defer to the entity's current state and
         // abandon the scheduled transition.
         $message = t('Scheduled Transition is discarded, since Entity has state ID %sid1, instead of expected ID %sid2.');
-        $scheduled_transition->logError($message, $current_sid, $from_sid);
+        $scheduled_transition->logError($message, 'error', $current_sid, $from_sid);
         $scheduled_transition->delete();
         continue;
       }
@@ -164,7 +164,7 @@ class WorkflowManager implements WorkflowManagerInterface {
       $transition = $entity->$field_name->__get('workflow_transition');
       if (!$transition) {
         // We come from creating/editing an entity via entity_form, with core widget or hidden Workflow widget.
-        // @todo D8: CommentForm : or from a Edit form with hidden widget.
+        // @todo D8: from an Edit form with hidden widget.
         if ($entity->original) {
           // Editing a Node with hidden Widget. State change not possible, so bail out.
 //          $entity->$field_name->value = $entity->original->$field_name->value;
@@ -184,18 +184,19 @@ class WorkflowManager implements WorkflowManagerInterface {
         $transition->setValues($new_sid, $user->id(), \Drupal::time()->getRequestTime(), $comment, TRUE);
       }
 
-      // @todo D8: CommentForm & executeTransitionsOfEntity()
+      // We come from Content/Comment edit page, from widget.
+      // Set the just-saved entity explicitly. Not necessary for update,
+      // but upon insert, the old version didn't have an ID, yet.
       $transition->setTargetEntity($entity);
-      if ($entity->getEntityTypeId() == 'comment') {
-        // We come from Content edit page, from widget.
-        // Set the just-saved entity explicitly. Not necessary for update,
-        // but upon insert, the old version didn't have an ID, yet.
-        /** @var $entity Comment */
-        $transition->setTargetEntity($entity->getCommentedEntity());
-      }
 
       if ($transition->isScheduled()) {
         $executed = $transition->save(); // Returns a positive integer.
+      }
+      elseif ($entity->getEntityTypeId() == 'comment') {
+        // If Transition is added via CommentForm, save Comment AND Entity.
+        // Execute and check the result.
+        $new_sid = $transition->executeAndUpdateEntity();
+        $executed = ($new_sid == $transition->getToSid()) ? TRUE : FALSE;
       }
       else {
         // Execute and check the result.
@@ -203,13 +204,9 @@ class WorkflowManager implements WorkflowManagerInterface {
         $executed = ($new_sid == $transition->getToSid()) ? TRUE : FALSE;
       }
 
-      if ($executed) {
-        continue;
-      }
-
       // If the transition failed, revert the entity workflow status.
       // For new entities, we do nothing: it has no original.
-      if (isset($entity->original)) {
+      if (!$executed && isset($entity->original)) {
         $originalValue = $entity->original->{$field_name}->value;
         $entity->{$field_name}->setValue($originalValue);
       }

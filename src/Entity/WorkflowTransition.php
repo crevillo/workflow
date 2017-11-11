@@ -474,7 +474,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       if (in_array(FALSE, $permitted, TRUE)) {
         // @todo: There is a watchdog error, but no UI-error. Is this OK?
         $message = 'Transition vetoed by module.';
-        $this->logError($message);
+        $this->logError($message, 'notice');
         return FALSE;  // <-- exit !!!
       }
     }
@@ -525,7 +525,7 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
               return FALSE;  // <-- exit !!!
             }
             $message = 'State of @entity_type_label %entity_label set to %sid2';
-            $this->logError($message);
+            $this->logError($message, 'notice');
           }
         }
 
@@ -643,22 +643,29 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * {@inheritdoc}
    */
   public function setTargetEntity($entity) {
+    $this->entity_type = '';
+    $this->entity_id = '';
+    $this->revision_id = '';
+    $this->delta = 0; // Only single value is supported.
+    $this->langcode = Language::LANGCODE_NOT_SPECIFIED;
+
+    if (!$entity) {
+      return $this;
+    }
+
+    // If Transition is added via CommentForm, use the Commented Entity.
+    if ($entity->getEntityTypeId() == 'comment') {
+      /** @var $entity \Drupal\comment\CommentInterface */
+      $entity = $entity->getCommentedEntity();
+    }
+
     $this->entity = $entity;
-    if ($entity) {
-      /** @var \Drupal\Core\Entity\RevisionableContentEntityBase $entity */
-      $this->entity_type = $entity->getEntityTypeId();
-      $this->entity_id = $entity->id();
-      $this->revision_id = $entity->getRevisionId();
-      $this->delta = 0; // Only single value is supported.
-      $this->langcode = $entity->language()->getId();
-    }
-    else {
-      $this->entity_type = '';
-      $this->entity_id = '';
-      $this->revision_id = '';
-      $this->delta = 0; // Only single value is supported.
-      $this->langcode = Language::LANGCODE_NOT_SPECIFIED;
-    }
+    /** @var \Drupal\Core\Entity\RevisionableContentEntityBase $entity */
+    $this->entity_type = $entity->getEntityTypeId();
+    $this->entity_id = $entity->id();
+    $this->revision_id = $entity->getRevisionId();
+    $this->delta = 0; // Only single value is supported.
+    $this->langcode = $entity->language()->getId();
 
     return $this;
   }
@@ -1051,10 +1058,11 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
    * Generate a Watchdog error
    *
    * @param $message
+   * @param $type {'error' | 'notice'}
    * @param $from_sid
    * @param $to_sid
    */
-  public function logError($message, $from_sid = '', $to_sid = '') {
+  public function logError($message, $type = 'error', $from_sid = '', $to_sid = '') {
 
     // Prepare an array of arguments for error messages.
     $entity = $this->getTargetEntity();
@@ -1069,7 +1077,8 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
       '@entity_type_label' => ($entity) ? $entity->getEntityType()->getLabel() : '',
       'link' => ($this->getTargetEntityId() && $this->getTargetEntity()->hasLinkTemplate('canonical')) ? $this->getTargetEntity()->toLink(t('View'))->toString() : '',
     ];
-    \Drupal::logger('workflow')->error($message, $t_args);
+    ($type == 'error') ? \Drupal::logger('workflow')->error($message, $t_args)
+      : \Drupal::logger('workflow')->notice($message, $t_args);
   }
 
   /**

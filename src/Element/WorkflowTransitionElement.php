@@ -126,16 +126,6 @@ class WorkflowTransitionElement extends FormElement {
     $workflow = $transition->getWorkflow();
     $wid = $transition->getWorkflowId();
     $force = $transition->isForced();
-    // @todo D8: CommentForm with correct element = OK
-    if ($transition->getTargetEntityTypeId() == 'comment') {
-      /** @var $comment_entity CommentInterface */
-      $comment_entity = $transition->getTargetEntity();
-      $entity = ($comment_entity) ? $comment_entity->getCommentedEntity() : NULL;
-      $transition->from_sid = $entity->$field_name->value;
-      $transition->setTargetEntity($entity);
-//      $entity_type = ($comment_entity) ? $comment_entity->getCommentedEntityTypeId() : '';
-//      $entity_id = ($comment_entity) ? $comment_entity->getCommentedEntityId() : '';
-    }
     $entity = $transition->getTargetEntity();
     $entity_type = $transition->getTargetEntityTypeId();
     $entity_id = $transition->getTargetEntityId();
@@ -468,15 +458,6 @@ class WorkflowTransitionElement extends FormElement {
    */
   static public function copyFormValuesToTransition(EntityInterface $transition, array $form, FormStateInterface $form_state, array $item) {
     $user = workflow_current_user(); // @todo #2287057: verify if submit() really is only used for UI. If not, $user must be passed.
-
-    // @todo D8=OK: CommentForm with correct element processing
-    /** @var $transition WorkflowTransitionInterface */
-    if ($transition->getTargetEntityTypeId() == 'comment') {
-      /** @var $comment_entity CommentInterface */
-      $comment_entity = $transition->getTargetEntity();
-      $commented_entity = $comment_entity->getCommentedEntity();
-      $transition->setTargetEntity($commented_entity);
-    }
 
     /**
      * Derived input
