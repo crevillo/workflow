@@ -74,8 +74,11 @@ function workflow_access_workflow_operations($op, EntityInterface $entity = NULL
  * @todo: determine the best way for D8. See also content_access.module
  * The problem is that node_access table uses Int, whereas the Role Id is string.
  */
-function workflow_access_entity_insert(EntityInterface $entity) {
-  workflow_access_entity_update($entity);
+function workflow_access_user_role_insert(EntityInterface $entity) {
+  // $entity is instanceof \Drupal\user\RoleInterface) {
+  // Attend user to Rebuild data, because the weight of a role
+  // is the key for workflow_Access.
+   node_access_needs_rebuild(TRUE);
 }
 
 /**
@@ -83,11 +86,12 @@ function workflow_access_entity_insert(EntityInterface $entity) {
  *
  * @param EntityInterface $entity
  */
-function workflow_access_entity_update(EntityInterface $entity) {
-  if ($entity instanceof \Drupal\user\RoleInterface) {
-    // Attend user to Rebuild data, because the weight of a role
-    // is the key for workflow_Access.
-    // @todo: determine the best way for D8. See also content_access.module
+function workflow_access_user_role_update(EntityInterface $entity) {
+  // $entity is instanceof \Drupal\user\RoleInterface) {
+  // Attend user to Rebuild data, because the weight of a role
+  // is the key for workflow_Access.
+  if ($entity->getWeight() != $entity->original->getWeight()) {
+    // Role's weight has changed.
     node_access_needs_rebuild(TRUE);
   }
 }
