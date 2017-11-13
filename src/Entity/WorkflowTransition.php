@@ -1069,8 +1069,8 @@ class WorkflowTransition extends ContentEntityBase implements WorkflowTransition
     $t_args = [
       /** @var $user \Drupal\user\UserInterface */
       '%user' => ($user = $this->getOwner()) ? $user->getDisplayName() : '',
-      '%sid1' => ($from_sid) ? $from_sid : $this->getFromState()->label(),
-      '%sid2' => ($to_sid) ? $to_sid : $this->getToState()->label(),
+      '%sid1' => ($from_sid) ? $from_sid : $this->getFromState()->label,
+      '%sid2' => ($to_sid) ? $to_sid : $this->getToState()->label,
       '%entity_id' => $this->getTargetEntityId(),
       '%entity_label' => $entity ? $entity->label() : '',
       '@entity_type' => ($entity) ? $entity->getEntityTypeId() : '',
