@@ -1,6 +1,6 @@
 {
   "name": "crevillo/workflow",
   "description": "Worfklow drupal forked",
-  "type": "project",
+  "type": "drupal-module",
   "license": "GPL-2.0+"
 }
