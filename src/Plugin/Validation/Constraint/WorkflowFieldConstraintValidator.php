@@ -53,11 +53,10 @@ class WorkflowFieldConstraintValidator extends ConstraintValidator implements Co
    * {@inheritdoc}
    */
   public function validate($entity, Constraint $constraint) {
-    // Workflow field name on comment has special requirements.
+    // Workflow field name on CommentForm has special requirements.
     $field_storage = $entity->getFieldDefinition()->getFieldStorageDefinition();
-    // @todo D8: CommentForm & constraints
     if ($field_storage->getTargetEntityTypeId() == 'comment') {
-      if (!$this->isValidFieldname($field_storage, $entity->getEntity())) {
+      if (!$this->isValidFieldname($field_storage)) {
         $this->context->buildViolation($constraint->messageFieldname)
           ->atPath('fieldnameOnComment')
           ->addViolation();
@@ -67,11 +66,10 @@ class WorkflowFieldConstraintValidator extends ConstraintValidator implements Co
 
   /**
    * @param FieldStorageConfig $field_storage
-   * @param FieldableEntityInterface $entity
    *
    * @return bool
    */
-  protected function isValidFieldname(FieldStorageConfig $field_storage, FieldableEntityInterface $entity) {
+  protected function isValidFieldname(FieldStorageConfig $field_storage) {
     $comment_field_name_ok = FALSE;
 
     if ($field_storage->getTargetEntityTypeId() !== 'comment') {

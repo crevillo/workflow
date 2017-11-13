@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Hooks provided by the workflow module.
@@ -319,7 +320,7 @@ function hook_form_workflow_transition_form_alter(&$form, FormStateInterface $fo
 
   // The WorkflowTransitionForm (E.g., Workflow History tab, Block).
   // It has its own handling.
-  // @todo: Populate the WorkflowTranstitionForm with a Widget, so we have 1 way-of-working.
+  // @todo: Populate the WorkflowTransitionForm with a Widget, so we have 1 way-of-working.
 
   // Let's take a (changeable) reference to the element.
   $workflow_element = &$form;
